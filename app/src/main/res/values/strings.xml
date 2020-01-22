@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">BeBetter-client</string>
+    <string name="app_name">BeBetter</string>
+    <string name="welcome">Welcome to BeBetter!</string>
+    <string name="login">Please sign in or sign up with Google.</string>
+    <string name="not_connected_to_network" > No network connection</string>
+    <string name="challenges">Challenges</string>
+    <string name="my_challenges">My Challenges</string>
+    <string name="profile">Profile</string>
+    <string name="friends">Friends</string>
+    <string name="achievements">Achievements</string>
+    <string name="statistics">Statistics</string>
+    <string name="settings">Settings</string>
+    <string name="sign_out">Sign out</string>
+    <string name="search">Search</string>
 </resources>

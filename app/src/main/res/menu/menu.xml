@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_challenges"
+        android:title="@string/challenges"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/action_my_challenges"
+        android:title="@string/my_challenges"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/action_profile"
+        android:title="@string/profile"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/action_friends"
+        android:title="@string/friends"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/action_achievements"
+        android:title="@string/achievements"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/action_statistics"
+        android:title="@string/statistics"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settings"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/action_sign_out"
+        android:title="@string/sign_out"
+        app:showAsAction="never">
+    </item>
+
+</menu>

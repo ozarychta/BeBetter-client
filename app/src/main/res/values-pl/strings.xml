@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BeBetter</string>
+    <string name="welcome">Witaj w BeBetter!</string>
+    <string name="login">Aby móc korzystać z aplikacji, \nzaloguj się lub zarejestruj kontem Google.</string>
+    <string name="not_connected_to_network" >Brak połączenia z internetem</string>
+    <string name="challenges">Wyzwania</string>
+    <string name="my_challenges">Moje wyzwania</string>
+    <string name="profile">Profil</string>
+    <string name="friends">Znajomi</string>
+    <string name="achievements">Osiągnięcia</string>
+    <string name="statistics">Statystyki</string>
+    <string name="settings">Ustawienia</string>
+    <string name="sign_out">Wyloguj się</string>
+    <string name="search">Szukaj</string>
+</resources>
