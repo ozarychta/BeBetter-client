@@ -9,7 +9,12 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,13 +36,20 @@ public class MainActivity extends BaseActivity {
 
     private boolean connectedToNetwork;
     private RequestQueue requestQueue;
-    private TextView textView;
-    private Button searchBtn;
 
-//    private static RecyclerView.Adapter adapter;
-//    private RecyclerView.LayoutManager layoutManager;
-//    private static RecyclerView recyclerView;
-//    private static ArrayList<Challenge> challenges = new ArrayList();
+    private Spinner categorySpinner;
+    private Spinner repeatSpinner;
+    private Spinner activeSpinner;
+    private EditText cityEdit;
+    private EditText searchEdit;
+
+    private Button searchBtn;
+    private ProgressBar progressBar;
+
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+    private ArrayList<Challenge> challenges;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +57,34 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().setTitle(R.string.challenges);
 
-        textView = findViewById(R.id.textView);
         searchBtn = findViewById(R.id.searchBtn);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
+
+        categorySpinner = findViewById(R.id.categorySpinner);
+        repeatSpinner = findViewById(R.id.repeatSpinner);
+        activeSpinner = findViewById(R.id.activeSpinner);
+        cityEdit = findViewById(R.id.cityEdit);
+        searchEdit = findViewById(R.id.searchEdit);
+
+        categorySpinner.setAdapter(new ArrayAdapter<Category>(this, android.R.layout.simple_spinner_dropdown_item, Category.values()));
+        categorySpinner.setSelection(0);
+
+        repeatSpinner.setAdapter(new ArrayAdapter<RepeatPeriod>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
+        repeatSpinner.setSelection(0);
+
+        activeSpinner.setAdapter(new ArrayAdapter<Active>(this, android.R.layout.simple_spinner_dropdown_item, Active.values()));
+        activeSpinner.setSelection(0);
+
+        recyclerView = findViewById(R.id.my_recycler_view);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
-//        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-////        recyclerView.setHasFixedSize(false);
-//        layoutManager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(layoutManager);
-////        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//
-//        adapter = new CustomAdapter(challenges);
-//        recyclerView.setAdapter(adapter);
+        challenges = new ArrayList<>();
+        adapter = new CustomAdapter(challenges);
+        recyclerView.setAdapter(adapter);
 
         searchBtn.setOnClickListener(v -> getChallengesFromServer());
 
@@ -88,7 +116,7 @@ public class MainActivity extends BaseActivity {
 
         }
         else {
-            Toast.makeText(this, getString(R.string.not_connected_to_network), Toast.LENGTH_LONG)
+            Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
         }
     }
@@ -99,48 +127,49 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getChallengesFromServer() {
-        Context context = this;
+        progressBar.setVisibility(View.VISIBLE);
+        challenges.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://be-better-server.herokuapp.com/challenges",
                 null,
                 response -> {
                     try {
-                        String s = "";
 
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 JSONObject jsonObject = (JSONObject) response.get(i);
-                                s = s+jsonObject +"\n\n";
-                                Log.d("jsonObject", response.get(i).toString());
+
                                 Integer id = jsonObject.getInt("id");
                                 String title = jsonObject.getString("title");
                                 String description = jsonObject.getString("description");
                                 String city = jsonObject.getString("city");
                                 String repeat = jsonObject.getString("repeatPeriod");
                                 String category = jsonObject.getString("category");
-//                                Integer goal = jsonObject.getInt("goal");
-
-//                                city = (jsonObject.getString("city") != null) ? jsonObject.getString("city"): "";
+                                Integer goal = 0;
+                                if(ConfirmationType.valueOf(jsonObject.getString("confirmationType")) == ConfirmationType.TIMER_TASK){
+                                    goal = jsonObject.getInt("goal");
+                                }
 
                                 Challenge c = new Challenge();
                                 c.setTitle(title);
                                 c.setCity(city);
                                 c.setRepeatPeriod(RepeatPeriod.valueOf(repeat));
                                 c.setCategory(Category.valueOf(category));
-//                                c.setGoal(goal);
+                                c.setGoal(goal);
 
 
-//                                challenges.add(c);
-//                                adapter = new CustomAdapter(challenges);
-//                                recyclerView.setAdapter(adapter);
+                                challenges.add(c);
+                                adapter.notifyDataSetChanged();
+
+                                Log.d("jsonObject", challenges.get(i).toString());
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                            } finally {
+                                progressBar.setVisibility(View.GONE);
                             }
                         }
-
-                        textView.setText(s);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -148,14 +177,12 @@ public class MainActivity extends BaseActivity {
                     }
                 },
                 error -> {
-//                    if (!connected){
-//                        Toast.makeText(context, getString(R.string.no_network_connection), Toast.LENGTH_LONG)
-//                                .show();
-//                    }else
-//                        Toast.makeText(context, getString(R.string.request_error_response_msg), Toast.LENGTH_LONG)
-//                                .show();
-//                    Log.w(TAG, "request response:failed time=" + error.getNetworkTimeMs());
-//                    Log.w(TAG, "request response:failed msg=" + error.getMessage());
+                    if (!connectedToNetwork){
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    }else
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
                 }
         ) {
             /** Passing some request headers* */

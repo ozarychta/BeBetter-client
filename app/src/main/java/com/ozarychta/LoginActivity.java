@@ -3,14 +3,11 @@ package com.ozarychta;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -74,11 +71,7 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-//            Toast.makeText(this, "signed in successfully, login \n" + account.getEmail(), Toast.LENGTH_LONG)
-//                    .show();
-            // Signed in successfully, show authenticated UI.
-//            updateUI(account);
+            // Signed in successfully
             startMainActivity();
             finish();
 
@@ -87,8 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                     .show();
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-//            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-//            updateUI(null);
         }
     }
 

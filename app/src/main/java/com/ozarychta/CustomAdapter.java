@@ -1,5 +1,6 @@
 package com.ozarychta;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             this.categoryTextView = (TextView) itemView.findViewById(R.id.categoryTextView);
             this.cityTextView = (TextView) itemView.findViewById(R.id.cityTextView);
             this.goalTextView = (TextView) itemView.findViewById(R.id.goalTextView);
+            Log.d("constructor view holder", "constructor view holder");
         }
     }
 
@@ -43,6 +45,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
 //        view.setOnClickListener(MainActivity.myOnClickListener);
 
+        Log.d("on create view holder", "on create view holder");
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
     }
@@ -55,11 +58,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         TextView cityTextView = holder.cityTextView;
         TextView goalTextView = holder.goalTextView;
 
-        titleTextView.setText(dataSet.get(position).getTitle());
+        Log.d("on bind view holder", "on bind view holder \n" + dataSet.get(position));
+
+
+        holder.titleTextView.setText(dataSet.get(position).getTitle());
         repeatTextView.setText(dataSet.get(position).getRepeatPeriod().toString());
         categoryTextView.setText(dataSet.get(position).getCategory().toString());
         cityTextView.setText(dataSet.get(position).getCity());
-        if(dataSet.get(position).getConfirmationType() == ConfirmationType.CHECK_TASK){
+        if(dataSet.get(position).getGoal() == 0){
             goalTextView.setText("");
         } else {
             goalTextView.setText("For: " + dataSet.get(position).getGoal() + " min");

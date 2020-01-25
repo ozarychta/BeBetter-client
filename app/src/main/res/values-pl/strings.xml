@@ -2,7 +2,7 @@
     <string name="app_name">BeBetter</string>
     <string name="welcome">Witaj w BeBetter!</string>
     <string name="login">Aby móc korzystać z aplikacji, \nzaloguj się lub zarejestruj kontem Google.</string>
-    <string name="not_connected_to_network" >Brak połączenia z internetem</string>
+    <string name="connection_error" >Brak połączenia z internetem</string>
     <string name="challenges">Wyzwania</string>
     <string name="my_challenges">Moje wyzwania</string>
     <string name="profile">Profil</string>
@@ -12,4 +12,11 @@
     <string name="settings">Ustawienia</string>
     <string name="sign_out">Wyloguj się</string>
     <string name="search">Szukaj</string>
+    <string name="server_error">Błąd przy połączeniu z serwerem</string>
+    <string name="city">Miasto:</string>
+    <string name="category">Kategoria:</string>
+    <string name="repeat_period">Ilość powtórzeń:</string>
+    <string name="start_time">Czas startu:</string>
+    <string name="all">All</string>
+    <string name="active">Ongoing</string>
 </resources>
