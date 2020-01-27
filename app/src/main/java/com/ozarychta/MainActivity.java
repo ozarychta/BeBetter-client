@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,16 +17,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ozarychta.enums.Active;
+import com.ozarychta.enums.Category;
+import com.ozarychta.enums.ConfirmationType;
+import com.ozarychta.enums.RepeatPeriod;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,8 +38,7 @@ import java.util.Map;
 
 public class MainActivity extends BaseActivity {
 
-    private boolean connectedToNetwork;
-    private RequestQueue requestQueue;
+    private ConnectivityManager connectivityManager;
 
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
@@ -101,13 +102,9 @@ public class MainActivity extends BaseActivity {
 
         searchBtn.setOnClickListener(v -> getChallengesFromServer());
 
-        connectedToNetwork = false;
-        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        connectedToNetwork = connectivityManager.getActiveNetworkInfo() != null
-                && connectivityManager.getActiveNetworkInfo().isAvailable()
-                && connectivityManager.getActiveNetworkInfo().isConnected();
+        connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        if (connectedToNetwork) {
+        if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
             if (account == null) {
                 startLoginActivity();
@@ -115,22 +112,31 @@ public class MainActivity extends BaseActivity {
                 return;
             }
 
-//            Log.d("TOKEN ", account.getIdToken());
-//            LoginActivity.silentSignIn(this, this::sendAddUser, "MainActivity");
+            Log.d("TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
 
 //            Toast.makeText(this, "successful sign in, account not null? main", Toast.LENGTH_LONG)
 //                    .show();
 
-            requestQueue =  Volley.newRequestQueue(this);
+//            requestQueue =  Volley.newRequestQueue(this);
 
-
-
+//            Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+//            if (task.isSuccessful()) {
+//                // There's immediate result available.
+////                addUser(task.getResult().getIdToken());
+//            } else {
+//                task.addOnCompleteListener(
+////                        this,
+////                        task1 -> addUser(SignInClient.getTokenIdFromResult(task1)));
+//            }
 
 
         }
         else {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
+            startLoginActivity();
+            finish();
+            return;
         }
     }
 
@@ -190,7 +196,7 @@ public class MainActivity extends BaseActivity {
                     }
                 },
                 error -> {
-                    if (!connectedToNetwork){
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
                     }else
@@ -206,6 +212,16 @@ public class MainActivity extends BaseActivity {
                 return headers;
             }
         };
-        requestQueue.add(jsonArrayRequest);
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
+
+        Log.d("USER_ID ", String.valueOf(userId));
     }
 }

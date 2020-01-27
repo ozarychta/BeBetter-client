@@ -1,6 +1,7 @@
 package com.ozarychta;
 
-import java.util.Date;
+import com.ozarychta.enums.Category;
+import com.ozarychta.enums.RepeatPeriod;
 
 public class Challenge {
 

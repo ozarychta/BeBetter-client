@@ -19,4 +19,8 @@
     <string name="start_time">Start time:</string>
     <string name="all">All</string>
     <string name="active">Ongoing</string>
+    <string name="sign_in_result_error">Error with user authentication. Please sign out and in again.</string>
+    <string name="shared_pref_filename">BeBetterSharedPreferences</string>
+    <string name="user_id_field">userId</string>
+    <string name="sign_in_error">Sing in error</string>
 </resources>

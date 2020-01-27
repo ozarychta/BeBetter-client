@@ -11,4 +11,5 @@
     <color name="secondaryTextColor">#000000</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="darkGrey">#3f3f3f</color>
 </resources>

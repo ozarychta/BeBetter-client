@@ -1,8 +1,4 @@
-package com.ozarychta;
-
-import android.app.Application;
-
-import androidx.annotation.StringRes;
+package com.ozarychta.enums;
 
 public enum Active {
     ALL("Wszystkie"),
@@ -15,7 +11,7 @@ public enum Active {
         label = aState;
     }
 
-    @Override public String toString() {
-        return label;
-    }
+//    @Override public String toString() {
+//        return label;
+//    }
 }
