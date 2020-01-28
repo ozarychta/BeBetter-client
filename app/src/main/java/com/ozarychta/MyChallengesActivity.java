@@ -21,8 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ozarychta.enums.Active;
 import com.ozarychta.enums.Category;
@@ -100,7 +98,7 @@ public class MyChallengesActivity extends BaseActivity {
 
 
         challenges = new ArrayList<>();
-        adapter = new CustomAdapter(challenges);
+        adapter = new ChallengeAdapter(challenges);
         recyclerView.setAdapter(adapter);
 
         SharedPreferences sharedPref = getApplicationContext()

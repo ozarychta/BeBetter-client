@@ -1,5 +1,8 @@
 package com.ozarychta;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
+public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.ChallengeViewHolder> {
 
     private ArrayList<Challenge> dataSet;
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class ChallengeViewHolder extends RecyclerView.ViewHolder {
 
         public TextView titleTextView;
         public TextView repeatTextView;
@@ -23,7 +26,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         public TextView cityTextView;
         public TextView goalTextView;
 
-        public MyViewHolder(View itemView) {
+        public ChallengeViewHolder(View itemView) {
             super(itemView);
             this.titleTextView = (TextView) itemView.findViewById(R.id.titleTextView);
             this.repeatTextView = (TextView) itemView.findViewById(R.id.repeatPeriodTextView);
@@ -34,24 +37,32 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         }
     }
 
-    public CustomAdapter(ArrayList<Challenge> data) {
+    public ChallengeAdapter(ArrayList<Challenge> data) {
         this.dataSet = data;
     }
 
     @Override
-    public CustomAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ChallengeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_list_challenge, parent, false);
 
-//        view.setOnClickListener(MainActivity.myOnClickListener);
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Context context = v.getContext();
+//                Intent intent = new Intent(context, Challenge.class);
+//                intent.putExtra("CHALLENGE", );
+//                context.startActivity(intent);
+//            }
+//        });
 
         Log.d("on create view holder", "on create view holder");
-        MyViewHolder myViewHolder = new MyViewHolder(view);
-        return myViewHolder;
+        ChallengeViewHolder challengeViewHolder = new ChallengeViewHolder(view);
+        return challengeViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ChallengeViewHolder holder, int position) {
         TextView titleTextView = holder.titleTextView;
         TextView repeatTextView = holder.repeatTextView;
         TextView categoryTextView = holder.categoryTextView;
@@ -62,15 +73,24 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
 
 
         holder.titleTextView.setText(dataSet.get(position).getTitle());
-        repeatTextView.setText(dataSet.get(position).getRepeatPeriod().toString());
-        categoryTextView.setText(dataSet.get(position).getCategory().toString());
-        cityTextView.setText(dataSet.get(position).getCity());
+        repeatTextView.setText("Powtórzeń w tygodniu: " + dataSet.get(position).getRepeatPeriod().getTimesPerWeek());
+        categoryTextView.setText("Kategoria: " + dataSet.get(position).getCategory().toString());
+        cityTextView.setText("Miasto: " + dataSet.get(position).getCity());
         if(dataSet.get(position).getGoal() == 0){
             goalTextView.setText("");
         } else {
-            goalTextView.setText("For: " + dataSet.get(position).getGoal() + " min");
+            goalTextView.setText("Przez: " + dataSet.get(position).getGoal() + " min");
         }
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, ChallengeActivity.class);
+                intent.putExtra("CHALLENGE", dataSet.get(position));
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

@@ -30,6 +30,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".AddChallengeActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ChallengeActivity"
+            android:screenOrientation="portrait"/>
 
     </application>
 

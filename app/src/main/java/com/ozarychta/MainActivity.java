@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Active;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.ConfirmationType;
@@ -32,13 +33,19 @@ import com.ozarychta.enums.RepeatPeriod;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class MainActivity extends BaseActivity {
 
     private ConnectivityManager connectivityManager;
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
+    private SimpleDateFormat dateFormat;
 
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
@@ -96,9 +103,12 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
 
         challenges = new ArrayList<>();
-        adapter = new CustomAdapter(challenges);
+        adapter = new ChallengeAdapter(challenges);
         recyclerView.setAdapter(adapter);
 
         searchBtn.setOnClickListener(v -> getChallengesFromServer());
@@ -174,20 +184,37 @@ public class MainActivity extends BaseActivity {
                                 String title = jsonObject.getString("title");
                                 String description = jsonObject.getString("description");
                                 String city = jsonObject.getString("city");
-                                String repeat = jsonObject.getString("repeatPeriod");
-                                String category = jsonObject.getString("category");
+                                RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
+                                Category category = Category.valueOf(jsonObject.getString("category"));
+                                AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
+                                Date start = dateFormat.parse(jsonObject.getString("startDate"));
+                                Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                                Boolean active = jsonObject.getBoolean("active");
+                                ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
+
                                 Integer goal = 0;
-                                if(ConfirmationType.valueOf(jsonObject.getString("confirmationType")) == ConfirmationType.TIMER_TASK){
+                                if(confirmation == ConfirmationType.TIMER_TASK){
                                     goal = jsonObject.getInt("goal");
+                                }
+                                Boolean isMoreBetter = true;
+                                if(confirmation == ConfirmationType.COUNTER_TASK){
+                                    isMoreBetter = jsonObject.getBoolean("moreBetter");
                                 }
 
                                 Challenge c = new Challenge();
+                                c.setId(Long.valueOf(id));
                                 c.setTitle(title);
+                                c.setDescription(description);
                                 c.setCity(city);
-                                c.setRepeatPeriod(RepeatPeriod.valueOf(repeat));
-                                c.setCategory(Category.valueOf(category));
+                                c.setRepeatPeriod(repeat);
+                                c.setCategory(category);
+                                c.setConfirmationType(confirmation);
+                                c.setAccessType(access);
+                                c.setActive(active);
                                 c.setGoal(goal);
-
+                                c.setMoreBetter(isMoreBetter);
+                                c.setStartDate(start);
+                                c.setEndDate(end);
 
                                 challenges.add(c);
                                 adapter.notifyDataSetChanged();
