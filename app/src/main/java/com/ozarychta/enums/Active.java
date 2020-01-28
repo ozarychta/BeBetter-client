@@ -1,17 +1,23 @@
 package com.ozarychta.enums;
 
 public enum Active {
-    ALL("Wszystkie"),
-    ACTIVE("W trakcie"),
-    INACTIVE("Nie rozpoczęte");
+    ALL("Wszystkie", true),
+    ACTIVE("W trakcie", true),
+    INACTIVE("Nie rozpoczęte", false);
 
     private String label;
+    private Boolean booleanValue;
 
-    Active(String aState) {
+    Active(String aState, Boolean aBooleanValue) {
         label = aState;
+        booleanValue = aBooleanValue;
     }
 
-//    @Override public String toString() {
+    public boolean getBooleanValue() {
+        return booleanValue;
+    }
+
+    //    @Override public String toString() {
 //        return label;
 //    }
 }

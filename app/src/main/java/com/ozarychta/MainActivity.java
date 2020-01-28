@@ -150,10 +150,15 @@ public class MainActivity extends BaseActivity {
         challenges.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/challenges",
+                "https://be-better-server.herokuapp.com/challenges?" + getUrlParameters(),
                 null,
                 response -> {
                     try {
+                        if (response.length()==0){
+                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
+                                    .show();
+                            progressBar.setVisibility(View.GONE);
+                        }
 
                         for (int i = 0; i < response.length(); i++) {
                             try {
@@ -199,9 +204,10 @@ public class MainActivity extends BaseActivity {
                     if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else
+                    }else{
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
+                    }
                     progressBar.setVisibility(View.GONE);
                 }
         ) {
@@ -214,6 +220,28 @@ public class MainActivity extends BaseActivity {
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
+    }
+
+    private String getUrlParameters() {
+        String url = "";
+        if(categorySpinner.getSelectedItem() != Category.ALL){
+            url += "&category=" + categorySpinner.getSelectedItem();
+        }
+        if(repeatSpinner.getSelectedItem() != RepeatPeriod.ALL){
+            url += "&repeat=" + repeatSpinner.getSelectedItem();
+        }
+        if(activeSpinner.getSelectedItem() != Active.ALL){
+            url += "&active=" + ((Active)activeSpinner.getSelectedItem()).getBooleanValue();
+        }
+        String city = cityEdit.getText().toString();
+        if(!city.isEmpty()){
+            url += "&city=" + city;
+        }
+        String search = searchEdit.getText().toString();
+        if(!search.isEmpty()){
+            url += "&search=" + search;
+        }
+        return url;
     }
 
     @Override

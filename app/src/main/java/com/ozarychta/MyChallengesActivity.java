@@ -110,7 +110,7 @@ public class MyChallengesActivity extends BaseActivity {
 
         if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
 
-            getMyChallengesFromServer(userId);
+//            getMyChallengesFromServer(userId);
 
         }
         else {
@@ -124,10 +124,15 @@ public class MyChallengesActivity extends BaseActivity {
         challenges.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/challenges" + "?creatorId=" + userId,
+                "https://be-better-server.herokuapp.com/challenges" + "?creatorId=" + userId + getUrlParameters(),
                 null,
                 response -> {
                     try {
+                        if (response.length()==0){
+                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
+                                    .show();
+                            progressBar.setVisibility(View.GONE);
+                        }
 
                         for (int i = 0; i < response.length(); i++) {
                             try {
@@ -173,9 +178,11 @@ public class MyChallengesActivity extends BaseActivity {
                     if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else
+                    }else{
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
+                    }
+
                     progressBar.setVisibility(View.GONE);
                 }
         ) {
@@ -188,6 +195,29 @@ public class MyChallengesActivity extends BaseActivity {
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
+    }
+
+    private String getUrlParameters() {
+        String url = "";
+        if(categorySpinner.getSelectedItem() != Category.ALL){
+            url += "&category=" + categorySpinner.getSelectedItem();
+        }
+        if(repeatSpinner.getSelectedItem() != RepeatPeriod.ALL){
+            url += "&repeat=" + repeatSpinner.getSelectedItem();
+        }
+        if(activeSpinner.getSelectedItem() != Active.ALL){
+            url += "&active=" + ((Active)activeSpinner.getSelectedItem()).getBooleanValue();
+        }
+        String city = cityEdit.getText().toString();
+        if(!city.isEmpty()){
+            url += "&city=" + city;
+        }
+        String search = searchEdit.getText().toString();
+        if(!search.isEmpty()){
+            url += "&search=" + search;
+        }
+        Log.d("request", url);
+        return url;
     }
 
     @Override

@@ -23,4 +23,5 @@
     <string name="shared_pref_filename">BeBetterSharedPreferences</string>
     <string name="user_id_field">userId</string>
     <string name="sign_in_error">Sing in error</string>
+    <string name="no_results">No results for given search</string>
 </resources>
