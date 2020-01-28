@@ -90,8 +90,9 @@ public class MainActivity extends BaseActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "fab clicked", Toast.LENGTH_LONG)
-                        .show();
+                startAddChallengeActivity();
+//                Toast.makeText(getApplicationContext(), "fab clicked", Toast.LENGTH_LONG)
+//                        .show();
             }
         });
 
@@ -138,6 +139,11 @@ public class MainActivity extends BaseActivity {
             finish();
             return;
         }
+    }
+
+    private void startAddChallengeActivity() {
+        Intent i = new Intent(this, AddChallengeActivity.class);
+        startActivity(i);
     }
 
     private void startLoginActivity() {

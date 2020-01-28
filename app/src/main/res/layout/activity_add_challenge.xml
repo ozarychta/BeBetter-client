@@ -1,6 +1,307 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginTop="5sp"
+        android:layout_marginHorizontal="4sp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/title"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/titleEdit"
+                android:layout_marginTop="2sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5sp"
+                android:textColor="@color/darkGrey"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/description"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/descriptionEdit"
+                android:layout_marginTop="2sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5sp"
+                android:textColor="@color/darkGrey"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/city"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/cityEdit"
+                android:layout_marginTop="2sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5sp"
+                android:textColor="@color/darkGrey"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/access_type"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <Spinner
+                android:id="@+id/accessSpinner"
+                style="@android:style/Widget.Material.Light.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:paddingRight="22sp"
+                android:paddingLeft="2sp"
+                android:paddingVertical="0sp"
+                android:layout_marginHorizontal="0sp"
+                android:textColor="@color/darkGrey"
+                android:textAlignment="textEnd"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/repeat_period"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <Spinner
+                android:id="@+id/repeatSpinner"
+                style="@android:style/Widget.Material.Light.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:paddingRight="22sp"
+                android:paddingLeft="2sp"
+                android:paddingVertical="0sp"
+                android:layout_marginHorizontal="0sp"
+                android:textColor="@color/darkGrey"
+                android:textAlignment="textEnd"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/category"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <Spinner
+                android:id="@+id/categorySpinner"
+                style="@android:style/Widget.Material.Light.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:paddingRight="22sp"
+                android:paddingLeft="2sp"
+                android:paddingVertical="0sp"
+                android:layout_marginHorizontal="0sp"
+                android:textColor="@color/darkGrey"
+                android:textAlignment="textEnd"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/confirmation_type"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <Spinner
+                android:id="@+id/confirmationSpinner"
+                style="@android:style/Widget.Material.Light.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:paddingRight="22sp"
+                android:paddingLeft="2sp"
+                android:paddingVertical="0sp"
+                android:layout_marginHorizontal="0sp"
+                android:textColor="@color/darkGrey"
+                android:textAlignment="textEnd"
+                />
+
+            <TextView
+                android:id="@+id/goalTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/goal"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <EditText
+                android:id="@+id/goalEdit"
+                android:inputType="number"
+                android:layout_marginTop="2sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5sp"
+                android:textColor="@color/darkGrey"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/moreOrLessTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/more_or_less"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <Spinner
+                android:id="@+id/moreOrLessSpinner"
+                style="@android:style/Widget.Material.Light.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:paddingRight="22sp"
+                android:paddingLeft="2sp"
+                android:paddingVertical="0sp"
+                android:layout_marginHorizontal="0sp"
+                android:textColor="@color/darkGrey"
+                android:textAlignment="textEnd"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/start_date"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <DatePicker
+                android:id="@+id/startDatePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:datePickerMode="spinner"
+                android:calendarViewShown="false"
+                android:colorControlNormal="@color/secondaryDarkColor"
+                style="@android:style/Widget.Material.Light.DatePicker"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:paddingHorizontal="4sp"
+                android:paddingTop="5sp"
+                android:paddingBottom="2sp"
+                android:textColor="@color/secondaryDarkColor"
+                android:text="@string/end_date"
+                android:gravity="center"
+                android:textSize="18sp"/>
+
+            <DatePicker
+                android:id="@+id/endDatePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:datePickerMode="spinner"
+                android:calendarViewShown="false"
+                android:colorControlNormal="@color/secondaryDarkColor"
+                style="@android:style/Widget.Material.Light.DatePicker"
+                />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="1sp" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/addBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:layout_marginBottom="10sp"
+                android:layout_marginHorizontal="10sp"
+                android:text="@string/add"
+                app:strokeColor="@color/secondaryDarkColor"
+                app:strokeWidth="2sp"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                app:backgroundTint="@color/secondaryColor"
+                app:cornerRadius="8sp"
+                />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

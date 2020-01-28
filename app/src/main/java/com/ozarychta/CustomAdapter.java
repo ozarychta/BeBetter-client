@@ -41,7 +41,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
     @Override
     public CustomAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_challenge, parent, false);
+                .inflate(R.layout.card_list_challenge, parent, false);
 
 //        view.setOnClickListener(MainActivity.myOnClickListener);
 

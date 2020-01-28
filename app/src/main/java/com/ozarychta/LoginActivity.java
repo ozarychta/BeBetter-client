@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
 
         findViewById(R.id.sign_in_button).setOnClickListener(v -> signIn());
 
-        connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     @Override
@@ -116,33 +116,31 @@ public class LoginActivity extends AppCompatActivity {
                 null,
                 response -> {
                     try {
-                        try {
 
-                            Integer id = response.getInt("id");
-                            String username = response.getString("username");
 
-                            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putInt(getString(R.string.user_id_field), id);
-                            editor.commit();
+                        Integer id = response.getInt("id");
+                        String username = response.getString("username");
 
-                            Toast.makeText(getApplicationContext(), "added user to server", Toast.LENGTH_LONG)
-                                    .show();
+                        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt(getString(R.string.user_id_field), id);
+                        editor.commit();
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        Toast.makeText(getApplicationContext(), "added user to server", Toast.LENGTH_LONG)
+                                .show();
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.w("", "request response:failed message=" + e.getMessage());
                     }
                 },
                 error -> {
-                    if (!!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                    if (!!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else
+                    } else
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                 }

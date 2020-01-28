@@ -90,8 +90,11 @@ public class MyChallengesActivity extends BaseActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "fab clicked", Toast.LENGTH_LONG)
-                        .show();
+
+                startAddChallengeActivity();
+
+//                Toast.makeText(getApplicationContext(), "fab clicked", Toast.LENGTH_LONG)
+//                        .show();
             }
         });
 
@@ -228,5 +231,10 @@ public class MyChallengesActivity extends BaseActivity {
 //        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
 
 //        Log.d("USER_ID ", String.valueOf(userId));
+    }
+
+    private void startAddChallengeActivity() {
+        Intent i = new Intent(this, AddChallengeActivity.class);
+        startActivity(i);
     }
 }
