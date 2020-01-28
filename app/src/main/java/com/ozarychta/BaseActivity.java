@@ -33,10 +33,12 @@ public class BaseActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_challenges:
-                //
+                startChallengesActivity();
+                finish();
                 break;
             case R.id.action_my_challenges:
-                //
+                startMyChallengesActivity();
+                finish();
                 break;
             case R.id.action_profile:
                 //
@@ -61,6 +63,16 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private void startMyChallengesActivity() {
+        Intent i = new Intent(this, MyChallengesActivity.class);
+        startActivity(i);
+    }
+
+    private void startChallengesActivity() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
     }
 
     private void signOut() {

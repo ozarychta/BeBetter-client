@@ -1,9 +1,5 @@
 package com.ozarychta;
 
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +14,10 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends BaseActivity {
+public class MyChallengesActivity extends BaseActivity {
 
     private ConnectivityManager connectivityManager;
 
@@ -58,7 +58,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setTitle(R.string.challenges);
+        getSupportActionBar().setTitle(R.string.my_challenges);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
@@ -100,57 +100,31 @@ public class MainActivity extends BaseActivity {
         adapter = new CustomAdapter(challenges);
         recyclerView.setAdapter(adapter);
 
-        searchBtn.setOnClickListener(v -> getChallengesFromServer());
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
+
+        searchBtn.setOnClickListener(v -> getMyChallengesFromServer(userId));
 
         connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
-            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-            if (account == null) {
-                startLoginActivity();
-                finish();
-                return;
-            }
 
-            Log.d("TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
-
-//            Toast.makeText(this, "successful sign in, account not null? main", Toast.LENGTH_LONG)
-//                    .show();
-
-//            requestQueue =  Volley.newRequestQueue(this);
-
-//            Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-//            if (task.isSuccessful()) {
-//                // There's immediate result available.
-////                addUser(task.getResult().getIdToken());
-//            } else {
-//                task.addOnCompleteListener(
-////                        this,
-////                        task1 -> addUser(SignInClient.getTokenIdFromResult(task1)));
-//            }
-
+            getMyChallengesFromServer(userId);
 
         }
         else {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
-            startLoginActivity();
-            finish();
-            return;
         }
     }
 
-    private void startLoginActivity() {
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
-    }
-
-    private void getChallengesFromServer() {
+    private void getMyChallengesFromServer(Integer userId) {
         progressBar.setVisibility(View.VISIBLE);
         challenges.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/challenges",
+                "https://be-better-server.herokuapp.com/challenges" + "?creatorId=" + userId,
                 null,
                 response -> {
                     try {
@@ -219,10 +193,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        SharedPreferences sharedPref = getApplicationContext()
-                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
+//        SharedPreferences sharedPref = getApplicationContext()
+//                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+//        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
 
-        Log.d("USER_ID ", String.valueOf(userId));
+//        Log.d("USER_ID ", String.valueOf(userId));
     }
 }
