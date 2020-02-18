@@ -1,11 +1,18 @@
-package com.ozarychta;
+package com.ozarychta.activities;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import com.google.android.material.card.MaterialCardView;
+import com.ozarychta.R;
+import com.ozarychta.model.Challenge;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -36,6 +43,9 @@ public class ChallengeActivity extends BaseActivity {
     private TextView endText;
 
     private Button statisticsBtn;
+
+    private LinearLayout daysLayout;
+    private MaterialCardView todayLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +78,8 @@ public class ChallengeActivity extends BaseActivity {
 
         statisticsBtn = findViewById(R.id.statisticsBtn);
 
+        daysLayout = findViewById(R.id.daysLinearLayout);
+        todayLayout = findViewById(R.id.today_card);
 
         titleText.setText(challenge.getTitle());
         descText.setText(challenge.getDescription());
@@ -83,6 +95,41 @@ public class ChallengeActivity extends BaseActivity {
 
         startText.setText(simpleDateFormat.format(challenge.getStartDate()));
         endText.setText(simpleDateFormat.format(challenge.getEndDate()));
+
+//        LayoutInflater.from(this).inflate(R.layout.card_day, daysLayout);
+
+        MaterialCardView past1;
+        MaterialCardView past2;
+        MaterialCardView past3;
+
+        past1 = findViewById(R.id.past_card1);
+        past2 = findViewById(R.id.past_card2);
+        past3 = findViewById(R.id.past_card3);
+
+        past1.setBackgroundColor(getResources().getColor(R.color.lightGrey));
+        past2.setBackgroundColor(getResources().getColor(R.color.lightGrey));
+        past3.setBackgroundColor(getResources().getColor(R.color.lightGrey));
+
+        ToggleButton t1 = past1.findViewById(R.id.toggleButton);
+        t1.setChecked(false);
+        t1.setEnabled(false);
+
+        TextView tt1 = past1.findViewById(R.id.dateTextView);
+        tt1.setText("9.02");
+
+        ToggleButton t2 = past2.findViewById(R.id.toggleButton);
+        t2.setChecked(true);
+        t2.setEnabled(false);
+
+        TextView tt2 = past2.findViewById(R.id.dateTextView);
+        tt2.setText("8.02");
+
+        ToggleButton t3 = past3.findViewById(R.id.toggleButton);
+        t3.setChecked(true);
+        t3.setEnabled(false);
+
+        TextView tt3 = past3.findViewById(R.id.dateTextView);
+        tt3.setText("7.02");
 
     }
 

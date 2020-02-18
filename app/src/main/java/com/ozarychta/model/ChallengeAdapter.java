@@ -1,8 +1,7 @@
-package com.ozarychta;
+package com.ozarychta.model;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.ozarychta.R;
+import com.ozarychta.activities.ChallengeActivity;
 
 import java.util.ArrayList;
 
@@ -45,16 +47,6 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
     public ChallengeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_list_challenge, parent, false);
-
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Context context = v.getContext();
-//                Intent intent = new Intent(context, Challenge.class);
-//                intent.putExtra("CHALLENGE", );
-//                context.startActivity(intent);
-//            }
-//        });
 
         Log.d("on create view holder", "on create view holder");
         ChallengeViewHolder challengeViewHolder = new ChallengeViewHolder(view);

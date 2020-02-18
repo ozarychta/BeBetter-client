@@ -1,4 +1,4 @@
-package com.ozarychta;
+package com.ozarychta.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ozarychta.enums.AccessType;
+import com.ozarychta.enums.ChallengeState;
+import com.ozarychta.model.Challenge;
+import com.ozarychta.model.ChallengeAdapter;
+import com.ozarychta.R;
+import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.enums.Active;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.ConfirmationType;
@@ -30,17 +36,23 @@ import com.ozarychta.enums.RepeatPeriod;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class MyChallengesActivity extends BaseActivity {
 
     private ConnectivityManager connectivityManager;
 
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
+    private SimpleDateFormat dateFormat;
+
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
-    private Spinner activeSpinner;
+    private Spinner stateSpinner;
     private EditText cityEdit;
     private EditText searchEdit;
 
@@ -66,7 +78,7 @@ public class MyChallengesActivity extends BaseActivity {
 
         categorySpinner = findViewById(R.id.categorySpinner);
         repeatSpinner = findViewById(R.id.repeatSpinner);
-        activeSpinner = findViewById(R.id.activeSpinner);
+        stateSpinner = findViewById(R.id.activeSpinner);
         cityEdit = findViewById(R.id.cityEdit);
         searchEdit = findViewById(R.id.searchEdit);
 
@@ -76,8 +88,8 @@ public class MyChallengesActivity extends BaseActivity {
         repeatSpinner.setAdapter(new ArrayAdapter<RepeatPeriod>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
         repeatSpinner.setSelection(0);
 
-        activeSpinner.setAdapter(new ArrayAdapter<Active>(this, android.R.layout.simple_spinner_dropdown_item, Active.values()));
-        activeSpinner.setSelection(0);
+        stateSpinner.setAdapter(new ArrayAdapter<ChallengeState>(this, android.R.layout.simple_spinner_dropdown_item, ChallengeState.values()));
+        stateSpinner.setSelection(0);
 
         recyclerView = findViewById(R.id.my_recycler_view);
         layoutManager = new LinearLayoutManager(this);
@@ -96,6 +108,8 @@ public class MyChallengesActivity extends BaseActivity {
             }
         });
 
+        dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         challenges = new ArrayList<>();
         adapter = new ChallengeAdapter(challenges);
@@ -143,20 +157,37 @@ public class MyChallengesActivity extends BaseActivity {
                                 String title = jsonObject.getString("title");
                                 String description = jsonObject.getString("description");
                                 String city = jsonObject.getString("city");
-                                String repeat = jsonObject.getString("repeatPeriod");
-                                String category = jsonObject.getString("category");
+                                RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
+                                Category category = Category.valueOf(jsonObject.getString("category"));
+                                AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
+                                Date start = dateFormat.parse(jsonObject.getString("startDate"));
+                                Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                                ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
+                                ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
+
                                 Integer goal = 0;
-                                if(ConfirmationType.valueOf(jsonObject.getString("confirmationType")) == ConfirmationType.TIMER_TASK){
+                                if(confirmation == ConfirmationType.TIMER_TASK){
                                     goal = jsonObject.getInt("goal");
+                                }
+                                Boolean isMoreBetter = true;
+                                if(confirmation == ConfirmationType.COUNTER_TASK){
+                                    isMoreBetter = jsonObject.getBoolean("moreBetter");
                                 }
 
                                 Challenge c = new Challenge();
+                                c.setId(Long.valueOf(id));
                                 c.setTitle(title);
+                                c.setDescription(description);
                                 c.setCity(city);
-                                c.setRepeatPeriod(RepeatPeriod.valueOf(repeat));
-                                c.setCategory(Category.valueOf(category));
+                                c.setRepeatPeriod(repeat);
+                                c.setCategory(category);
+                                c.setConfirmationType(confirmation);
+                                c.setAccessType(access);
+                                c.setState(state);
                                 c.setGoal(goal);
-
+                                c.setMoreBetter(isMoreBetter);
+                                c.setStartDate(start);
+                                c.setEndDate(end);
 
                                 challenges.add(c);
                                 adapter.notifyDataSetChanged();
@@ -206,8 +237,8 @@ public class MyChallengesActivity extends BaseActivity {
         if(repeatSpinner.getSelectedItem() != RepeatPeriod.ALL){
             url += "&repeat=" + repeatSpinner.getSelectedItem();
         }
-        if(activeSpinner.getSelectedItem() != Active.ALL){
-            url += "&active=" + ((Active)activeSpinner.getSelectedItem()).getBooleanValue();
+        if(stateSpinner.getSelectedItem() != ChallengeState.ALL){
+            url += "&state=" + stateSpinner.getSelectedItem();
         }
         String city = cityEdit.getText().toString();
         if(!city.isEmpty()){

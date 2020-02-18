@@ -1,7 +1,8 @@
-package com.ozarychta;
+package com.ozarychta.model;
 
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
+import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.enums.ConfirmationType;
 import com.ozarychta.enums.RepeatPeriod;
 
@@ -28,7 +29,7 @@ public class Challenge implements Serializable {
 
     private Date endDate;
 
-    private Boolean active;
+    private ChallengeState state;
 
     private ConfirmationType confirmationType;
 
@@ -91,12 +92,12 @@ public class Challenge implements Serializable {
         this.endDate = endDate;
     }
 
-    public Boolean getActive() {
-        return active;
+    public ChallengeState getState() {
+        return state;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setState(ChallengeState state) {
+        this.state = state;
     }
 
     public ConfirmationType getConfirmationType() {

@@ -1,4 +1,4 @@
-package com.ozarychta;
+package com.ozarychta.activities;
 
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +24,11 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ozarychta.enums.ChallengeState;
+import com.ozarychta.model.Challenge;
+import com.ozarychta.model.ChallengeAdapter;
+import com.ozarychta.R;
+import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Active;
 import com.ozarychta.enums.Category;
@@ -49,7 +54,7 @@ public class MainActivity extends BaseActivity {
 
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
-    private Spinner activeSpinner;
+    private Spinner stateSpinner;
     private EditText cityEdit;
     private EditText searchEdit;
 
@@ -75,7 +80,7 @@ public class MainActivity extends BaseActivity {
 
         categorySpinner = findViewById(R.id.categorySpinner);
         repeatSpinner = findViewById(R.id.repeatSpinner);
-        activeSpinner = findViewById(R.id.activeSpinner);
+        stateSpinner = findViewById(R.id.activeSpinner);
         cityEdit = findViewById(R.id.cityEdit);
         searchEdit = findViewById(R.id.searchEdit);
 
@@ -85,8 +90,8 @@ public class MainActivity extends BaseActivity {
         repeatSpinner.setAdapter(new ArrayAdapter<RepeatPeriod>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
         repeatSpinner.setSelection(0);
 
-        activeSpinner.setAdapter(new ArrayAdapter<Active>(this, android.R.layout.simple_spinner_dropdown_item, Active.values()));
-        activeSpinner.setSelection(0);
+        stateSpinner.setAdapter(new ArrayAdapter<ChallengeState>(this, android.R.layout.simple_spinner_dropdown_item, ChallengeState.values()));
+        stateSpinner.setSelection(0);
 
         recyclerView = findViewById(R.id.my_recycler_view);
         layoutManager = new LinearLayoutManager(this);
@@ -189,7 +194,7 @@ public class MainActivity extends BaseActivity {
                                 AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
                                 Date start = dateFormat.parse(jsonObject.getString("startDate"));
                                 Date end = dateFormat.parse(jsonObject.getString("endDate"));
-                                Boolean active = jsonObject.getBoolean("active");
+                                ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                                 ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
 
                                 Integer goal = 0;
@@ -210,7 +215,7 @@ public class MainActivity extends BaseActivity {
                                 c.setCategory(category);
                                 c.setConfirmationType(confirmation);
                                 c.setAccessType(access);
-                                c.setActive(active);
+                                c.setState(state);
                                 c.setGoal(goal);
                                 c.setMoreBetter(isMoreBetter);
                                 c.setStartDate(start);
@@ -263,8 +268,8 @@ public class MainActivity extends BaseActivity {
         if(repeatSpinner.getSelectedItem() != RepeatPeriod.ALL){
             url += "&repeat=" + repeatSpinner.getSelectedItem();
         }
-        if(activeSpinner.getSelectedItem() != Active.ALL){
-            url += "&active=" + ((Active)activeSpinner.getSelectedItem()).getBooleanValue();
+        if(stateSpinner.getSelectedItem() != ChallengeState.ALL){
+            url += "&state=" + stateSpinner.getSelectedItem();
         }
         String city = cityEdit.getText().toString();
         if(!city.isEmpty()){

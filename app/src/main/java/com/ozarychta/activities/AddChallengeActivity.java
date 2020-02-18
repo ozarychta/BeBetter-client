@@ -1,4 +1,4 @@
-package com.ozarychta;
+package com.ozarychta.activities;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -17,16 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
+import com.ozarychta.R;
+import com.ozarychta.ServerRequestUtil;
+import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
-import com.ozarychta.enums.Category;
 import com.ozarychta.enums.CategoryDTO;
 import com.ozarychta.enums.ConfirmationType;
 import com.ozarychta.enums.MoreOrLess;
-import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.enums.RepeatPeriodDTO;
 
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.ozarychta;
+package com.ozarychta.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.ozarychta.R;
+import com.ozarychta.SignInClient;
 
 public class BaseActivity extends AppCompatActivity {
 

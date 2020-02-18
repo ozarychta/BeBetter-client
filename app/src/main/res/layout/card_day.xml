@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    style="@style/Widget.MaterialComponents.CardView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="2sp"
+    app:cornerRadius="2sp"
+    app:strokeColor="@color/secondaryColor"
+    app:cardElevation="2sp"
+    app:cardUseCompatPadding="false"
+    android:layout_marginVertical="32dp"
+    android:layout_marginHorizontal="20dp"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:text="10.02"
+            android:textColor="@color/primaryDarkColor"
+            android:textSize="18sp" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toggle_check"
+            android:textOn=""
+            android:textOff="" />
+
+
+
+
+    </LinearLayout>
+
+
+</com.google.android.material.card.MaterialCardView>
+
