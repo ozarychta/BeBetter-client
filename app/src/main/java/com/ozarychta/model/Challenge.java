@@ -39,6 +39,8 @@ public class Challenge implements Serializable {
 
     private Boolean isMoreBetter;
 
+    private Boolean isUserParticipant;
+
     private Integer creatorId;
 
     public Challenge() {
@@ -170,6 +172,14 @@ public class Challenge implements Serializable {
 
     public void setGoal(Integer goal) {
         this.goal = goal;
+    }
+
+    public Boolean getUserParticipant() {
+        return isUserParticipant;
+    }
+
+    public void setUserParticipant(Boolean userParticipant) {
+        isUserParticipant = userParticipant;
     }
 
     @Override

@@ -39,4 +39,7 @@
     <string name="challenge">Challenge</string>
     <string name="times_per_week">times per week</string>
     <string name="for_">For:</string>
+    <string name="join">Join</string>
+    <string name="joined_challenge">Successfully joined challenge</string>
+    <string name="challenge_not_started_yet">Challenge not started yet</string>
 </resources>

@@ -39,4 +39,7 @@
     <string name="challenge">Wyzwanie</string>
     <string name="times_per_week">razy w tygodniu</string>
     <string name="for_">Przez:</string>
+    <string name="join">Dołącz</string>
+    <string name="joined_challenge">Dołączyłeś do wyzwania.</string>
+    <string name="challenge_not_started_yet">Wyzwanie jeszcze się nie rozpoczęło.</string>
 </resources>

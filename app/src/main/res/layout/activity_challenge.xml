@@ -57,6 +57,7 @@
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/daysLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
@@ -67,6 +68,19 @@
                     android:text="Śledzenie postępów:"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/notStartedYetLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4sp"
+                    android:gravity="center"
+                    android:paddingHorizontal="4sp"
+                    android:paddingTop="5sp"
+                    android:paddingBottom="2sp"
+                    android:text="@string/challenge_not_started_yet"
+                    android:textColor="@color/primaryDarkColor"
+                    android:textSize="24sp" />
 
                 <LinearLayout
                     android:id="@+id/daysLinearLayout"
@@ -82,7 +96,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5sp"
-                        android:id="@+id/today_card"
+                        android:id="@+id/today"
                         layout="@layout/card_day" />
 
                     <include
@@ -90,14 +104,14 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5sp"
-                        android:id="@+id/past_card1"
+                        android:id="@+id/day2"
                         layout="@layout/card_day" />
                     <include
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5sp"
-                        android:id="@+id/past_card2"
+                        android:id="@+id/day3"
                         layout="@layout/card_day" />
 
                     <include
@@ -105,7 +119,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5sp"
-                        android:id="@+id/past_card3"
+                        android:id="@+id/day4"
                         layout="@layout/card_day" />
 
 
@@ -334,6 +348,22 @@
                     android:layout_height="wrap_content"
                     android:colorControlNormal="@color/secondaryDarkColor"
                     android:gravity="center" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/joinBtn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10sp"
+                    android:layout_marginTop="2sp"
+                    android:layout_marginBottom="10sp"
+                    android:text="@string/join"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    app:backgroundTint="@color/secondaryColor"
+                    app:cornerRadius="8sp"
+                    app:strokeColor="@color/secondaryDarkColor"
+                    app:strokeWidth="2sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/statisticsBtn"

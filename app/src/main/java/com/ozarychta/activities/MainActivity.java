@@ -23,7 +23,9 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ozarychta.SignInClient;
 import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.model.Challenge;
 import com.ozarychta.model.ChallengeAdapter;
@@ -40,8 +42,10 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -90,6 +94,8 @@ public class MainActivity extends BaseActivity {
         repeatSpinner.setAdapter(new ArrayAdapter<RepeatPeriod>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
         repeatSpinner.setSelection(0);
 
+//        List<ChallengeState> states = Arrays.asList(ChallengeState.values());
+//        states.remove(3);
         stateSpinner.setAdapter(new ArrayAdapter<ChallengeState>(this, android.R.layout.simple_spinner_dropdown_item, ChallengeState.values()));
         stateSpinner.setSelection(0);
 
@@ -116,7 +122,7 @@ public class MainActivity extends BaseActivity {
         adapter = new ChallengeAdapter(challenges);
         recyclerView.setAdapter(adapter);
 
-        searchBtn.setOnClickListener(v -> getChallengesFromServer());
+        searchBtn.setOnClickListener(v -> silentSignInAndGetChallenges());
 
         connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -166,7 +172,21 @@ public class MainActivity extends BaseActivity {
         startActivity(i);
     }
 
-    private void getChallengesFromServer() {
+    private void silentSignInAndGetChallenges() {
+        progressBar.setVisibility(View.VISIBLE);
+
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            getChallengesFromServer(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> getChallengesFromServer(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void getChallengesFromServer(String token) {
         progressBar.setVisibility(View.VISIBLE);
         challenges.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
@@ -196,6 +216,7 @@ public class MainActivity extends BaseActivity {
                                 Date end = dateFormat.parse(jsonObject.getString("endDate"));
                                 ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                                 ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
+                                Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
 
                                 Integer goal = 0;
                                 if(confirmation == ConfirmationType.TIMER_TASK){
@@ -220,6 +241,7 @@ public class MainActivity extends BaseActivity {
                                 c.setMoreBetter(isMoreBetter);
                                 c.setStartDate(start);
                                 c.setEndDate(end);
+                                c.setUserParticipant(isUserParticipant);
 
                                 challenges.add(c);
                                 adapter.notifyDataSetChanged();
@@ -253,7 +275,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public Map getHeaders() {
                 HashMap headers = new HashMap();
-                headers.put("authorization", "Bearer ");
+                headers.put("authorization", "Bearer " + token);
                 return headers;
             }
         };

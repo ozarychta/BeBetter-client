@@ -1,31 +1,51 @@
 package com.ozarychta.activities;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.ozarychta.R;
+import com.ozarychta.ServerRequestUtil;
+import com.ozarychta.SignInClient;
+import com.ozarychta.enums.AccessType;
+import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.model.Challenge;
+import com.ozarychta.model.Day;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class ChallengeActivity extends BaseActivity {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
-    private static final String SIMPLE_DATE_FORMAT = "dd-MM-yyyy";
+    private static final String SIMPLE_DATE_FORMAT = "dd.MM";
     private SimpleDateFormat simpleDateFormat;
+    private SimpleDateFormat dateFormat;
 
     private ConnectivityManager connectivityManager;
 
     private Challenge challenge;
+    private Day today;
 
     private TextView goalText;
     private TextView moreOrLessText;
@@ -42,10 +62,19 @@ public class ChallengeActivity extends BaseActivity {
     private TextView startText;
     private TextView endText;
 
+    private Button joinBtn;
     private Button statisticsBtn;
 
+    private TextView daysLabel;
+    private TextView notStartedYetLabel;
     private LinearLayout daysLayout;
-    private MaterialCardView todayLayout;
+    private MaterialCardView todayCard;
+    private MaterialCardView day2;
+    private MaterialCardView day3;
+    private MaterialCardView day4;
+
+    private TextView todayDate;
+    private ToggleButton todayToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +89,9 @@ public class ChallengeActivity extends BaseActivity {
 
         simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         titleText = findViewById(R.id.titleTextView);
         descText = findViewById(R.id.descriptionTextView);
@@ -76,10 +108,15 @@ public class ChallengeActivity extends BaseActivity {
         startText = findViewById(R.id.startTextView);
         endText = findViewById(R.id.endTextView);
 
+        joinBtn = findViewById(R.id.joinBtn);
         statisticsBtn = findViewById(R.id.statisticsBtn);
 
+        daysLabel = findViewById(R.id.daysLabel);
         daysLayout = findViewById(R.id.daysLinearLayout);
-        todayLayout = findViewById(R.id.today_card);
+        todayCard = findViewById(R.id.today);
+        day2 = findViewById(R.id.day2);
+        day3 = findViewById(R.id.day3);
+        day4 = findViewById(R.id.day4);
 
         titleText.setText(challenge.getTitle());
         descText.setText(challenge.getDescription());
@@ -96,41 +133,296 @@ public class ChallengeActivity extends BaseActivity {
         startText.setText(simpleDateFormat.format(challenge.getStartDate()));
         endText.setText(simpleDateFormat.format(challenge.getEndDate()));
 
+        notStartedYetLabel = findViewById(R.id.notStartedYetLabel);
+        notStartedYetLabel.setVisibility(View.GONE);
+
+        todayDate = todayCard.findViewById(R.id.dateTextView);
+        todayToggle = todayCard.findViewById(R.id.toggleButton);
+        todayToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                today.setDone(isChecked);
+                silentSignInAndSaveChange();
+            }
+        });
+
 //        LayoutInflater.from(this).inflate(R.layout.card_day, daysLayout);
 
-        MaterialCardView past1;
-        MaterialCardView past2;
-        MaterialCardView past3;
+        if(challenge.getAccessType() == AccessType.PUBLIC && challenge.getUserParticipant()==false){
+            daysLabel.setVisibility(View.GONE);
+            daysLayout.setVisibility(View.GONE);
+            statisticsBtn.setVisibility(View.GONE);
 
-        past1 = findViewById(R.id.past_card1);
-        past2 = findViewById(R.id.past_card2);
-        past3 = findViewById(R.id.past_card3);
+            joinBtn.setVisibility(View.VISIBLE);
+        } else {
+            daysLabel.setVisibility(View.VISIBLE);
+            statisticsBtn.setVisibility(View.VISIBLE);
+            joinBtn.setVisibility(View.GONE);
 
-        past1.setBackgroundColor(getResources().getColor(R.color.lightGrey));
-        past2.setBackgroundColor(getResources().getColor(R.color.lightGrey));
-        past3.setBackgroundColor(getResources().getColor(R.color.lightGrey));
+            updateStateDependentUI();
+        }
 
-        ToggleButton t1 = past1.findViewById(R.id.toggleButton);
-        t1.setChecked(false);
-        t1.setEnabled(false);
+        joinBtn.setOnClickListener(v -> silentSignInAndJoinChallenge());
 
-        TextView tt1 = past1.findViewById(R.id.dateTextView);
-        tt1.setText("9.02");
+//        past1.setBackgroundColor(getResources().getColor(R.color.lightGrey));
+//        past2.setBackgroundColor(getResources().getColor(R.color.lightGrey));
+//        past3.setBackgroundColor(getResources().getColor(R.color.lightGrey));
+//
+//        ToggleButton t1 = past1.findViewById(R.id.toggleButton);
+//        t1.setChecked(false);
+//        t1.setEnabled(false);
+//
+//        TextView tt1 = past1.findViewById(R.id.dateTextView);
+//        tt1.setText("9.02");
+//
+//        ToggleButton t2 = past2.findViewById(R.id.toggleButton);
+//        t2.setChecked(true);
+//        t2.setEnabled(false);
+//
+//        TextView tt2 = past2.findViewById(R.id.dateTextView);
+//        tt2.setText("8.02");
+//
+//        ToggleButton t3 = past3.findViewById(R.id.toggleButton);
+//        t3.setChecked(true);
+//        t3.setEnabled(false);
+//
+//        TextView tt3 = past3.findViewById(R.id.dateTextView);
+//        tt3.setText("7.02");
 
-        ToggleButton t2 = past2.findViewById(R.id.toggleButton);
-        t2.setChecked(true);
-        t2.setEnabled(false);
+    }
 
-        TextView tt2 = past2.findViewById(R.id.dateTextView);
-        tt2.setText("8.02");
+    private void silentSignInAndSaveChange() {
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            saveChange(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> saveChange(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
 
-        ToggleButton t3 = past3.findViewById(R.id.toggleButton);
-        t3.setChecked(true);
-        t3.setEnabled(false);
+    private void saveChange(String tokenId) {
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("done", today.getDone());
+        requestBody.put("currentStatus", today.getCurrentStatus());
 
-        TextView tt3 = past3.findViewById(R.id.dateTextView);
-        tt3.setText("7.02");
+        JSONObject jsonRequestBody = new JSONObject(requestBody);
+        Log.d("request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
 
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.PUT,
+                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/days/" + today.getId(),
+                jsonRequestBody,
+                response -> {
+                    try {
+                        JSONObject jsonObject = (JSONObject) response;
+
+                        Integer id = jsonObject.getInt("id");
+
+//                        Toast.makeText(getApplicationContext(), getString(R.string.updated_state), Toast.LENGTH_LONG)
+//                                .show();
+                        Log.d("", "Updated day");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("", "request response:failed message=" + e.getMessage());
+                    } finally {
+//                        progressBar.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+//                    progressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + tokenId);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
+    }
+
+    private void updateStateDependentUI() {
+        ChallengeState state = challenge.getState();
+
+        if(ChallengeState.NOT_STARTED == state){
+            daysLayout.setVisibility(View.GONE);
+            notStartedYetLabel.setVisibility(View.VISIBLE);
+        } else if(ChallengeState.STARTED == state){
+            daysLayout.setVisibility(View.VISIBLE);
+            notStartedYetLabel.setVisibility(View.GONE);
+            silentSignInAndGetLastFourDays();
+        } else {
+            daysLayout.setVisibility(View.VISIBLE);
+            notStartedYetLabel.setVisibility(View.GONE);
+            silentSignInAndGetLastFourDays();
+        }
+    }
+
+    private void silentSignInAndGetLastFourDays() {
+
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            getLastFourDays(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> getLastFourDays(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void getLastFourDays(String idToken) {
+        ChallengeState state = challenge.getState();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/days?challengeState=" +state,
+                null,
+                response -> {
+                    try {
+//                        if (response.length()==0){
+//                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
+//                                    .show();
+//                            progressBar.setVisibility(View.GONE);
+//                        }
+
+                        JSONObject jsonObject = (JSONObject) response.get(0);
+
+                        Long id = jsonObject.getLong("id");
+                        Date date = dateFormat.parse(jsonObject.getString("date"));
+                        Boolean done = jsonObject.getBoolean("done");
+                        Integer currentStatus = jsonObject.getInt("currentStatus");
+
+                        today = new Day(id, date, done, currentStatus);
+
+                        todayDate.setText(simpleDateFormat.format(date));
+                        todayToggle.setChecked(done);
+
+//                        for (int i = 0; i < response.length(); i++) {
+//                            try {
+//                                JSONObject jsonObject = (JSONObject) response.get(i);
+//
+//                                Integer id = jsonObject.getInt("id");
+//                                Date date = simpleDateFormat.parse(jsonObject.getString("date"));
+//                                Boolean done = jsonObject.getBoolean("done");
+//
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("", "request response:failed message=" + e.getMessage());
+                    } finally {
+//                        progressBar.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+//                    progressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + idToken);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
+    }
+
+
+    private void silentSignInAndJoinChallenge() {
+//        progressBar.setVisibility(View.VISIBLE);
+
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            joinChallenge(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> joinChallenge(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void joinChallenge(String token) {
+//        progressBar.setVisibility(View.VISIBLE);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/participants",
+                null,
+                response -> {
+                    try {
+                        JSONObject jsonObject = (JSONObject) response;
+
+                        Integer id = jsonObject.getInt("id");
+
+                        daysLabel.setVisibility(View.VISIBLE);
+                        statisticsBtn.setVisibility(View.VISIBLE);
+
+                        joinBtn.setVisibility(View.GONE);
+
+                        challenge.setUserParticipant(true);
+
+                        updateStateDependentUI();
+
+                        Toast.makeText(getApplicationContext(), getString(R.string.joined_challenge), Toast.LENGTH_LONG)
+                                .show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("", "request response:failed message=" + e.getMessage());
+                    } finally {
+//                        progressBar.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+//                    progressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
     }
 
 }
