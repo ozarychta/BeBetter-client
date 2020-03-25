@@ -42,4 +42,10 @@
     <string name="join">Dołącz</string>
     <string name="joined_challenge">Dołączyłeś do wyzwania.</string>
     <string name="challenge_not_started_yet">Wyzwanie jeszcze się nie rozpoczęło.</string>
+    <string name="edit_user_info">Edytuj informacje</string>
+    <string name="username">Nazwa użytkownika:</string>
+    <string name="about_me">O mnie:</string>
+    <string name="main_goal">Główny cel:</string>
+    <string name="ranking_points">Punkty rankingowe:</string>
+    <string name="highest_strike">Najdłuższy strike:</string>
 </resources>

@@ -11,9 +11,10 @@
     app:cornerRadius="2sp"
     app:strokeColor="@color/secondaryColor"
     app:cardElevation="2sp"
+    app:cardBackgroundColor="@color/lightGrey"
     app:cardUseCompatPadding="false"
-    android:layout_marginVertical="22dp"
-    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="10dp"
+    android:layout_marginHorizontal="10dp"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -38,11 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/toggle_check"
+            android:enabled="false"
             android:textOn=""
             android:textOff="" />
-
-
-
 
     </LinearLayout>
 

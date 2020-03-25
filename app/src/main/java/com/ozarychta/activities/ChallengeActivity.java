@@ -12,6 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -24,12 +28,15 @@ import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.model.Challenge;
+import com.ozarychta.model.ChallengeAdapter;
 import com.ozarychta.model.Day;
+import com.ozarychta.model.DayAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +46,10 @@ public class ChallengeActivity extends BaseActivity {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     private static final String SIMPLE_DATE_FORMAT = "dd.MM";
+    private static final String BASIC_DATE_FORMAT = "dd.MM.yyyy";
     private SimpleDateFormat simpleDateFormat;
     private SimpleDateFormat dateFormat;
+    private SimpleDateFormat basicDateFormat;
 
     private ConnectivityManager connectivityManager;
 
@@ -76,6 +85,11 @@ public class ChallengeActivity extends BaseActivity {
     private TextView todayDate;
     private ToggleButton todayToggle;
 
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+    private ArrayList<Day> pastDays;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +106,9 @@ public class ChallengeActivity extends BaseActivity {
 
         dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        basicDateFormat = new SimpleDateFormat(BASIC_DATE_FORMAT);
+        basicDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         titleText = findViewById(R.id.titleTextView);
         descText = findViewById(R.id.descriptionTextView);
@@ -114,9 +131,18 @@ public class ChallengeActivity extends BaseActivity {
         daysLabel = findViewById(R.id.daysLabel);
         daysLayout = findViewById(R.id.daysLinearLayout);
         todayCard = findViewById(R.id.today);
-        day2 = findViewById(R.id.day2);
-        day3 = findViewById(R.id.day3);
-        day4 = findViewById(R.id.day4);
+//        day2 = findViewById(R.id.day2);
+//        day3 = findViewById(R.id.day3);
+//        day4 = findViewById(R.id.day4);
+
+        recyclerView = findViewById(R.id.past_days_recycler_view);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        pastDays = new ArrayList<>();
+        adapter = new DayAdapter(pastDays);
+        recyclerView.setAdapter(adapter);
 
         titleText.setText(challenge.getTitle());
         descText.setText(challenge.getDescription());
@@ -130,8 +156,8 @@ public class ChallengeActivity extends BaseActivity {
         goalText.setText(challenge.getGoal().toString());
         moreOrLessText.setText(challenge.getMoreBetter().toString());
 
-        startText.setText(simpleDateFormat.format(challenge.getStartDate()));
-        endText.setText(simpleDateFormat.format(challenge.getEndDate()));
+        startText.setText(basicDateFormat.format(challenge.getStartDate()));
+        endText.setText(basicDateFormat.format(challenge.getEndDate()));
 
         notStartedYetLabel = findViewById(R.id.notStartedYetLabel);
         notStartedYetLabel.setVisibility(View.GONE);
@@ -264,11 +290,13 @@ public class ChallengeActivity extends BaseActivity {
         } else if(ChallengeState.STARTED == state){
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
+            todayCard.setVisibility(View.VISIBLE);
             silentSignInAndGetLastFourDays();
         } else {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
             silentSignInAndGetLastFourDays();
+            todayCard.setVisibility(View.GONE);
         }
     }
 
@@ -287,7 +315,7 @@ public class ChallengeActivity extends BaseActivity {
 
     private void getLastFourDays(String idToken) {
         ChallengeState state = challenge.getState();
-
+        pastDays.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/days?challengeState=" +state,
@@ -307,23 +335,35 @@ public class ChallengeActivity extends BaseActivity {
                         Boolean done = jsonObject.getBoolean("done");
                         Integer currentStatus = jsonObject.getInt("currentStatus");
 
-                        today = new Day(id, date, done, currentStatus);
+                        if(state==ChallengeState.STARTED){
+                            today = new Day(id, date, done, currentStatus);
 
-                        todayDate.setText(simpleDateFormat.format(date));
-                        todayToggle.setChecked(done);
+                            todayDate.setText(simpleDateFormat.format(date));
+                            todayToggle.setChecked(done);
+                        } else {
+                            Day day = new Day(id, date, done, currentStatus);
+                            pastDays.add(day);
+                            adapter.notifyDataSetChanged();
+                        }
 
-//                        for (int i = 0; i < response.length(); i++) {
-//                            try {
-//                                JSONObject jsonObject = (JSONObject) response.get(i);
-//
-//                                Integer id = jsonObject.getInt("id");
-//                                Date date = simpleDateFormat.parse(jsonObject.getString("date"));
-//                                Boolean done = jsonObject.getBoolean("done");
-//
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
+
+                        for (int i = 1; i < response.length(); i++) {
+                            try {
+                                jsonObject = (JSONObject) response.get(i);
+
+                                id = jsonObject.getLong("id");
+                                date = dateFormat.parse(jsonObject.getString("date"));
+                                done = jsonObject.getBoolean("done");
+                                currentStatus = jsonObject.getInt("currentStatus");
+
+                                Day day = new Day(id, date, done, currentStatus);
+                                pastDays.add(day);
+                                adapter.notifyDataSetChanged();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -117,7 +117,6 @@ public class MainActivity extends BaseActivity {
         dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-
         challenges = new ArrayList<>();
         adapter = new ChallengeAdapter(challenges);
         recyclerView.setAdapter(adapter);

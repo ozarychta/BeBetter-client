@@ -42,4 +42,10 @@
     <string name="join">Join</string>
     <string name="joined_challenge">Successfully joined challenge</string>
     <string name="challenge_not_started_yet">Challenge not started yet</string>
+    <string name="edit_user_info">Edit your user info</string>
+    <string name="username">Username:</string>
+    <string name="about_me">About me:</string>
+    <string name="main_goal">Main goal:</string>
+    <string name="ranking_points">Ranking points:</string>
+    <string name="highest_strike">Highest strike:</string>
 </resources>
