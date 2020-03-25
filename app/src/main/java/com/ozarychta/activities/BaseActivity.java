@@ -43,7 +43,8 @@ public class BaseActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_profile:
-                //
+                startProfileActivity();
+                finish();
                 break;
             case R.id.action_friends:
                 //
@@ -65,6 +66,11 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private void startProfileActivity() {
+        Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
     }
 
     private void startMyChallengesActivity() {
