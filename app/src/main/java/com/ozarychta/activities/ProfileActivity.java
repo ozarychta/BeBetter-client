@@ -1,42 +1,48 @@
 package com.ozarychta.activities;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
-import com.ozarychta.enums.ChallengeState;
-import com.ozarychta.model.Day;
 import com.ozarychta.model.User;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends BaseActivity{
 
+    private static final Integer REQUEST_CODE = 1;
+
     private ConnectivityManager connectivityManager;
 
     private User user;
+    private Integer userIdFromIntent;
+    private Integer signedUserId;
 
     private TextView usernameText;
     private TextView aboutMeText;
     private TextView mainGoalText;
     private TextView rankingPointsText;
     private TextView highestStrikeText;
+
+    private Button editBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,31 @@ public class ProfileActivity extends BaseActivity{
         mainGoalText = findViewById(R.id.mainGoalTextView);
         rankingPointsText = findViewById(R.id.pointsTextView);
         highestStrikeText = findViewById(R.id.strikeTextView);
+
+        editBtn = findViewById(R.id.editBtn);
+        editBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EditProfileActivity.class);
+            intent.putExtra("USER", user);
+            startActivityForResult(intent, REQUEST_CODE);
+        });
+
+        userIdFromIntent = getIntent().getIntExtra("USER_ID", -1);
+
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+        signedUserId = sharedPref.getInt(getString(R.string.user_id_field), -1);
+
+        if (userIdFromIntent.equals(signedUserId)){
+            editBtn.setVisibility(View.VISIBLE);
+        } else {
+            editBtn.setVisibility(View.GONE);
+        }
+
+        if (signedUserId == -1){
+            Toast.makeText(getApplicationContext(), "signed user id -1", Toast.LENGTH_LONG)
+                    .show();
+            editBtn.setVisibility(View.GONE);
+        }
 
         silentSignInAndGetUserInfo();
     }
@@ -69,8 +100,8 @@ public class ProfileActivity extends BaseActivity{
 
     private void getUserInfo(String idToken) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.POST,
-                "https://be-better-server.herokuapp.com/users",
+                Request.Method.GET,
+                "https://be-better-server.herokuapp.com/users/" + userIdFromIntent,
                 null,
                 response -> {
                     try {
@@ -83,11 +114,8 @@ public class ProfileActivity extends BaseActivity{
                         Integer points = jsonObject.getInt("rankingPoints");
                         Integer strike = jsonObject.getInt("highestStreak");
 
-                        usernameText.setText(username);
-                        aboutMeText.setText(aboutMe);
-                        mainGoalText.setText(mainGoal);
-                        rankingPointsText.setText(points);
-                        highestStrikeText.setText(strike);
+                        user = new User(id, username, aboutMe, mainGoal, points, strike);
+                        updateUI();
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -116,5 +144,25 @@ public class ProfileActivity extends BaseActivity{
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                user = (User) data.getSerializableExtra("USER");
+                updateUI();
+            }
+        }
+    }
+
+    private void updateUI() {
+        usernameText.setText(user.getUsername());
+        aboutMeText.setText(user.getAboutMe());
+        mainGoalText.setText(user.getMainGoal());
+        rankingPointsText.setText(String.valueOf(user.getRankingPoints()));
+        highestStrikeText.setText(String.valueOf(user.getHighestStrike()));
     }
 }

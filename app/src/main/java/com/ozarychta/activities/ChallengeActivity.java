@@ -78,10 +78,6 @@ public class ChallengeActivity extends BaseActivity {
     private TextView notStartedYetLabel;
     private LinearLayout daysLayout;
     private MaterialCardView todayCard;
-    private MaterialCardView day2;
-    private MaterialCardView day3;
-    private MaterialCardView day4;
-
     private TextView todayDate;
     private ToggleButton todayToggle;
 
@@ -131,9 +127,6 @@ public class ChallengeActivity extends BaseActivity {
         daysLabel = findViewById(R.id.daysLabel);
         daysLayout = findViewById(R.id.daysLinearLayout);
         todayCard = findViewById(R.id.today);
-//        day2 = findViewById(R.id.day2);
-//        day3 = findViewById(R.id.day3);
-//        day4 = findViewById(R.id.day4);
 
         recyclerView = findViewById(R.id.past_days_recycler_view);
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -171,8 +164,6 @@ public class ChallengeActivity extends BaseActivity {
             }
         });
 
-//        LayoutInflater.from(this).inflate(R.layout.card_day, daysLayout);
-
         if(challenge.getAccessType() == AccessType.PUBLIC && challenge.getUserParticipant()==false){
             daysLabel.setVisibility(View.GONE);
             daysLayout.setVisibility(View.GONE);
@@ -188,32 +179,6 @@ public class ChallengeActivity extends BaseActivity {
         }
 
         joinBtn.setOnClickListener(v -> silentSignInAndJoinChallenge());
-
-//        past1.setBackgroundColor(getResources().getColor(R.color.lightGrey));
-//        past2.setBackgroundColor(getResources().getColor(R.color.lightGrey));
-//        past3.setBackgroundColor(getResources().getColor(R.color.lightGrey));
-//
-//        ToggleButton t1 = past1.findViewById(R.id.toggleButton);
-//        t1.setChecked(false);
-//        t1.setEnabled(false);
-//
-//        TextView tt1 = past1.findViewById(R.id.dateTextView);
-//        tt1.setText("9.02");
-//
-//        ToggleButton t2 = past2.findViewById(R.id.toggleButton);
-//        t2.setChecked(true);
-//        t2.setEnabled(false);
-//
-//        TextView tt2 = past2.findViewById(R.id.dateTextView);
-//        tt2.setText("8.02");
-//
-//        ToggleButton t3 = past3.findViewById(R.id.toggleButton);
-//        t3.setChecked(true);
-//        t3.setEnabled(false);
-//
-//        TextView tt3 = past3.findViewById(R.id.dateTextView);
-//        tt3.setText("7.02");
-
     }
 
     private void silentSignInAndSaveChange() {

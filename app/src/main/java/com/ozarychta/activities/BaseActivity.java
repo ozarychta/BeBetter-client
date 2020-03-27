@@ -69,7 +69,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void startProfileActivity() {
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+        Integer signedUserId = sharedPref.getInt(getString(R.string.user_id_field), -1);
         Intent i = new Intent(this, ProfileActivity.class);
+        i.putExtra("USER_ID", signedUserId);
         startActivity(i);
     }
 

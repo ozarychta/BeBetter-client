@@ -46,6 +46,8 @@
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:text="@string/username"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="18sp" />
@@ -55,8 +57,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5sp"
-                    android:layout_marginTop="2sp"
-                    android:layout_marginBottom="5sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:gravity="center"
                     android:textColor="@color/darkGrey"
                     android:textSize="18sp" />
@@ -70,6 +72,8 @@
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:text="@string/about_me"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="18sp" />
@@ -79,7 +83,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5sp"
-                    android:layout_marginTop="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:gravity="center"
                     android:textColor="@color/darkGrey"
                     android:textSize="18sp" />
@@ -92,6 +97,8 @@
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:text="@string/main_goal"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="18sp" />
@@ -101,7 +108,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5sp"
-                    android:layout_marginTop="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:gravity="center"
                     android:textColor="@color/darkGrey"
                     android:textSize="18sp" />
@@ -114,6 +122,8 @@
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:text="@string/ranking_points"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="18sp" />
@@ -124,7 +134,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5sp"
                     android:gravity="center"
-                    android:layout_marginTop="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:textColor="@color/darkGrey"
                     android:textSize="18sp"/>
 
@@ -136,6 +147,8 @@
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:text="@string/highest_strike"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="18sp" />
@@ -146,11 +159,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5sp"
                     android:gravity="center"
-                    android:layout_marginTop="2sp"
+                    android:layout_marginTop="4sp"
+                    android:layout_marginBottom="10sp"
                     android:textColor="@color/darkGrey"
                     android:textSize="18sp"/>
-
-
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/editBtn"
