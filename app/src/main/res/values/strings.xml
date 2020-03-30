@@ -47,7 +47,7 @@
     <string name="about_me">About me:</string>
     <string name="main_goal">Main goal:</string>
     <string name="ranking_points">Ranking points:</string>
-    <string name="highest_strike">Highest strike:</string>
+    <string name="highest_streak">Highest streak:</string>
     <string name="edited_user_info">Saved</string>
     <string name="empty_username">Username field cannot be empty</string>
 </resources>

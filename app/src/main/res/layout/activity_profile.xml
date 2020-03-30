@@ -149,7 +149,7 @@
                     android:paddingBottom="2sp"
                     android:layout_marginTop="4sp"
                     android:layout_marginBottom="10sp"
-                    android:text="@string/highest_strike"
+                    android:text="@string/highest_streak"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="18sp" />
 

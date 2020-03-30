@@ -47,7 +47,7 @@
     <string name="about_me">O mnie:</string>
     <string name="main_goal">Główny cel:</string>
     <string name="ranking_points">Punkty rankingowe:</string>
-    <string name="highest_strike">Najdłuższy strike:</string>
+    <string name="highest_streak">Najdłuższy streak:</string>
     <string name="edited_user_info">Zapisano</string>
     <string name="empty_username">Nazwa użytkownika nie może być pusta</string>
 </resources>
