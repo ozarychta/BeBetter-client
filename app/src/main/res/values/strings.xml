@@ -50,4 +50,8 @@
     <string name="highest_streak">Highest streak:</string>
     <string name="edited_user_info">Saved</string>
     <string name="empty_username">Username field cannot be empty</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="search_hint">Search…</string>
+    <string name="highest_streak_acronym">HS</string>
+    <string name="ranking_points_acronym">RP</string>
 </resources>

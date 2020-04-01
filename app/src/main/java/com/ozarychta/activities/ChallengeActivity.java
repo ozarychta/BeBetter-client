@@ -255,13 +255,13 @@ public class ChallengeActivity extends BaseActivity {
         } else if(ChallengeState.STARTED == state){
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
-            todayCard.setVisibility(View.VISIBLE);
             silentSignInAndGetLastFourDays();
+            todayCard.setVisibility(View.VISIBLE);
         } else {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
-            silentSignInAndGetLastFourDays();
             todayCard.setVisibility(View.GONE);
+            silentSignInAndGetLastFourDays();
         }
     }
 
@@ -287,11 +287,11 @@ public class ChallengeActivity extends BaseActivity {
                 null,
                 response -> {
                     try {
-//                        if (response.length()==0){
-//                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
-//                                    .show();
+                        if (response.length()==0){
+                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
+                                    .show();
 //                            progressBar.setVisibility(View.GONE);
-//                        }
+                        }
 
                         JSONObject jsonObject = (JSONObject) response.get(0);
 

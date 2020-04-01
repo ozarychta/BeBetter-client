@@ -50,4 +50,8 @@
     <string name="highest_streak">Najdłuższy streak:</string>
     <string name="edited_user_info">Zapisano</string>
     <string name="empty_username">Nazwa użytkownika nie może być pusta</string>
+    <string name="sort_by">Sortuj po:</string>
+    <string name="search_hint">Szukaj…</string>
+    <string name="highest_streak_acronym">NS</string>
+    <string name="ranking_points_acronym">PR</string>
 </resources>

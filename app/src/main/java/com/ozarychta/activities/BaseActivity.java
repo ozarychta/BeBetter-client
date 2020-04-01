@@ -47,7 +47,8 @@ public class BaseActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_friends:
-                //
+                startFriendsActivity();
+                finish();
                 break;
             case R.id.action_achievements:
                 //
@@ -66,6 +67,11 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private void startFriendsActivity() {
+        Intent i = new Intent(this, FriendsActivity.class);
+        startActivity(i);
     }
 
     private void startProfileActivity() {
