@@ -69,8 +69,10 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
         categoryTextView.setText("Kategoria: " + dataSet.get(position).getCategory().toString());
         cityTextView.setText("Miasto: " + dataSet.get(position).getCity());
         if(dataSet.get(position).getGoal() == 0){
+            goalTextView.setVisibility(View.GONE);
             goalTextView.setText("");
         } else {
+            goalTextView.setVisibility(View.VISIBLE);
             goalTextView.setText("Przez: " + dataSet.get(position).getGoal() + " min");
         }
 

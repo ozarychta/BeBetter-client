@@ -11,15 +11,15 @@
     app:strokeColor="@color/primaryColor"
     app:cardElevation="5dp"
     app:cardUseCompatPadding="false"
-    android:layout_marginVertical="14dp"
+    android:layout_marginVertical="8dp"
     android:layout_marginHorizontal="4dp"
     app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="4sp"
+        android:layout_marginBottom="14sp"
         android:orientation="vertical">
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4sp"
             android:textColor="@color/primaryDarkColor"
             android:textSize="20dp" />
 
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5sp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5sp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5sp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -63,12 +63,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5sp"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </LinearLayout>
-
 
 </com.google.android.material.card.MaterialCardView>
 
