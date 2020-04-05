@@ -65,7 +65,7 @@ public class ProfileActivity extends BaseActivity{
             startActivityForResult(intent, REQUEST_CODE);
         });
 
-        userIdFromIntent = getIntent().getLongExtra("USER_ID", -1);
+        userIdFromIntent = Long.valueOf(getIntent().getIntExtra("USER_ID", -1));
 
         SharedPreferences sharedPref = getApplicationContext()
                 .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
