@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -27,13 +28,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
-import com.ozarychta.enums.AccessType;
-import com.ozarychta.enums.Category;
-import com.ozarychta.enums.ChallengeState;
-import com.ozarychta.enums.ConfirmationType;
-import com.ozarychta.enums.RepeatPeriod;
+import com.ozarychta.ViewPagerAdapter;
 import com.ozarychta.enums.SortType;
-import com.ozarychta.model.Challenge;
 import com.ozarychta.model.FriendAdapter;
 import com.ozarychta.model.User;
 
@@ -41,7 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,8 +52,12 @@ public class FriendsActivity extends BaseActivity {
 
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+
     private RecyclerView recyclerView;
     private ArrayList<User> friends;
+
+    private ViewPager2 viewPager;
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +81,10 @@ public class FriendsActivity extends BaseActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        viewPagerAdapter = new ViewPagerAdapter(this);
+        viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(viewPagerAdapter);
 
         FloatingActionButton floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
