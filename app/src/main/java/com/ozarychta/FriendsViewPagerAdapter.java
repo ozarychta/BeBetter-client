@@ -7,10 +7,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.ozarychta.enums.FriendType;
 
-public class ViewPagerAdapter extends FragmentStateAdapter {
+public class FriendsViewPagerAdapter extends FragmentStateAdapter {
     private static final int ITEM_COUNT = 2;
 
-    public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+    public FriendsViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
 

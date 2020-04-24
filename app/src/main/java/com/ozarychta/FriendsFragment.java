@@ -9,21 +9,28 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ozarychta.enums.FriendType;
+import com.ozarychta.model.FriendAdapter;
 import com.ozarychta.model.User;
 
 import java.util.ArrayList;
 
 public class FriendsFragment extends Fragment {
     private static final String ARG_TYPE = "friendType";
+
     private FriendType friendType;
-    private RecyclerView recyclerView;
     private ArrayList<User> friends;
 
+    private FriendsViewModel friendsViewModel;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
 
     public FriendsFragment() {
     }
@@ -56,5 +63,21 @@ public class FriendsFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        friendsViewModel = new ViewModelProvider(requireActivity()).get(FriendsViewModel.class);
+        if(friendType==FriendType.FOLLOWING){
+            friendsViewModel.getFollowingLiveData().observe(getViewLifecycleOwner(), friendsListUpdateObserver);
+        } else {
+            friendsViewModel.getFollowersLiveData().observe(getViewLifecycleOwner(), friendsListUpdateObserver);
+        }
+
     }
+
+    Observer<ArrayList<User>> friendsListUpdateObserver = new Observer<ArrayList<User>>() {
+        @Override
+        public void onChanged(ArrayList<User> userArrayList) {
+            adapter = new FriendAdapter(userArrayList);
+            recyclerView.setAdapter(adapter);
+        }
+    };
 }

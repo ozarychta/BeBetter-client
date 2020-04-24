@@ -15,9 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.Request;
@@ -25,12 +23,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.ozarychta.FriendsViewModel;
+import com.ozarychta.FriendsViewPagerAdapter;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
-import com.ozarychta.ViewPagerAdapter;
 import com.ozarychta.enums.SortType;
-import com.ozarychta.model.FriendAdapter;
 import com.ozarychta.model.User;
 
 import org.json.JSONException;
@@ -50,14 +48,13 @@ public class FriendsActivity extends BaseActivity {
     private Button searchBtn;
     private ProgressBar progressBar;
 
-    private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-
-    private RecyclerView recyclerView;
-    private ArrayList<User> friends;
+    private ArrayList<User> following;
+    private ArrayList<User> followers;
 
     private ViewPager2 viewPager;
-    private ViewPagerAdapter viewPagerAdapter;
+    private FriendsViewPagerAdapter viewPagerAdapter;
+
+    private FriendsViewModel friendsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,14 +74,11 @@ public class FriendsActivity extends BaseActivity {
         sortBySpinner.setAdapter(new ArrayAdapter<SortType>(this, android.R.layout.simple_spinner_dropdown_item, SortType.values()));
         sortBySpinner.setSelection(0);
 
-        recyclerView = findViewById(R.id.friends_recycler_view);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        viewPagerAdapter = new ViewPagerAdapter(this);
+        viewPagerAdapter = new FriendsViewPagerAdapter(this);
         viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(viewPagerAdapter);
+
+        friendsViewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
 
         FloatingActionButton floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -94,9 +88,8 @@ public class FriendsActivity extends BaseActivity {
             }
         });
 
-        friends = new ArrayList<>();
-        adapter = new FriendAdapter(friends);
-        recyclerView.setAdapter(adapter);
+        following = new ArrayList<>();
+        followers = new ArrayList<>();
 
         searchBtn.setOnClickListener(v -> silentSignInAndGetFriends());
 
@@ -138,17 +131,21 @@ public class FriendsActivity extends BaseActivity {
         Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
         if (task.isSuccessful()) {
             // There's immediate result available.
-            getFriendsFromServer(task.getResult().getIdToken());
+            getFollowingFromServer(task.getResult().getIdToken());
+            getFollowersFromServer(task.getResult().getIdToken());
         } else {
             task.addOnCompleteListener(
                     this,
-                    task1 -> getFriendsFromServer(SignInClient.getTokenIdFromResult(task1)));
+                    task1 -> {
+                        getFollowingFromServer(SignInClient.getTokenIdFromResult(task1));
+                        getFollowersFromServer(SignInClient.getTokenIdFromResult(task1));
+                    });
         }
     }
 
-    private void getFriendsFromServer(String token) {
+    private void getFollowingFromServer(String token) {
         progressBar.setVisibility(View.VISIBLE);
-        friends.clear();
+        following.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://be-better-server.herokuapp.com/following?" + getUrlParameters(),
@@ -174,10 +171,9 @@ public class FriendsActivity extends BaseActivity {
 
                                 User u = new User(id, username, aboutMe, mainGoal, points, strike);
 
-                                friends.add(u);
-                                adapter.notifyDataSetChanged();
+                                following.add(u);
 
-                                Log.d("jsonObject", friends.get(i).toString());
+                                Log.d("jsonObject following", following.get(i).getUsername());
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -185,6 +181,76 @@ public class FriendsActivity extends BaseActivity {
                                 progressBar.setVisibility(View.GONE);
                             }
                         }
+
+                        friendsViewModel.setFollowingLiveData(following);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("", "request response:failed message=" + e.getMessage());
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                    progressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
+    }
+
+    private void getFollowersFromServer(String token) {
+        progressBar.setVisibility(View.VISIBLE);
+        followers.clear();
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://be-better-server.herokuapp.com/followers?" + getUrlParameters(),
+                null,
+                response -> {
+                    try {
+                        if (response.length()==0){
+                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
+                                    .show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject jsonObject = (JSONObject) response.get(i);
+
+                                Long id = jsonObject.getLong("id");
+                                String username = jsonObject.getString("username");
+                                String aboutMe = jsonObject.getString("aboutMe");
+                                String mainGoal = jsonObject.getString("mainGoal");
+                                Integer points = jsonObject.getInt("rankingPoints");
+                                Integer strike = jsonObject.getInt("highestStreak");
+
+                                User u = new User(id, username, aboutMe, mainGoal, points, strike);
+
+                                followers.add(u);
+
+                                Log.d("jsonObject followers", followers.get(i).getUsername());
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } finally {
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        }
+
+                        friendsViewModel.setFollowersLiveData(followers);
 
                     } catch (Exception e) {
                         e.printStackTrace();
