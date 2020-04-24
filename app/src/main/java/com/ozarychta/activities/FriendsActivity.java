@@ -295,7 +295,7 @@ public class FriendsActivity extends BaseActivity {
         super.onStart();
         SharedPreferences sharedPref = getApplicationContext()
                 .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
+        Long userId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
         Log.d("USER_ID ", String.valueOf(userId));
     }

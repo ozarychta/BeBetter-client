@@ -22,16 +22,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ozarychta.enums.AccessType;
-import com.ozarychta.enums.ChallengeState;
-import com.ozarychta.model.Challenge;
-import com.ozarychta.model.ChallengeAdapter;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
-import com.ozarychta.enums.Active;
+import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
+import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.enums.ConfirmationType;
 import com.ozarychta.enums.RepeatPeriod;
+import com.ozarychta.model.Challenge;
+import com.ozarychta.model.ChallengeAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -257,7 +256,7 @@ public class MyChallengesActivity extends BaseActivity {
         super.onStart();
 //        SharedPreferences sharedPref = getApplicationContext()
 //                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-//        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
+//        Long userId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
 //        Log.d("USER_ID ", String.valueOf(userId));
     }

@@ -1,9 +1,5 @@
 package com.ozarychta.activities;
 
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,33 +15,34 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ozarychta.SignInClient;
-import com.ozarychta.enums.ChallengeState;
-import com.ozarychta.model.Challenge;
-import com.ozarychta.model.ChallengeAdapter;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
+import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
-import com.ozarychta.enums.Active;
 import com.ozarychta.enums.Category;
+import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.enums.ConfirmationType;
 import com.ozarychta.enums.RepeatPeriod;
+import com.ozarychta.model.Challenge;
+import com.ozarychta.model.ChallengeAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -308,7 +305,7 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         SharedPreferences sharedPref = getApplicationContext()
                 .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
+        Long userId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
         Log.d("USER_ID ", String.valueOf(userId));
     }

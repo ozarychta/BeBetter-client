@@ -118,12 +118,12 @@ public class LoginActivity extends AppCompatActivity {
                     try {
 
 
-                        Integer id = response.getInt("id");
+                        Long id = response.getLong("id");
                         String username = response.getString("username");
 
                         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putInt(getString(R.string.user_id_field), id);
+                        editor.putLong(getString(R.string.user_id_field), id);
                         editor.commit();
 
                         Toast.makeText(getApplicationContext(), "added user to server", Toast.LENGTH_LONG)

@@ -65,11 +65,12 @@ public class ProfileActivity extends BaseActivity{
             startActivityForResult(intent, REQUEST_CODE);
         });
 
-        userIdFromIntent = Long.valueOf(getIntent().getIntExtra("USER_ID", -1));
+//        userIdFromIntent = Long.valueOf(getIntent().getIntExtra("USER_ID", -1));
+        userIdFromIntent = getIntent().getLongExtra("USER_ID", -1);
 
         SharedPreferences sharedPref = getApplicationContext()
                 .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-        signedUserId = Long.valueOf(sharedPref.getInt(getString(R.string.user_id_field), -1));
+        signedUserId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
         if (userIdFromIntent.equals(signedUserId)){
             editBtn.setVisibility(View.VISIBLE);
