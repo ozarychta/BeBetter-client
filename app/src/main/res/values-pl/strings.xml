@@ -21,8 +21,8 @@
     <string name="active">W trakcie</string>
     <string name="sign_in_result_error">Error with user authentication. Please sign out and in again.</string>
     <string name="shared_pref_filename">BeBetterSharedPreferences</string>
-    <string name="user_id_field">userId</string>
-    <string name="sign_in_error">Sing in error</string>
+    <string name="user_id_field">USER_ID</string>
+    <string name="sign_in_error">Błąd logowania</string>
     <string name="no_results">Brak wyników dla tego wyszukiwania.</string>
     <string name="add_challenge">Dodaj Wyzwanie</string>
     <string name="title">Tytuł:</string>

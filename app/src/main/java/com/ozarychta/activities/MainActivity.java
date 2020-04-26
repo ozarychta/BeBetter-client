@@ -2,7 +2,6 @@ package com.ozarychta.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +22,8 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ozarychta.R;
@@ -128,6 +129,35 @@ public class MainActivity extends BaseActivity {
                 startLoginActivity();
                 finish();
                 return;
+            }
+
+            Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+            if (!task.isSuccessful()) {
+                startLoginActivity();
+                finish();
+                return;
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+                task.addOnCompleteListener(new OnCompleteListener<GoogleSignInAccount>() {
+                    @Override
+                    public void onComplete(Task<GoogleSignInAccount> task) {
+                        try {
+                            progressBar.setVisibility(View.GONE);
+                            GoogleSignInAccount signInAccount = task.getResult(ApiException.class);
+                        } catch (ApiException apiException) {
+                            // You can get from apiException.getStatusCode() the detailed error code
+                            // e.g. GoogleSignInStatusCodes.SIGN_IN_REQUIRED means user needs to take
+                            // explicit action to finish sign-in;
+                            // Please refer to GoogleSignInStatusCodes Javadoc for details
+                            Toast.makeText(getApplicationContext(), "Please sign in", Toast.LENGTH_LONG)
+                                    .show();
+                            startLoginActivity();
+                            finish();
+                            return;
+                        }
+                    }
+                });
+
             }
 
             Log.d("TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
@@ -303,10 +333,10 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        SharedPreferences sharedPref = getApplicationContext()
-                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-        Long userId = sharedPref.getLong(getString(R.string.user_id_field), -1);
-
-        Log.d("USER_ID ", String.valueOf(userId));
+//        SharedPreferences sharedPref = getApplicationContext()
+//                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+//        Long userId = (Long) sharedPref.getLong(getString(R.string.user_id_field), -1);
+//
+//        Log.d("USER_ID ", String.valueOf(userId));
     }
 }
