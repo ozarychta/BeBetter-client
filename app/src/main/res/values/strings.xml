@@ -54,4 +54,6 @@
     <string name="search_hint">Search…</string>
     <string name="highest_streak_acronym">HS</string>
     <string name="ranking_points_acronym">RP</string>
+    <string name="following">FOLLOWING</string>
+    <string name="follower">FOLLOWER</string>
 </resources>

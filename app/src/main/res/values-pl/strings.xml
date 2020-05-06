@@ -54,4 +54,6 @@
     <string name="search_hint">Szukaj…</string>
     <string name="highest_streak_acronym">NS</string>
     <string name="ranking_points_acronym">PR</string>
+    <string name="following">OBSERWOWANI</string>
+    <string name="follower">OBSERWATORZY</string>
 </resources>

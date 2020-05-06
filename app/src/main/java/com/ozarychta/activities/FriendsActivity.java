@@ -16,13 +16,14 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.ozarychta.FriendsViewModel;
 import com.ozarychta.FriendsViewPagerAdapter;
 import com.ozarychta.R;
@@ -51,8 +52,9 @@ public class FriendsActivity extends BaseActivity {
     private ArrayList<User> following;
     private ArrayList<User> followers;
 
-    private ViewPager2 viewPager;
+    private ViewPager viewPager;
     private FriendsViewPagerAdapter viewPagerAdapter;
+    private TabLayout tabLayout;
 
     private FriendsViewModel friendsViewModel;
 
@@ -74,9 +76,12 @@ public class FriendsActivity extends BaseActivity {
         sortBySpinner.setAdapter(new ArrayAdapter<SortType>(this, android.R.layout.simple_spinner_dropdown_item, SortType.values()));
         sortBySpinner.setSelection(0);
 
-        viewPagerAdapter = new FriendsViewPagerAdapter(this);
+        viewPagerAdapter = new FriendsViewPagerAdapter(getSupportFragmentManager(), this);
         viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(viewPagerAdapter);
+
+        tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
 
         friendsViewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
 
