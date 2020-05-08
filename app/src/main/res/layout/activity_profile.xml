@@ -54,7 +54,7 @@
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
                     android:layout_marginTop="4sp"
-                    android:layout_marginBottom="10sp"
+                    android:layout_marginBottom="6sp"
                     android:text="@string/username"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="16sp" />
@@ -80,7 +80,7 @@
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
                     android:layout_marginTop="4sp"
-                    android:layout_marginBottom="10sp"
+                    android:layout_marginBottom="6sp"
                     android:text="@string/about_me"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="16sp" />
@@ -105,7 +105,7 @@
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
                     android:layout_marginTop="4sp"
-                    android:layout_marginBottom="10sp"
+                    android:layout_marginBottom="6sp"
                     android:text="@string/main_goal"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="16sp" />
@@ -130,7 +130,7 @@
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
                     android:layout_marginTop="4sp"
-                    android:layout_marginBottom="10sp"
+                    android:layout_marginBottom="6sp"
                     android:text="@string/ranking_points"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="16sp" />
@@ -155,7 +155,7 @@
                     android:paddingTop="5sp"
                     android:paddingBottom="2sp"
                     android:layout_marginTop="4sp"
-                    android:layout_marginBottom="10sp"
+                    android:layout_marginBottom="6sp"
                     android:text="@string/highest_streak"
                     android:textColor="@color/secondaryDarkColor"
                     android:textSize="16sp" />
