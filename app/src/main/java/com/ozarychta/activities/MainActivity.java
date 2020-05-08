@@ -132,11 +132,11 @@ public class MainActivity extends BaseActivity {
             }
 
             Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-            if (!task.isSuccessful()) {
-                startLoginActivity();
-                finish();
-                return;
-            } else {
+//            if (!task.isSuccessful()) {
+//                startLoginActivity();
+//                finish();
+//                return;
+//            } else {
                 progressBar.setVisibility(View.VISIBLE);
                 task.addOnCompleteListener(new OnCompleteListener<GoogleSignInAccount>() {
                     @Override
@@ -158,7 +158,7 @@ public class MainActivity extends BaseActivity {
                     }
                 });
 
-            }
+//            }
 
             Log.d("TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
 
