@@ -56,4 +56,6 @@
     <string name="ranking_points_acronym">RP</string>
     <string name="following">FOLLOWING</string>
     <string name="follower">FOLLOWER</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
 </resources>

@@ -56,4 +56,6 @@
     <string name="ranking_points_acronym">PR</string>
     <string name="following">OBSERWOWANI</string>
     <string name="follower">OBSERWATORZY</string>
+    <string name="follow">Obserwuj</string>
+    <string name="unfollow">Nie obserwuj</string>
 </resources>

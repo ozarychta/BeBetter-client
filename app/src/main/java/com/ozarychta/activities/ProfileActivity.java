@@ -21,6 +21,7 @@ import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
 import com.ozarychta.model.User;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -43,6 +44,8 @@ public class ProfileActivity extends BaseActivity{
     private TextView highestStrikeText;
 
     private Button editBtn;
+    private Button followBtn;
+    private Button unfollowBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,14 @@ public class ProfileActivity extends BaseActivity{
             startActivityForResult(intent, REQUEST_CODE);
         });
 
+        followBtn = findViewById(R.id.followBtn);
+        followBtn.setOnClickListener(v -> followUser()
+        );
+
+        unfollowBtn = findViewById(R.id.unfollowBtn);
+        unfollowBtn.setOnClickListener(v ->  unfollowUser()
+        );
+
 //        userIdFromIntent = Long.valueOf(getIntent().getIntExtra("USER_ID", -1));
         userIdFromIntent = getIntent().getLongExtra("USER_ID", -1);
 
@@ -74,8 +85,12 @@ public class ProfileActivity extends BaseActivity{
 
         if (userIdFromIntent.equals(signedUserId)){
             editBtn.setVisibility(View.VISIBLE);
+            followBtn.setVisibility(View.GONE);
+            unfollowBtn.setVisibility(View.GONE);
         } else {
             editBtn.setVisibility(View.GONE);
+            followBtn.setVisibility(View.GONE);
+            unfollowBtn.setVisibility(View.GONE);
         }
 
         if (signedUserId == -1){
@@ -85,6 +100,132 @@ public class ProfileActivity extends BaseActivity{
         }
 
         silentSignInAndGetUserInfo();
+    }
+
+    private void followUser() {
+        //progressbar
+        silentSignInAndFollowUser();
+    }
+
+    private void unfollowUser() {
+        //progressbar
+        silentSignInAndUnfollowUser();
+    }
+
+    private void silentSignInAndFollowUser() {
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            postFollowUser(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> postFollowUser(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void silentSignInAndUnfollowUser() {
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            postUnfollowUser(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> postUnfollowUser(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void postFollowUser(String tokenIdFromResult) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                "https://be-better-server.herokuapp.com/follow?userId="+userIdFromIntent,
+                null,
+                response -> {
+                    try {
+                        JSONObject jsonObject = (JSONObject) response;
+
+                        Integer id = jsonObject.getInt("id");
+
+                        Log.d("", id+" followed user " + userIdFromIntent);
+
+                        Toast.makeText(getApplicationContext(), "followed user" + userIdFromIntent, Toast.LENGTH_LONG)
+                                .show();
+
+                        followBtn.setVisibility(View.GONE);
+                        unfollowBtn.setVisibility(View.VISIBLE);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("", "request response:failed message=" + e.getMessage());
+                    }
+                },
+                error -> {
+                    if (!!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    } else
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + tokenIdFromResult);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
+    }
+
+    private void postUnfollowUser(String tokenIdFromResult) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                "https://be-better-server.herokuapp.com/unfollow?userId="+userIdFromIntent,
+                null,
+                response -> {
+                    try {
+                        JSONObject jsonObject = (JSONObject) response;
+
+                        Integer id = jsonObject.getInt("id");
+
+                        Log.d("", id+" followed user " + userIdFromIntent);
+
+                        Toast.makeText(getApplicationContext(), "unfollowed user" + userIdFromIntent, Toast.LENGTH_LONG)
+                                .show();
+
+                        followBtn.setVisibility(View.VISIBLE);
+                        unfollowBtn.setVisibility(View.GONE);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("", "request response:failed message=" + e.getMessage());
+                    }
+                },
+                error -> {
+                    if (!!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    } else
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + tokenIdFromResult);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
     }
 
     private void silentSignInAndGetUserInfo() {
@@ -161,6 +302,14 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void updateUI() {
+        if(user.isFollowed() == true){
+            followBtn.setVisibility(View.GONE);
+            unfollowBtn.setVisibility(View.VISIBLE);
+        } else if(!signedUserId.equals(userIdFromIntent)){
+            followBtn.setVisibility(View.VISIBLE);
+            unfollowBtn.setVisibility(View.GONE);
+        }
+
         usernameText.setText(user.getUsername());
         aboutMeText.setText(user.getAboutMe());
         mainGoalText.setText(user.getMainGoal());
