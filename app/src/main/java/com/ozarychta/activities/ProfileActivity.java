@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,8 @@ public class ProfileActivity extends BaseActivity{
     private Button followBtn;
     private Button unfollowBtn;
 
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,9 @@ public class ProfileActivity extends BaseActivity{
         mainGoalText = findViewById(R.id.mainGoalTextView);
         rankingPointsText = findViewById(R.id.pointsTextView);
         highestStrikeText = findViewById(R.id.strikeTextView);
+
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         editBtn = findViewById(R.id.editBtn);
         editBtn.setOnClickListener(v -> {
@@ -103,16 +109,15 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void followUser() {
-        //progressbar
         silentSignInAndFollowUser();
     }
 
     private void unfollowUser() {
-        //progressbar
         silentSignInAndUnfollowUser();
     }
 
     private void silentSignInAndFollowUser() {
+        progressBar.setVisibility(View.VISIBLE);
         Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
         if (task.isSuccessful()) {
             // There's immediate result available.
@@ -125,6 +130,7 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void silentSignInAndUnfollowUser() {
+        progressBar.setVisibility(View.VISIBLE);
         Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
         if (task.isSuccessful()) {
             // There's immediate result available.
@@ -137,6 +143,7 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void postFollowUser(String tokenIdFromResult) {
+        progressBar.setVisibility(View.VISIBLE);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 "https://be-better-server.herokuapp.com/follow?userId="+userIdFromIntent,
@@ -160,6 +167,8 @@ public class ProfileActivity extends BaseActivity{
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.w("", "request response:failed message=" + e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {
@@ -169,6 +178,7 @@ public class ProfileActivity extends BaseActivity{
                     } else
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
+                    progressBar.setVisibility(View.GONE);
                 }
         ) {
             /** Passing some request headers* */
@@ -183,6 +193,7 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void postUnfollowUser(String tokenIdFromResult) {
+        progressBar.setVisibility(View.VISIBLE);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 "https://be-better-server.herokuapp.com/unfollow?userId="+userIdFromIntent,
@@ -206,6 +217,8 @@ public class ProfileActivity extends BaseActivity{
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.w("", "request response:failed message=" + e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {
@@ -215,6 +228,7 @@ public class ProfileActivity extends BaseActivity{
                     } else
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
+                    progressBar.setVisibility(View.GONE);
                 }
         ) {
             /** Passing some request headers* */
@@ -229,6 +243,7 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void silentSignInAndGetUserInfo() {
+        progressBar.setVisibility(View.VISIBLE);
         Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
         if (task.isSuccessful()) {
             // There's immediate result available.
@@ -241,6 +256,7 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void getUserInfo(String idToken) {
+        progressBar.setVisibility(View.VISIBLE);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 "https://be-better-server.herokuapp.com/users/" + userIdFromIntent,
@@ -264,7 +280,7 @@ public class ProfileActivity extends BaseActivity{
                         e.printStackTrace();
                         Log.w("", "request response:failed message=" + e.getMessage());
                     } finally {
-//                        progressBar.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {
@@ -275,7 +291,7 @@ public class ProfileActivity extends BaseActivity{
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }
-//                    progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
                 }
         ) {
             /** Passing some request headers* */
