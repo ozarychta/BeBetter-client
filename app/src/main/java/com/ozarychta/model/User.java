@@ -17,7 +17,19 @@ public class User implements Serializable {
 
     private Integer highestStrike;
 
+    private Boolean followed;
+
     public User() {
+    }
+
+    public User(Long id, String username, String aboutMe, String mainGoal, Integer rankingPoints, Integer highestStrike, Boolean followed) {
+        this.id = id;
+        this.username = username;
+        this.aboutMe = aboutMe;
+        this.mainGoal = mainGoal;
+        this.rankingPoints = rankingPoints;
+        this.highestStrike = highestStrike;
+        this.followed = followed;
     }
 
     public User(Long id, String username, String aboutMe, String mainGoal, Integer rankingPoints, Integer highestStrike) {
@@ -27,7 +39,9 @@ public class User implements Serializable {
         this.mainGoal = mainGoal;
         this.rankingPoints = rankingPoints;
         this.highestStrike = highestStrike;
+        this.followed = false;
     }
+
 
     public Long getId() {
         return id;
@@ -77,6 +91,14 @@ public class User implements Serializable {
         this.highestStrike = highestStrike;
     }
 
+    public Boolean isFollowed() {
+        return followed;
+    }
+
+    public void setFollowed(Boolean followed) {
+        this.followed = followed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -87,11 +109,12 @@ public class User implements Serializable {
                 Objects.equals(aboutMe, user.aboutMe) &&
                 Objects.equals(mainGoal, user.mainGoal) &&
                 Objects.equals(rankingPoints, user.rankingPoints) &&
-                Objects.equals(highestStrike, user.highestStrike);
+                Objects.equals(highestStrike, user.highestStrike) &&
+                Objects.equals(followed, user.followed);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, aboutMe, mainGoal, rankingPoints, highestStrike);
+        return Objects.hash(id, username, aboutMe, mainGoal, rankingPoints, highestStrike, followed);
     }
 }

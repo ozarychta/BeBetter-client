@@ -114,8 +114,9 @@ public class ProfileActivity extends BaseActivity{
                         String mainGoal = jsonObject.getString("mainGoal");
                         Integer points = jsonObject.getInt("rankingPoints");
                         Integer strike = jsonObject.getInt("highestStreak");
+                        Boolean followed = jsonObject.getBoolean("followed");
 
-                        user = new User(id, username, aboutMe, mainGoal, points, strike);
+                        user = new User(id, username, aboutMe, mainGoal, points, strike, followed);
                         updateUI();
 
                     } catch (Exception e) {
