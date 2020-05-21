@@ -100,7 +100,7 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="6sp"/>
+                android:paddingBottom="6sp"/>
 
         </androidx.viewpager.widget.ViewPager>
 

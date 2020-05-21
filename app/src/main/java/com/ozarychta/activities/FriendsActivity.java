@@ -89,7 +89,7 @@ public class FriendsActivity extends BaseActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                startAddFriendActivity();
+                startUsersActivity();
             }
         });
 
@@ -120,10 +120,10 @@ public class FriendsActivity extends BaseActivity {
         silentSignInAndGetFriends();
     }
 
-//    private void startAddFriendActivity() {
-//        Intent i = new Intent(this, AddChallengeActivity.class);
-//        startActivity(i);
-//    }
+    private void startUsersActivity() {
+        Intent i = new Intent(this, UsersActivity.class);
+        startActivity(i);
+    }
 
     private void startLoginActivity() {
         Intent i = new Intent(this, LoginActivity.class);

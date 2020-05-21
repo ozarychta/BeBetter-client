@@ -58,4 +58,5 @@
     <string name="follower">OBSERWATORZY</string>
     <string name="follow">Obserwuj</string>
     <string name="unfollow">Nie obserwuj</string>
+    <string name="find_users">Znajdź użytkowników</string>
 </resources>
