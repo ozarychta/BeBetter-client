@@ -12,15 +12,15 @@
     app:strokeColor="@color/secondaryColor"
     app:cardElevation="2sp"
     app:cardUseCompatPadding="false"
-    android:layout_marginVertical="22dp"
-    android:layout_marginHorizontal="20dp"
-    app:strokeWidth="1dp">
+    android:layout_marginVertical="22sp"
+    android:layout_marginHorizontal="20sp"
+    app:strokeWidth="1sp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="12sp"
         android:orientation="vertical">
 
         <TextView
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="5sp"
             android:text=""
             android:textColor="@color/primaryDarkColor"
             android:textSize="18sp" />
