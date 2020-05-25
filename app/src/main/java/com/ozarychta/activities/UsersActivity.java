@@ -36,6 +36,7 @@ import java.util.Map;
 public class UsersActivity extends BaseActivity {
 
     private ConnectivityManager connectivityManager;
+    private Long signedUserId;
 
     private EditText searchEdit;
     private Button searchBtn;
@@ -91,6 +92,18 @@ public class UsersActivity extends BaseActivity {
             finish();
             return;
         }
+
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+        signedUserId = sharedPref.getLong(getString(R.string.user_id_field), -1);
+
+        if (signedUserId == -1){
+            Toast.makeText(getApplicationContext(), "Account error. Please sign in.", Toast.LENGTH_LONG)
+                    .show();
+            startLoginActivity();
+            finish();
+            return;
+        }
     }
 
     private void silentSignInAndGetUsers() {
@@ -112,6 +125,16 @@ public class UsersActivity extends BaseActivity {
     private void getUsersFromServer(String token) {
         progressBar.setVisibility(View.VISIBLE);
         users.clear();
+
+        String search = searchEdit.getText().toString();
+
+        if (search.isEmpty()) {
+            Toast.makeText(getApplicationContext(), getString(R.string.empty_search), Toast.LENGTH_LONG)
+                    .show();
+            progressBar.setVisibility(View.GONE);
+            return;
+        }
+
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://be-better-server.herokuapp.com/users?" + getUrlParameters(),
@@ -123,6 +146,7 @@ public class UsersActivity extends BaseActivity {
                                     .show();
                             progressBar.setVisibility(View.GONE);
                         }
+                        Log.d("response", response.toString(2));
 
                         for (int i = 0; i < response.length(); i++) {
                             try {
@@ -137,7 +161,9 @@ public class UsersActivity extends BaseActivity {
 
                                 User u = new User(id, username, aboutMe, mainGoal, points, strike);
 
-                                users.add(u);
+                                if(!signedUserId.equals(u.getId())){
+                                    users.add(u);
+                                }
                                 adapter.notifyDataSetChanged();
 
                                 Log.d("jsonObject user", users.get(i).getUsername());
@@ -178,12 +204,12 @@ public class UsersActivity extends BaseActivity {
 
     private String getUrlParameters() {
         String url = "";
-//        url += "&sortBy=" + sortBySpinner.getSelectedItem();
-//
-//        String search = searchEdit.getText().toString();
-//        if(!search.isEmpty()){
-//            url += "&search=" + search;
-//        }
+
+        String search = searchEdit.getText().toString();
+        if(!search.isEmpty()){
+            url += "&search=" + search;
+        }
+
         return url;
     }
 

@@ -43,7 +43,7 @@ public class FriendsActivity extends BaseActivity {
 
     private ConnectivityManager connectivityManager;
 
-    private Spinner sortBySpinner;
+    private Spinner sortTypeSpinner;
     private EditText searchEdit;
 
     private Button searchBtn;
@@ -70,11 +70,11 @@ public class FriendsActivity extends BaseActivity {
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
-        sortBySpinner = findViewById(R.id.sortBySpinner);
+        sortTypeSpinner = findViewById(R.id.sortBySpinner);
         searchEdit = findViewById(R.id.searchEdit);
 
-        sortBySpinner.setAdapter(new ArrayAdapter<SortType>(this, android.R.layout.simple_spinner_dropdown_item, SortType.values()));
-        sortBySpinner.setSelection(0);
+        sortTypeSpinner.setAdapter(new ArrayAdapter<SortType>(this, android.R.layout.simple_spinner_dropdown_item, SortType.values()));
+        sortTypeSpinner.setSelection(0);
 
         viewPagerAdapter = new FriendsViewPagerAdapter(getSupportFragmentManager(), this);
         viewPager = findViewById(R.id.view_pager);
@@ -226,8 +226,8 @@ public class FriendsActivity extends BaseActivity {
                 response -> {
                     try {
                         if (response.length()==0){
-                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
-                                    .show();
+//                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
+//                                    .show();
                             progressBar.setVisibility(View.GONE);
                         }
 
@@ -286,12 +286,13 @@ public class FriendsActivity extends BaseActivity {
 
     private String getUrlParameters() {
         String url = "";
-//        url += "&sortBy=" + sortBySpinner.getSelectedItem();
-//
-//        String search = searchEdit.getText().toString();
-//        if(!search.isEmpty()){
-//            url += "&search=" + search;
-//        }
+
+        String search = searchEdit.getText().toString();
+        if(!search.isEmpty()){
+            url += "&search=" + search;
+        }
+        url += "&sortType=" + sortTypeSpinner.getSelectedItem();
+
         return url;
     }
 
