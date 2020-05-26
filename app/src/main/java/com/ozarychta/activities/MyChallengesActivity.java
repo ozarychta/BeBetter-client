@@ -2,7 +2,6 @@ package com.ozarychta.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,9 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
+import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.ChallengeState;
@@ -87,6 +89,8 @@ public class MyChallengesActivity extends BaseActivity {
         repeatSpinner.setAdapter(new ArrayAdapter<RepeatPeriod>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
         repeatSpinner.setSelection(0);
 
+//        List<ChallengeState> states = Arrays.asList(ChallengeState.values());
+//        states.remove(3);
         stateSpinner.setAdapter(new ArrayAdapter<ChallengeState>(this, android.R.layout.simple_spinner_dropdown_item, ChallengeState.values()));
         stateSpinner.setSelection(0);
 
@@ -99,11 +103,7 @@ public class MyChallengesActivity extends BaseActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 startAddChallengeActivity();
-
-//                Toast.makeText(getApplicationContext(), "fab clicked", Toast.LENGTH_LONG)
-//                        .show();
             }
         });
 
@@ -114,31 +114,47 @@ public class MyChallengesActivity extends BaseActivity {
         adapter = new ChallengeAdapter(challenges);
         recyclerView.setAdapter(adapter);
 
-        SharedPreferences sharedPref = getApplicationContext()
-                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-        int userId = sharedPref.getInt(getString(R.string.user_id_field), -1);
-
-        searchBtn.setOnClickListener(v -> getMyChallengesFromServer(userId));
+        searchBtn.setOnClickListener(v -> silentSignInAndGetChallenges());
 
         connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
-
-//            getMyChallengesFromServer(userId);
-
-        }
-        else {
+        if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
         }
+
     }
 
-    private void getMyChallengesFromServer(Integer userId) {
+    private void startAddChallengeActivity() {
+        Intent i = new Intent(this, AddChallengeActivity.class);
+        startActivity(i);
+    }
+
+    private void startLoginActivity() {
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+    }
+
+    private void silentSignInAndGetChallenges() {
+        progressBar.setVisibility(View.VISIBLE);
+
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            getChallengesFromServer(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> getChallengesFromServer(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void getChallengesFromServer(String token) {
         progressBar.setVisibility(View.VISIBLE);
         challenges.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/challenges" + "?creatorId=" + userId + getUrlParameters(),
+                "https://be-better-server.herokuapp.com/challenges?" + getUrlParameters(),
                 null,
                 response -> {
                     try {
@@ -163,6 +179,7 @@ public class MyChallengesActivity extends BaseActivity {
                                 Date end = dateFormat.parse(jsonObject.getString("endDate"));
                                 ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                                 ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
+                                Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
 
                                 Integer goal = 0;
                                 if(confirmation == ConfirmationType.TIMER_TASK){
@@ -187,6 +204,7 @@ public class MyChallengesActivity extends BaseActivity {
                                 c.setMoreBetter(isMoreBetter);
                                 c.setStartDate(start);
                                 c.setEndDate(end);
+                                c.setUserParticipant(isUserParticipant);
 
                                 challenges.add(c);
                                 adapter.notifyDataSetChanged();
@@ -213,7 +231,6 @@ public class MyChallengesActivity extends BaseActivity {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }
-
                     progressBar.setVisibility(View.GONE);
                 }
         ) {
@@ -221,7 +238,7 @@ public class MyChallengesActivity extends BaseActivity {
             @Override
             public Map getHeaders() {
                 HashMap headers = new HashMap();
-                headers.put("authorization", "Bearer ");
+                headers.put("authorization", "Bearer " + token);
                 return headers;
             }
         };
@@ -230,6 +247,8 @@ public class MyChallengesActivity extends BaseActivity {
 
     private String getUrlParameters() {
         String url = "";
+        url += "&type=" + AccessType.PRIVATE;
+
         if(categorySpinner.getSelectedItem() != Category.ALL){
             url += "&category=" + categorySpinner.getSelectedItem();
         }
@@ -247,22 +266,6 @@ public class MyChallengesActivity extends BaseActivity {
         if(!search.isEmpty()){
             url += "&search=" + search;
         }
-        Log.d("request", url);
         return url;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        SharedPreferences sharedPref = getApplicationContext()
-//                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-//        Long userId = sharedPref.getLong(getString(R.string.user_id_field), -1);
-
-//        Log.d("USER_ID ", String.valueOf(userId));
-    }
-
-    private void startAddChallengeActivity() {
-        Intent i = new Intent(this, AddChallengeActivity.class);
-        startActivity(i);
     }
 }
