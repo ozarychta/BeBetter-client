@@ -356,9 +356,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10sp"
-                    android:layout_marginTop="2sp"
-                    android:layout_marginBottom="10sp"
+                    android:layout_marginVertical="4sp"
                     android:text="@string/statistics"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    app:backgroundTint="@color/secondaryColor"
+                    app:cornerRadius="8sp"
+                    app:strokeColor="@color/secondaryDarkColor"
+                    app:strokeWidth="2sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/showCommentsBtn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10sp"
+                    android:layout_marginVertical="4sp"
+                    android:text="@string/show_comments"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    app:backgroundTint="@color/secondaryColor"
+                    app:cornerRadius="8sp"
+                    app:strokeColor="@color/secondaryDarkColor"
+                    app:strokeWidth="2sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/hideCommentsBtn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10sp"
+                    android:layout_marginVertical="4sp"
+                    android:text="@string/hide_comments"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     app:backgroundTint="@color/secondaryColor"
@@ -368,43 +397,54 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/comments_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4sp"
-            android:gravity="center"
-            android:paddingHorizontal="4sp"
-            android:paddingTop="5sp"
-            android:paddingBottom="2sp"
-            android:text="hello"
-            android:textColor="@color/secondaryDarkColor"
-            android:textSize="18sp" />
+            android:layout_marginHorizontal="10sp"
+            android:scrollbars="vertical" />
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/addCommentLinearLayout"
             android:layout_width="match_parent"
+            android:weightSum="4"
+            android:layout_marginTop="2sp"
+            android:layout_marginBottom="8sp"
+            android:layout_marginHorizontal="5sp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4sp"
-            android:gravity="center"
-            android:paddingHorizontal="4sp"
-            android:paddingTop="5sp"
-            android:paddingBottom="2sp"
-            android:text="hello"
-            android:textColor="@color/secondaryDarkColor"
-            android:textSize="18sp" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="100sp"
-            android:layout_height="100sp"
-            android:layout_marginHorizontal="4sp"
-            android:gravity="center"
-            android:paddingHorizontal="4sp"
-            android:paddingTop="5sp"
-            android:paddingBottom="2sp"
-            android:text="hello"
-            android:background="@color/black"
-            android:textColor="@color/secondaryDarkColor"
-            android:textSize="18sp" />
+            <EditText
+                android:id="@+id/commentEdit"
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4sp"
+                android:layout_marginVertical="6sp"
+                android:layout_weight="3"
+                android:inputType="textMultiLine"
+                android:hint="@string/comment_hint"
+                android:minLines="2"
+                android:textColor="@color/darkGrey"
+                android:textSize="15sp"/>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/addCommentBtn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="4sp"
+                android:layout_marginVertical="2sp"
+                android:text="@string/add"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:layout_gravity="bottom"
+                app:backgroundTint="@color/secondaryColor"
+                app:cornerRadius="8sp"
+                app:strokeColor="@color/secondaryDarkColor"
+                app:strokeWidth="2sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

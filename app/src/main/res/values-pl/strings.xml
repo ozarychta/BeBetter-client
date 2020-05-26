@@ -60,4 +60,7 @@
     <string name="follow">Obserwuj</string>
     <string name="unfollow">Nie obserwuj</string>
     <string name="find_users">Znajdź użytkowników</string>
+    <string name="show_comments">Pokaż komentarze</string>
+    <string name="hide_comments">Ukryj komentarze</string>
+    <string name="comment_hint">Skomentuj...</string>
 </resources>

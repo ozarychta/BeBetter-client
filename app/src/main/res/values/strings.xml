@@ -60,4 +60,7 @@
     <string name="follow">Follow</string>
     <string name="unfollow">Unfollow</string>
     <string name="find_users">Find users</string>
+    <string name="show_comments">Show comments</string>
+    <string name="hide_comments">Hide comments</string>
+    <string name="comment_hint">Add your comment...</string>
 </resources>
