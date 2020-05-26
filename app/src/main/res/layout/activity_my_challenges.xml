@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginTop="5sp"
+        android:layout_marginHorizontal="4sp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <com.google.android.material.card.MaterialCardView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="2sp"
+                app:cornerRadius="2sp"
+                app:strokeColor="@color/secondaryColor"
+                app:cardElevation="2sp"
+                app:cardUseCompatPadding="false"
+                android:layout_marginVertical="6sp"
+                android:layout_marginHorizontal="4sp"
+                app:strokeWidth="1sp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/categoryTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4sp"
+                        android:paddingHorizontal="4sp"
+                        android:paddingVertical="0sp"
+                        android:textColor="@color/secondaryDarkColor"
+                        android:text="@string/category"
+                        android:gravity="center"
+                        android:textSize="16sp"/>
+
+                    <Spinner
+                        android:id="@+id/categorySpinner"
+                        style="@android:style/Widget.Material.Light.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dropdown"
+                        android:paddingRight="22sp"
+                        android:paddingLeft="2sp"
+                        android:paddingVertical="0sp"
+                        android:layout_marginHorizontal="0sp"
+                        android:textColor="@color/darkGrey"
+                        android:textAlignment="textEnd"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="2sp"
+                app:cornerRadius="2sp"
+                app:strokeColor="@color/secondaryColor"
+                app:cardElevation="2sp"
+                app:cardUseCompatPadding="false"
+                android:layout_marginVertical="6sp"
+                android:layout_marginHorizontal="4sp"
+                app:strokeWidth="1sp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/repeatTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4sp"
+                        android:paddingHorizontal="4sp"
+                        android:paddingVertical="0sp"
+                        android:text="@string/repeat_period"
+                        android:gravity="center"
+                        android:textColor="@color/secondaryDarkColor"
+                        android:textSize="16sp"/>
+
+                    <Spinner
+                        android:id="@+id/repeatSpinner"
+                        style="@android:style/Widget.Material"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dropdown"
+                        android:paddingRight="22sp"
+                        android:paddingLeft="2sp"
+                        android:paddingVertical="0sp"
+                        android:layout_marginHorizontal="0sp"
+                        android:textColor="@color/darkGrey"
+                        android:textAlignment="textEnd"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="2sp"
+                app:cornerRadius="2sp"
+                app:strokeColor="@color/secondaryColor"
+                app:cardElevation="2sp"
+                app:cardUseCompatPadding="false"
+                android:layout_marginVertical="6sp"
+                android:layout_marginHorizontal="4sp"
+                app:strokeWidth="1sp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/activeTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4sp"
+                        android:paddingHorizontal="4sp"
+                        android:paddingVertical="0sp"
+                        android:textColor="@color/secondaryDarkColor"
+                        android:text="@string/start_time"
+                        android:gravity="center"
+                        android:textSize="16sp"/>
+
+                    <Spinner
+                        android:id="@+id/activeSpinner"
+                        style="@android:style/Widget.Material.Light.Spinner.Underlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:spinnerMode="dropdown"
+                        android:paddingRight="22sp"
+                        android:paddingLeft="2sp"
+                        android:paddingVertical="0sp"
+                        android:layout_marginHorizontal="0sp"
+                        android:textColor="@color/darkGrey"
+                        android:textAlignment="textEnd"
+                        />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="2sp"
+                app:cornerRadius="2sp"
+                app:strokeColor="@color/secondaryColor"
+                app:cardElevation="2sp"
+                app:cardUseCompatPadding="false"
+                android:layout_marginVertical="6sp"
+                android:layout_marginHorizontal="4sp"
+                app:strokeWidth="1sp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/cityTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4sp"
+                        android:layout_marginVertical="2sp"
+                        android:paddingHorizontal="4sp"
+                        android:paddingVertical="0sp"
+                        android:textColor="@color/secondaryDarkColor"
+                        android:text="@string/city"
+                        android:gravity="center"
+                        android:textSize="16sp"/>
+
+                    <EditText
+                        android:id="@+id/cityEdit"
+                        android:layout_marginVertical="3sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5sp"
+                        android:layout_marginRight="5sp"
+                        android:textColor="@color/darkGrey"
+                        android:textSize="16sp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <EditText
+        android:id="@+id/searchEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        android:layout_marginRight="5sp"
+        android:layout_marginTop="2sp"
+        android:gravity="center"
+        android:hint="Search..."
+        android:textColor="@android:color/black"
+        android:textSize="16sp"/>
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:id="@+id/searchBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="2sp"
+        android:layout_marginHorizontal="10sp"
+        android:text="@string/search"
+        app:strokeColor="@color/secondaryDarkColor"
+        app:strokeWidth="2sp"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:backgroundTint="@color/secondaryColor"
+        app:cornerRadius="8sp"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="1sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="2sp">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6sp"/>
+
+        </androidx.viewpager.widget.ViewPager>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="32sp"
+            android:src="@drawable/ic_add_white_56dp"
+            app:backgroundTint="@color/secondaryColor"
+            app:fabSize="normal" />
+    </FrameLayout>
+
+</LinearLayout>

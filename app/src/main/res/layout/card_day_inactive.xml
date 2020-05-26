@@ -14,7 +14,7 @@
     app:cardBackgroundColor="@color/lightGrey"
     app:cardUseCompatPadding="false"
     android:layout_marginVertical="10sp"
-    android:layout_marginHorizontal="10sp"
+    android:layout_marginHorizontal="8sp"
     app:strokeWidth="1sp">
 
     <LinearLayout
