@@ -23,6 +23,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.ozarychta.R;
@@ -99,8 +100,9 @@ public class ChallengeActivity extends BaseActivity {
 
     private LinearLayout commentsLinearLayout;
     private ProgressBar progressBar;
+    private ProgressBar addCommentProgressBar;
 
-    private Button addCommentButton;
+    private Button addCommentBtn;
     private EditText commentEdit;
 
     private ScrollView scrollView;
@@ -144,13 +146,15 @@ public class ChallengeActivity extends BaseActivity {
         statisticsBtn = findViewById(R.id.statisticsBtn);
         showCommentsBtn = findViewById(R.id.showCommentsBtn);
         hideCommentsBtn = findViewById(R.id.hideCommentsBtn);
-        addCommentButton = findViewById(R.id.addCommentBtn);
+        addCommentBtn = findViewById(R.id.addCommentBtn);
 
         commentsLinearLayout = findViewById(R.id.commentsLayout);
         scrollView = findViewById(R.id.scrollView);
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
+        addCommentProgressBar = findViewById(R.id.addCommentProgressBar);
+        addCommentProgressBar.setVisibility(View.GONE);
 
         daysLabel = findViewById(R.id.daysLabel);
         daysLayout = findViewById(R.id.daysLinearLayout);
@@ -202,12 +206,16 @@ public class ChallengeActivity extends BaseActivity {
         });
 
         commentEdit = findViewById(R.id.commentEdit);
-
-        showCommentsBtn.setVisibility(View.VISIBLE);
         hideCommentsBtn.setVisibility(View.GONE);
         commentsLinearLayout.setVisibility(View.GONE);
 
-        if(challenge.getAccessType() == AccessType.PUBLIC && challenge.getUserParticipant()==false){
+        if(challenge.getAccessType() == AccessType.PUBLIC && challenge.isUserParticipant() == true){
+            showCommentsBtn.setVisibility(View.VISIBLE);
+        } else {
+            showCommentsBtn.setVisibility(View.GONE);
+        }
+
+        if(challenge.isUserParticipant() == false){
             daysLabel.setVisibility(View.GONE);
             daysLayout.setVisibility(View.GONE);
             statisticsBtn.setVisibility(View.GONE);
@@ -224,7 +232,7 @@ public class ChallengeActivity extends BaseActivity {
         joinBtn.setOnClickListener(v -> silentSignInAndJoinChallenge());
         showCommentsBtn.setOnClickListener(v -> silentSignInAndShowComments());
         hideCommentsBtn.setOnClickListener(v -> hideComments());
-        addCommentButton.setOnClickListener(v -> silentSignInAndSaveComment());
+        addCommentBtn.setOnClickListener(v -> silentSignInAndAddComment());
     }
 
     private void silentSignInAndShowComments() {
@@ -240,20 +248,80 @@ public class ChallengeActivity extends BaseActivity {
         }
     }
 
-    private void silentSignInAndSaveComment() {
+    private void silentSignInAndAddComment() {
+        addCommentProgressBar.setVisibility(View.VISIBLE);
         Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
         if (task.isSuccessful()) {
             // There's immediate result available.
-            saveComment(task.getResult().getIdToken());
+            addCommentToServer(task.getResult().getIdToken());
         } else {
             task.addOnCompleteListener(
                     this,
-                    task1 -> saveComment(SignInClient.getTokenIdFromResult(task1)));
+                    task1 -> addCommentToServer(SignInClient.getTokenIdFromResult(task1)));
         }
     }
 
-    private void saveComment(String token) {
+    private void addCommentToServer(String token) {
+        String comment = commentEdit.getText().toString();
 
+        if (Strings.isEmptyOrWhitespace(comment)) {
+            Toast.makeText(getApplicationContext(), getString(R.string.empty_fields_error), Toast.LENGTH_LONG)
+                    .show();
+            addCommentProgressBar.setVisibility(View.GONE);
+            return;
+        }
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("text", comment);
+
+        JSONObject jsonRequestBody = new JSONObject(requestBody);
+        Log.d("request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/comments",
+                jsonRequestBody,
+                response -> {
+                    try {
+                        JSONObject jsonObject = (JSONObject) response;
+
+                        Integer id = jsonObject.getInt("id");
+
+                        Toast.makeText(getApplicationContext(), R.string.added_comment, Toast.LENGTH_LONG)
+                                .show();
+
+                        showComments(token);
+                        commentEdit.setText("");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("", "request response:failed message=" + e.getMessage());
+                    } finally {
+                        addCommentProgressBar.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                    addCommentProgressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
     }
 
     private void hideComments() {
@@ -279,7 +347,6 @@ public class ChallengeActivity extends BaseActivity {
                         if (response.length()==0){
                             Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
                                     .show();
-                            progressBar.setVisibility(View.GONE);
                         }
 
                         for (int i = 0; i < response.length(); i++) {
@@ -306,23 +373,24 @@ public class ChallengeActivity extends BaseActivity {
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                            } finally {
-                                progressBar.setVisibility(View.GONE);
-                                commentsLinearLayout.setVisibility(View.VISIBLE);
-                                showCommentsBtn.setVisibility(View.GONE);
-                                hideCommentsBtn.setVisibility(View.VISIBLE);
-
-                                scrollView.post(new Runnable() {
-                                    public void run() {
-                                        scrollView.fullScroll(scrollView.FOCUS_DOWN);
-                                    }
-                                });
                             }
                         }
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.w("", "request response:failed message=" + e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
+                        commentsLinearLayout.setVisibility(View.VISIBLE);
+                        showCommentsBtn.setVisibility(View.GONE);
+                        hideCommentsBtn.setVisibility(View.VISIBLE);
+                        addCommentProgressBar.setVisibility(View.GONE);
+
+                        scrollView.post(new Runnable() {
+                            public void run() {
+                                scrollView.fullScroll(scrollView.FOCUS_DOWN);
+                            }
+                        });
                     }
                 },
                 error -> {
@@ -555,6 +623,7 @@ public class ChallengeActivity extends BaseActivity {
 
                         daysLabel.setVisibility(View.VISIBLE);
                         statisticsBtn.setVisibility(View.VISIBLE);
+                        showCommentsBtn.setVisibility(View.VISIBLE);
 
                         joinBtn.setVisibility(View.GONE);
 

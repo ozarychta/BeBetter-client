@@ -174,7 +174,7 @@ public class Challenge implements Serializable {
         this.goal = goal;
     }
 
-    public Boolean getUserParticipant() {
+    public Boolean isUserParticipant() {
         return isUserParticipant;
     }
 

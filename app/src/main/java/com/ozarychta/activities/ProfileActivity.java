@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.Task;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
@@ -327,8 +328,8 @@ public class ProfileActivity extends BaseActivity{
         }
 
         usernameText.setText(user.getUsername());
-        aboutMeText.setText(user.getAboutMe());
-        mainGoalText.setText(user.getMainGoal());
+        aboutMeText.setText(Strings.isEmptyOrWhitespace(user.getAboutMe()) ? "_" : user.getAboutMe());
+        mainGoalText.setText(Strings.isEmptyOrWhitespace(user.getMainGoal()) ? "_" : user.getMainGoal());
         rankingPointsText.setText(String.valueOf(user.getRankingPoints()));
         highestStrikeText.setText(String.valueOf(user.getHighestStrike()));
     }

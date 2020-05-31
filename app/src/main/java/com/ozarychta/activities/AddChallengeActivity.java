@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.Task;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
@@ -168,7 +169,7 @@ public class AddChallengeActivity extends BaseActivity {
         String desc = descEdit.getText().toString();
         String city = cityEdit.getText().toString();
 
-        if (title.isEmpty() || desc.isEmpty() || city.isEmpty()) {
+        if (Strings.isEmptyOrWhitespace(title) || Strings.isEmptyOrWhitespace(desc) || Strings.isEmptyOrWhitespace(city)) {
             Toast.makeText(getApplicationContext(), getString(R.string.empty_fields_error), Toast.LENGTH_LONG)
                     .show();
             progressBar.setVisibility(View.GONE);

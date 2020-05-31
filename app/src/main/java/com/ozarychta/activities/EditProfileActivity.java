@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.Task;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
@@ -86,7 +87,7 @@ public class EditProfileActivity extends BaseActivity{
         String aboutMe = aboutMeEdit.getText().toString();
         String mainGoal = mainGoalEdit.getText().toString();
 
-        if (username.isEmpty()) {
+        if (Strings.isEmptyOrWhitespace(username)) {
             Toast.makeText(getApplicationContext(), getString(R.string.empty_username), Toast.LENGTH_LONG)
                     .show();
             progressBar.setVisibility(View.GONE);

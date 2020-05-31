@@ -418,6 +418,13 @@
                 android:layout_marginHorizontal="10sp"
                 android:scrollbars="vertical" />
 
+            <ProgressBar
+                android:id="@+id/addCommentProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="1sp" />
+
             <LinearLayout
                 android:id="@+id/addCommentLinearLayout"
                 android:layout_width="match_parent"

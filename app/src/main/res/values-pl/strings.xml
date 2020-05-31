@@ -63,4 +63,5 @@
     <string name="show_comments">Pokaż komentarze</string>
     <string name="hide_comments">Ukryj komentarze</string>
     <string name="comment_hint">Skomentuj...</string>
+    <string name="added_comment">Komentarz został dodany</string>
 </resources>
