@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -397,53 +398,67 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/comments_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10sp"
-            android:scrollbars="vertical" />
-
         <LinearLayout
-            android:id="@+id/addCommentLinearLayout"
+            android:id="@+id/commentsLayout"
             android:layout_width="match_parent"
-            android:weightSum="4"
-            android:layout_marginTop="2sp"
-            android:layout_marginBottom="8sp"
-            android:layout_marginHorizontal="5sp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/commentEdit"
-                android:layout_width="0sp"
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="4sp"
-                android:layout_marginVertical="6sp"
-                android:layout_weight="3"
-                android:inputType="textMultiLine"
-                android:hint="@string/comment_hint"
-                android:minLines="2"
-                android:textColor="@color/darkGrey"
-                android:textSize="15sp"/>
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="1sp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/addCommentBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="0sp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentsRecyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginHorizontal="4sp"
-                android:layout_marginVertical="2sp"
-                android:text="@string/add"
-                android:textColor="@color/white"
-                android:textSize="15sp"
-                android:layout_gravity="bottom"
-                app:backgroundTint="@color/secondaryColor"
-                app:cornerRadius="8sp"
-                app:strokeColor="@color/secondaryDarkColor"
-                app:strokeWidth="2sp" />
+                android:layout_marginHorizontal="10sp"
+                android:scrollbars="vertical" />
 
+            <LinearLayout
+                android:id="@+id/addCommentLinearLayout"
+                android:layout_width="match_parent"
+                android:weightSum="4"
+                android:layout_marginTop="2sp"
+                android:layout_marginBottom="8sp"
+                android:layout_marginHorizontal="5sp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/commentEdit"
+                    android:layout_width="0sp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4sp"
+                    android:layout_marginVertical="6sp"
+                    android:layout_weight="3"
+                    android:inputType="textMultiLine"
+                    android:hint="@string/comment_hint"
+                    android:minLines="2"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="15sp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/addCommentBtn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="0sp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="4sp"
+                    android:layout_marginVertical="2sp"
+                    android:text="@string/add"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:layout_gravity="bottom"
+                    app:backgroundTint="@color/secondaryColor"
+                    app:cornerRadius="8sp"
+                    app:strokeColor="@color/secondaryDarkColor"
+                    app:strokeWidth="2sp" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

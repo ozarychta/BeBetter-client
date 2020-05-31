@@ -7,7 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -28,7 +31,8 @@ import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.model.Challenge;
-import com.ozarychta.model.ChallengeAdapter;
+import com.ozarychta.model.Comment;
+import com.ozarychta.model.CommentAdapter;
 import com.ozarychta.model.Day;
 import com.ozarychta.model.DayAdapter;
 
@@ -73,6 +77,8 @@ public class ChallengeActivity extends BaseActivity {
 
     private Button joinBtn;
     private Button statisticsBtn;
+    private Button showCommentsBtn;
+    private Button hideCommentsBtn;
 
     private TextView daysLabel;
     private TextView notStartedYetLabel;
@@ -81,10 +87,23 @@ public class ChallengeActivity extends BaseActivity {
     private TextView todayDate;
     private ToggleButton todayToggle;
 
-    private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private RecyclerView recyclerView;
+    private RecyclerView.Adapter daysAdapter;
+    private RecyclerView.LayoutManager daysLayoutManager;
+    private RecyclerView daysRecyclerView;
     private ArrayList<Day> pastDays;
+
+    private RecyclerView.Adapter commentsAdapter;
+    private RecyclerView.LayoutManager commentsLayoutManager;
+    private RecyclerView commentsRecyclerView;
+    private ArrayList<Comment> comments;
+
+    private LinearLayout commentsLinearLayout;
+    private ProgressBar progressBar;
+
+    private Button addCommentButton;
+    private EditText commentEdit;
+
+    private ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,19 +142,37 @@ public class ChallengeActivity extends BaseActivity {
 
         joinBtn = findViewById(R.id.joinBtn);
         statisticsBtn = findViewById(R.id.statisticsBtn);
+        showCommentsBtn = findViewById(R.id.showCommentsBtn);
+        hideCommentsBtn = findViewById(R.id.hideCommentsBtn);
+        addCommentButton = findViewById(R.id.addCommentBtn);
+
+        commentsLinearLayout = findViewById(R.id.commentsLayout);
+        scrollView = findViewById(R.id.scrollView);
+
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         daysLabel = findViewById(R.id.daysLabel);
         daysLayout = findViewById(R.id.daysLinearLayout);
         todayCard = findViewById(R.id.today);
 
-        recyclerView = findViewById(R.id.past_days_recycler_view);
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        daysRecyclerView = findViewById(R.id.past_days_recycler_view);
+        daysLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        daysRecyclerView.setLayoutManager(daysLayoutManager);
+        daysRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         pastDays = new ArrayList<>();
-        adapter = new DayAdapter(pastDays);
-        recyclerView.setAdapter(adapter);
+        daysAdapter = new DayAdapter(pastDays);
+        daysRecyclerView.setAdapter(daysAdapter);
+
+        commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+        commentsLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        commentsRecyclerView.setLayoutManager(commentsLayoutManager);
+        commentsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        comments = new ArrayList<>();
+        commentsAdapter = new CommentAdapter(comments);
+        commentsRecyclerView.setAdapter(commentsAdapter);
 
         titleText.setText(challenge.getTitle());
         descText.setText(challenge.getDescription());
@@ -164,6 +201,12 @@ public class ChallengeActivity extends BaseActivity {
             }
         });
 
+        commentEdit = findViewById(R.id.commentEdit);
+
+        showCommentsBtn.setVisibility(View.VISIBLE);
+        hideCommentsBtn.setVisibility(View.GONE);
+        commentsLinearLayout.setVisibility(View.GONE);
+
         if(challenge.getAccessType() == AccessType.PUBLIC && challenge.getUserParticipant()==false){
             daysLabel.setVisibility(View.GONE);
             daysLayout.setVisibility(View.GONE);
@@ -179,6 +222,129 @@ public class ChallengeActivity extends BaseActivity {
         }
 
         joinBtn.setOnClickListener(v -> silentSignInAndJoinChallenge());
+        showCommentsBtn.setOnClickListener(v -> silentSignInAndShowComments());
+        hideCommentsBtn.setOnClickListener(v -> hideComments());
+        addCommentButton.setOnClickListener(v -> silentSignInAndSaveComment());
+    }
+
+    private void silentSignInAndShowComments() {
+        progressBar.setVisibility(View.VISIBLE);
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            showComments(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> showComments(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void silentSignInAndSaveComment() {
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            saveComment(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> saveComment(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void saveComment(String token) {
+
+    }
+
+    private void hideComments() {
+        showCommentsBtn.setVisibility(View.VISIBLE);
+        hideCommentsBtn.setVisibility(View.GONE);
+        commentsLinearLayout.setVisibility(View.GONE);
+    }
+
+    private void showComments(String token) {
+        progressBar.setVisibility(View.VISIBLE);
+        scrollView.post(new Runnable() {
+            public void run() {
+                scrollView.fullScroll(scrollView.FOCUS_DOWN);
+            }
+        });
+        comments.clear();
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/comments",
+                null,
+                response -> {
+                    try {
+                        if (response.length()==0){
+                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
+                                    .show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject jsonObject = (JSONObject) response.get(i);
+
+                                Long id = jsonObject.getLong("id");
+                                Long creatorId = jsonObject.getLong("creatorId");
+                                String creatorUsername = jsonObject.getString("creatorUsername");
+                                String text = jsonObject.getString("text");
+                                Date createdAt = dateFormat.parse(jsonObject.getString("createdAt"));
+
+                                Comment c = new Comment();
+                                c.setId(id);
+                                c.setCreatorId(creatorId);
+                                c.setCreatorUsername(creatorUsername);
+                                c.setText(text);
+                                c.setCreatedAt(createdAt);
+
+                                comments.add(c);
+                                commentsAdapter.notifyDataSetChanged();
+
+                                Log.d("jsonObject", comments.get(i).toString());
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } finally {
+                                progressBar.setVisibility(View.GONE);
+                                commentsLinearLayout.setVisibility(View.VISIBLE);
+                                showCommentsBtn.setVisibility(View.GONE);
+                                hideCommentsBtn.setVisibility(View.VISIBLE);
+
+                                scrollView.post(new Runnable() {
+                                    public void run() {
+                                        scrollView.fullScroll(scrollView.FOCUS_DOWN);
+                                    }
+                                });
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.w("", "request response:failed message=" + e.getMessage());
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                    progressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
     }
 
     private void silentSignInAndSaveChange() {
@@ -308,7 +474,7 @@ public class ChallengeActivity extends BaseActivity {
                         } else {
                             Day day = new Day(id, date, done, currentStatus);
                             pastDays.add(day);
-                            adapter.notifyDataSetChanged();
+                            daysAdapter.notifyDataSetChanged();
                         }
 
 
@@ -323,7 +489,7 @@ public class ChallengeActivity extends BaseActivity {
 
                                 Day day = new Day(id, date, done, currentStatus);
                                 pastDays.add(day);
-                                adapter.notifyDataSetChanged();
+                                daysAdapter.notifyDataSetChanged();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
