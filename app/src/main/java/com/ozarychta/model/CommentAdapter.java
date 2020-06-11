@@ -19,7 +19,7 @@ import java.util.TimeZone;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
-    private static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy 'at' HH:mm";
+    private static final String SIMPLE_DATE_FORMAT = "HH:mm  dd.MM.yyyy";
     private SimpleDateFormat simpleDateFormat;
 
     private ArrayList<Comment> dataSet;
