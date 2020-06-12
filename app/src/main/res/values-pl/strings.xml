@@ -23,7 +23,8 @@
     <string name="shared_pref_filename">BeBetterSharedPreferences</string>
     <string name="user_id_field">USER_ID</string>
     <string name="sign_in_error">Błąd logowania</string>
-    <string name="no_results">Brak wyników dla tego wyszukiwania.</string>
+    <string name="no_results">Brak wyników dla tego wyszukiwania</string>
+    <string name="no_comments">Brak wyników. Twój komentarz może być pierwszy!</string>
     <string name="add_challenge">Dodaj Wyzwanie</string>
     <string name="title">Tytuł:</string>
     <string name="description">Opis:</string>
@@ -53,8 +54,8 @@
     <string name="empty_search">Pole wyszukiwania nie może być puste</string>
     <string name="sort_by">Sortuj po:</string>
     <string name="search_hint">Szukaj…</string>
-    <string name="highest_streak_acronym">NS</string>
-    <string name="ranking_points_acronym">PR</string>
+    <string name="highest_streak_short">NS</string>
+    <string name="ranking_points_short">PR</string>
     <string name="following">OBSERWOWANI</string>
     <string name="follower">OBSERWATORZY</string>
     <string name="follow">Obserwuj</string>
@@ -62,6 +63,8 @@
     <string name="find_users">Znajdź użytkowników</string>
     <string name="show_comments">Pokaż komentarze</string>
     <string name="hide_comments">Ukryj komentarze</string>
-    <string name="comment_hint">Skomentuj...</string>
+    <string name="comment_hint">Skomentuj…</string>
     <string name="added_comment">Komentarz został dodany</string>
+    <string name="unknown_error_occurred">Wystąpił błąd. Spróbuj jeszcze raz.</string>
+    <string name="error_occurred">Wystąpił błąd</string>
 </resources>

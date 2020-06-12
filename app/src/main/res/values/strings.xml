@@ -24,6 +24,7 @@
     <string name="user_id_field">USER_ID</string>
     <string name="sign_in_error">Sing in error</string>
     <string name="no_results">No results for given search</string>
+    <string name="no_comments">No comments found</string>
     <string name="add_challenge">Add Challenge</string>
     <string name="title">Title:</string>
     <string name="description">Description:</string>
@@ -53,8 +54,8 @@
     <string name="empty_search">Search field cannot be empty</string>
     <string name="sort_by">Sort by:</string>
     <string name="search_hint">Search…</string>
-    <string name="highest_streak_acronym">HS</string>
-    <string name="ranking_points_acronym">RP</string>
+    <string name="highest_streak_short">HS</string>
+    <string name="ranking_points_short">RP</string>
     <string name="following">FOLLOWING</string>
     <string name="follower">FOLLOWER</string>
     <string name="follow">Follow</string>
@@ -62,6 +63,8 @@
     <string name="find_users">Find users</string>
     <string name="show_comments">Show comments</string>
     <string name="hide_comments">Hide comments</string>
-    <string name="comment_hint">Add your comment...</string>
+    <string name="comment_hint">Add your comment…</string>
     <string name="added_comment">Added comment</string>
+    <string name="unknown_error_occurred">Unknown error occurred. Please try again.</string>
+    <string name="error_occurred">Error</string>
 </resources>

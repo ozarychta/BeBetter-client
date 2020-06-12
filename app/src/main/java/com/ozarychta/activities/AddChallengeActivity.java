@@ -202,14 +202,10 @@ public class AddChallengeActivity extends BaseActivity {
         requestBody.put("goal", goal);
         requestBody.put("moreBetter", isMoreBetter);
 
-        Log.d("startDatePicker.getYear()", String.valueOf(startDatePicker.getYear()));
-        Log.d("startDatePicker.getMonth()", String.valueOf(startDatePicker.getMonth()));
-        Log.d("startDatePicker.getYear()", String.valueOf(startDatePicker.getDayOfMonth()));
-
-        Log.d("startDatePicker.getYear()", String.valueOf(startDatePicker.getYear()));
-        Log.d("startDatePicker.getMonth()", String.valueOf(startDatePicker.getMonth()));
-        Log.d("startDatePicker.getYear()", String.valueOf(startDatePicker.getDayOfMonth()));
-
+        Log.d(this.getClass().getSimpleName() + " startDatePicker yyyy mm dd",
+                startDatePicker.getYear() + " " + startDatePicker.getMonth() + " " + startDatePicker.getDayOfMonth());
+        Log.d(this.getClass().getSimpleName() + " startDatePicker yyyy mm dd",
+                endDatePicker.getYear() + " " + endDatePicker.getMonth() + " " + endDatePicker.getDayOfMonth());
         Calendar start = Calendar.getInstance();
         start.set(Calendar.YEAR, startDatePicker.getYear());
         start.set(Calendar.MONTH, startDatePicker.getMonth());
@@ -225,7 +221,7 @@ public class AddChallengeActivity extends BaseActivity {
         requestBody.put("endDate", dateFormat.format(end.getTime()));
 
         JSONObject jsonRequestBody = new JSONObject(requestBody);
-        Log.d("request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
+        Log.d(this.getClass().getSimpleName() + " request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
@@ -244,7 +240,9 @@ public class AddChallengeActivity extends BaseActivity {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
                         progressBar.setVisibility(View.GONE);
                     }

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -64,6 +65,7 @@ public class MyChallengesActivity extends BaseActivity {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private ArrayList<Challenge> challenges;
+    private TextView noResultsLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +116,9 @@ public class MyChallengesActivity extends BaseActivity {
         adapter = new ChallengeAdapter(challenges);
         recyclerView.setAdapter(adapter);
 
+        noResultsLabel = findViewById(R.id.noResultsLabel);
+        noResultsLabel.setVisibility(View.GONE);
+
         searchBtn.setOnClickListener(v -> silentSignInAndGetChallenges());
 
         connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -152,6 +157,7 @@ public class MyChallengesActivity extends BaseActivity {
     private void getChallengesFromServer(String token) {
         progressBar.setVisibility(View.VISIBLE);
         challenges.clear();
+        noResultsLabel.setVisibility(View.GONE);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://be-better-server.herokuapp.com/challenges?" + getUrlParameters(),
@@ -159,13 +165,12 @@ public class MyChallengesActivity extends BaseActivity {
                 response -> {
                     try {
                         if (response.length()==0){
-                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
-                                    .show();
                             progressBar.setVisibility(View.GONE);
+                            noResultsLabel.setVisibility(View.VISIBLE);
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-                            try {
+//                            try {
                                 JSONObject jsonObject = (JSONObject) response.get(i);
 
                                 Integer id = jsonObject.getInt("id");
@@ -209,18 +214,26 @@ public class MyChallengesActivity extends BaseActivity {
                                 challenges.add(c);
                                 adapter.notifyDataSetChanged();
 
-                                Log.d("jsonObject", challenges.get(i).toString());
+                                Log.d(this.getClass().getSimpleName() + " jsonObject", challenges.get(i).toString());
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } finally {
-                                progressBar.setVisibility(View.GONE);
-                            }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG)
+//                                        .show();
+//                                Log.d(this.getClass().getSimpleName() + " JSON Exception", response.toString(2));
+//                            } finally {
+//                                progressBar.setVisibility(View.GONE);
+//                            }
                         }
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {

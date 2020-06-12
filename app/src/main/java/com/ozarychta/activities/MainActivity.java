@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -35,7 +36,6 @@ import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.model.Challenge;
 import com.ozarychta.model.ChallengeAdapter;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -47,9 +47,8 @@ import java.util.TimeZone;
 
 public class MainActivity extends BaseActivity {
 
-    private ConnectivityManager connectivityManager;
-
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
+    private ConnectivityManager connectivityManager;
     private SimpleDateFormat dateFormat;
 
     private Spinner categorySpinner;
@@ -65,6 +64,7 @@ public class MainActivity extends BaseActivity {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private ArrayList<Challenge> challenges;
+    private TextView noResultsLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +100,9 @@ public class MainActivity extends BaseActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        noResultsLabel = findViewById(R.id.noResultsLabel);
+        noResultsLabel.setVisibility(View.GONE);
+
         FloatingActionButton floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +122,7 @@ public class MainActivity extends BaseActivity {
 
         searchBtn.setOnClickListener(v -> silentSignInAndGetChallenges());
 
-        connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -158,7 +161,7 @@ public class MainActivity extends BaseActivity {
 //
 //            }
 
-            Log.d("TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
+            Log.d(this.getClass().getSimpleName() + " TOKEN ", account.getIdToken() == null ? "null" : account.getIdToken());
 
 //            Toast.makeText(this, "successful sign in, account not null? main", Toast.LENGTH_LONG)
 //                    .show();
@@ -176,8 +179,7 @@ public class MainActivity extends BaseActivity {
 //            }
 
 
-        }
-        else {
+        } else {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
             startLoginActivity();
@@ -213,82 +215,89 @@ public class MainActivity extends BaseActivity {
     private void getChallengesFromServer(String token) {
         progressBar.setVisibility(View.VISIBLE);
         challenges.clear();
+        noResultsLabel.setVisibility(View.GONE);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 "https://be-better-server.herokuapp.com/challenges?" + getUrlParameters(),
                 null,
                 response -> {
                     try {
-                        if (response.length()==0){
-                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
-                                    .show();
+                        if (response.length() == 0) {
                             progressBar.setVisibility(View.GONE);
+                            noResultsLabel.setVisibility(View.VISIBLE);
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject jsonObject = (JSONObject) response.get(i);
+//                            try {
+                            JSONObject jsonObject = (JSONObject) response.get(i);
 
-                                Integer id = jsonObject.getInt("id");
-                                String title = jsonObject.getString("title");
-                                String description = jsonObject.getString("description");
-                                String city = jsonObject.getString("city");
-                                RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
-                                Category category = Category.valueOf(jsonObject.getString("category"));
-                                AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
-                                Date start = dateFormat.parse(jsonObject.getString("startDate"));
-                                Date end = dateFormat.parse(jsonObject.getString("endDate"));
-                                ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
-                                ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
-                                Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
+                            Integer id = jsonObject.getInt("id");
+                            String title = jsonObject.getString("title");
+                            String description = jsonObject.getString("description");
+                            String city = jsonObject.getString("city");
+                            RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
+                            Category category = Category.valueOf(jsonObject.getString("category"));
+                            AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
+                            Date start = dateFormat.parse(jsonObject.getString("startDate"));
+                            Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                            ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
+                            ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
+                            Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
 
-                                Integer goal = 0;
-                                if(confirmation == ConfirmationType.TIMER_TASK){
-                                    goal = jsonObject.getInt("goal");
-                                }
-                                Boolean isMoreBetter = true;
-                                if(confirmation == ConfirmationType.COUNTER_TASK){
-                                    isMoreBetter = jsonObject.getBoolean("moreBetter");
-                                }
-
-                                Challenge c = new Challenge();
-                                c.setId(Long.valueOf(id));
-                                c.setTitle(title);
-                                c.setDescription(description);
-                                c.setCity(city);
-                                c.setRepeatPeriod(repeat);
-                                c.setCategory(category);
-                                c.setConfirmationType(confirmation);
-                                c.setAccessType(access);
-                                c.setState(state);
-                                c.setGoal(goal);
-                                c.setMoreBetter(isMoreBetter);
-                                c.setStartDate(start);
-                                c.setEndDate(end);
-                                c.setUserParticipant(isUserParticipant);
-
-                                challenges.add(c);
-                                adapter.notifyDataSetChanged();
-
-                                Log.d("jsonObject", challenges.get(i).toString());
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } finally {
-                                progressBar.setVisibility(View.GONE);
+                            Integer goal = 0;
+                            if (confirmation == ConfirmationType.TIMER_TASK) {
+                                goal = jsonObject.getInt("goal");
                             }
+                            Boolean isMoreBetter = true;
+                            if (confirmation == ConfirmationType.COUNTER_TASK) {
+                                isMoreBetter = jsonObject.getBoolean("moreBetter");
+                            }
+
+                            Challenge c = new Challenge();
+                            c.setId(Long.valueOf(id));
+                            c.setTitle(title);
+                            c.setDescription(description);
+                            c.setCity(city);
+                            c.setRepeatPeriod(repeat);
+                            c.setCategory(category);
+                            c.setConfirmationType(confirmation);
+                            c.setAccessType(access);
+                            c.setState(state);
+                            c.setGoal(goal);
+                            c.setMoreBetter(isMoreBetter);
+                            c.setStartDate(start);
+                            c.setEndDate(end);
+                            c.setUserParticipant(isUserParticipant);
+
+                            challenges.add(c);
+                            adapter.notifyDataSetChanged();
+
+                            Log.d(this.getClass().getSimpleName() + " jsonObject", challenges.get(i).toString());
+
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG)
+//                                        .show();
+//                                Log.d(this.getClass().getSimpleName() + " JSON Exception", response.toString(2));
+//                            } finally {
+//                                progressBar.setVisibility(View.GONE);
+//                            }
                         }
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }
@@ -310,21 +319,21 @@ public class MainActivity extends BaseActivity {
         String url = "";
         url += "&type=" + AccessType.PUBLIC;
 
-        if(categorySpinner.getSelectedItem() != Category.ALL){
+        if (categorySpinner.getSelectedItem() != Category.ALL) {
             url += "&category=" + categorySpinner.getSelectedItem();
         }
-        if(repeatSpinner.getSelectedItem() != RepeatPeriod.ALL){
+        if (repeatSpinner.getSelectedItem() != RepeatPeriod.ALL) {
             url += "&repeat=" + repeatSpinner.getSelectedItem();
         }
-        if(stateSpinner.getSelectedItem() != ChallengeState.ALL){
+        if (stateSpinner.getSelectedItem() != ChallengeState.ALL) {
             url += "&state=" + stateSpinner.getSelectedItem();
         }
         String city = cityEdit.getText().toString();
-        if(!city.isEmpty()){
+        if (!city.isEmpty()) {
             url += "&city=" + city;
         }
         String search = searchEdit.getText().toString();
-        if(!search.isEmpty()){
+        if (!search.isEmpty()) {
             url += "&search=" + search;
         }
         return url;
@@ -337,6 +346,6 @@ public class MainActivity extends BaseActivity {
 //                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
 //        Long userId = (Long) sharedPref.getLong(getString(R.string.user_id_field), -1);
 //
-//        Log.d("USER_ID ", String.valueOf(userId));
+//        Log.d(this.getClass().getSimpleName() + " USER_ID ", String.valueOf(userId));
     }
 }

@@ -245,16 +245,30 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="1sp" />
 
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10sp"
             android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/noResultsLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4sp"
+            android:layout_marginVertical="20sp"
+            android:gravity="center"
+            android:paddingHorizontal="4sp"
+            android:paddingTop="5sp"
+            android:paddingBottom="5sp"
+            android:text="@string/no_results"
+            android:textColor="@color/primaryDarkColor"
+            android:textSize="16sp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"

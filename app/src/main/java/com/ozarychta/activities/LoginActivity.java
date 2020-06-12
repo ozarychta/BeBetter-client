@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn() {
-        Log.d("login", "signin");
+        Log.d(this.getClass().getSimpleName() + " login", "signin");
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -116,8 +116,6 @@ public class LoginActivity extends AppCompatActivity {
                 null,
                 response -> {
                     try {
-
-
                         Long id = response.getLong("id");
                         String username = response.getString("username");
 
@@ -133,7 +131,9 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     }
                 },
                 error -> {

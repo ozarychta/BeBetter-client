@@ -98,6 +98,8 @@ public class ChallengeActivity extends BaseActivity {
     private RecyclerView commentsRecyclerView;
     private ArrayList<Comment> comments;
 
+    private TextView noCommentsLabel;
+
     private LinearLayout commentsLinearLayout;
     private ProgressBar progressBar;
     private ProgressBar addCommentProgressBar;
@@ -114,7 +116,7 @@ public class ChallengeActivity extends BaseActivity {
         getSupportActionBar().setTitle(R.string.challenge);
 
         challenge = (Challenge) getIntent().getSerializableExtra("CHALLENGE");
-        Log.d("challenge", challenge.getId().toString());
+        Log.d(this.getClass().getSimpleName() + " challenge", challenge.getId().toString());
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -178,6 +180,8 @@ public class ChallengeActivity extends BaseActivity {
         commentsAdapter = new CommentAdapter(comments);
         commentsRecyclerView.setAdapter(commentsAdapter);
 
+        noCommentsLabel = findViewById(R.id.noCommentsLabel);
+
         titleText.setText(challenge.getTitle());
         descText.setText(challenge.getDescription());
         cityText.setText(challenge.getCity());
@@ -208,6 +212,7 @@ public class ChallengeActivity extends BaseActivity {
         commentEdit = findViewById(R.id.commentEdit);
         hideCommentsBtn.setVisibility(View.GONE);
         commentsLinearLayout.setVisibility(View.GONE);
+        noCommentsLabel.setVisibility(View.GONE);
 
         if(challenge.getAccessType() == AccessType.PUBLIC && challenge.isUserParticipant() == true){
             showCommentsBtn.setVisibility(View.VISIBLE);
@@ -275,7 +280,7 @@ public class ChallengeActivity extends BaseActivity {
         requestBody.put("text", comment);
 
         JSONObject jsonRequestBody = new JSONObject(requestBody);
-        Log.d("request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
+        Log.d(this.getClass().getSimpleName() + " request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
@@ -297,7 +302,9 @@ public class ChallengeActivity extends BaseActivity {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
                         addCommentProgressBar.setVisibility(View.GONE);
                     }
@@ -332,6 +339,7 @@ public class ChallengeActivity extends BaseActivity {
 
     private void showComments(String token) {
         progressBar.setVisibility(View.VISIBLE);
+        noCommentsLabel.setVisibility(View.GONE);
         scrollView.post(new Runnable() {
             public void run() {
                 scrollView.fullScroll(scrollView.FOCUS_DOWN);
@@ -345,12 +353,11 @@ public class ChallengeActivity extends BaseActivity {
                 response -> {
                     try {
                         if (response.length()==0){
-                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
-                                    .show();
+                            noCommentsLabel.setVisibility(View.VISIBLE);
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-                            try {
+//                            try {
                                 JSONObject jsonObject = (JSONObject) response.get(i);
 
                                 Long id = jsonObject.getLong("id");
@@ -369,16 +376,19 @@ public class ChallengeActivity extends BaseActivity {
                                 comments.add(c);
                                 commentsAdapter.notifyDataSetChanged();
 
-                                Log.d("jsonObject", comments.get(i).toString());
+//                                Log.d(this.getClass().getSimpleName() + " comment", comments.get(i).toString());
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
                         }
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
                         progressBar.setVisibility(View.GONE);
                         commentsLinearLayout.setVisibility(View.VISIBLE);
@@ -433,7 +443,7 @@ public class ChallengeActivity extends BaseActivity {
         requestBody.put("currentStatus", today.getCurrentStatus());
 
         JSONObject jsonRequestBody = new JSONObject(requestBody);
-        Log.d("request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
+        Log.d(this.getClass().getSimpleName() + " request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.PUT,
@@ -447,13 +457,15 @@ public class ChallengeActivity extends BaseActivity {
 
 //                        Toast.makeText(getApplicationContext(), getString(R.string.updated_state), Toast.LENGTH_LONG)
 //                                .show();
-                        Log.d("", "Updated day");
+                        Log.d(this.getClass().getSimpleName(), "Updated day");
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
 //                        progressBar.setVisibility(View.GONE);
                     }
@@ -547,7 +559,7 @@ public class ChallengeActivity extends BaseActivity {
 
 
                         for (int i = 1; i < response.length(); i++) {
-                            try {
+//                            try {
                                 jsonObject = (JSONObject) response.get(i);
 
                                 id = jsonObject.getLong("id");
@@ -559,14 +571,18 @@ public class ChallengeActivity extends BaseActivity {
                                 pastDays.add(day);
                                 daysAdapter.notifyDataSetChanged();
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
                         }
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
 //                        progressBar.setVisibility(View.GONE);
                     }
@@ -638,7 +654,9 @@ public class ChallengeActivity extends BaseActivity {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
 //                        progressBar.setVisibility(View.GONE);
                     }

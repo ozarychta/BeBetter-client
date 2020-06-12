@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +31,8 @@ public class FriendsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+
+    private TextView noResultsLabel;
 
     public FriendsFragment() {
     }
@@ -61,6 +64,9 @@ public class FriendsFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        noResultsLabel = view.findViewById(R.id.noResultsLabel);
+        noResultsLabel.setVisibility(View.GONE);
+
         friendsViewModel = new ViewModelProvider(requireActivity()).get(FriendsViewModel.class);
         if(friendType==FriendType.FOLLOWING){
             friendsViewModel.getFollowingLiveData().observe(getViewLifecycleOwner(), friendsListUpdateObserver);
@@ -75,6 +81,11 @@ public class FriendsFragment extends Fragment {
         public void onChanged(ArrayList<User> userArrayList) {
             adapter = new FriendAdapter(userArrayList);
             recyclerView.setAdapter(adapter);
+            if(userArrayList.isEmpty()){
+                noResultsLabel.setVisibility(View.VISIBLE);
+            } else {
+                noResultsLabel.setVisibility(View.GONE);
+            }
         }
     };
 }

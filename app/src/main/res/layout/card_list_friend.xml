@@ -59,7 +59,7 @@
                 android:layout_marginHorizontal="4sp"
                 android:layout_marginTop="4sp"
                 android:layout_marginBottom="0sp"
-                android:text="@string/ranking_points_acronym"
+                android:text="@string/ranking_points_short"
                 android:textAlignment="center"
                 android:textColor="@color/primaryDarkColor"
                 android:textSize="16sp" />
@@ -92,7 +92,7 @@
                 android:layout_marginTop="4sp"
                 android:layout_marginBottom="0sp"
                 android:textAlignment="center"
-                android:text="@string/highest_streak_acronym"
+                android:text="@string/highest_streak_short"
                 android:textColor="@color/primaryDarkColor"
                 android:textSize="16sp" />
 

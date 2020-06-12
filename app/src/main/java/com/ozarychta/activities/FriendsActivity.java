@@ -108,7 +108,7 @@ public class FriendsActivity extends BaseActivity {
 //                return;
 //            }
 //
-//            Log.d("TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
+//            Log.d(this.getClass().getSimpleName() + " TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
         } else {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
@@ -164,7 +164,7 @@ public class FriendsActivity extends BaseActivity {
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-                            try {
+//                            try {
                                 JSONObject jsonObject = (JSONObject) response.get(i);
 
                                 Long id = jsonObject.getLong("id");
@@ -178,20 +178,25 @@ public class FriendsActivity extends BaseActivity {
 
                                 following.add(u);
 
-                                Log.d("jsonObject following", following.get(i).getUsername());
+                                Log.d(this.getClass().getSimpleName() + " jsonObject following", following.get(i).getUsername());
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } finally {
-                                progressBar.setVisibility(View.GONE);
-                            }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            } finally {
+//                                progressBar.setVisibility(View.GONE);
+//                            }
                         }
 
                         friendsViewModel.setFollowingLiveData(following);
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {
@@ -232,7 +237,7 @@ public class FriendsActivity extends BaseActivity {
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-                            try {
+//                            try {
                                 JSONObject jsonObject = (JSONObject) response.get(i);
 
                                 Long id = jsonObject.getLong("id");
@@ -246,20 +251,26 @@ public class FriendsActivity extends BaseActivity {
 
                                 followers.add(u);
 
-                                Log.d("jsonObject followers", followers.get(i).getUsername());
+                                Log.d(this.getClass().getSimpleName() + " jsonObject followers", followers.get(i).getUsername());
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } finally {
-                                progressBar.setVisibility(View.GONE);
-                            }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            } finally {
+//                                progressBar.setVisibility(View.GONE);
+//                            }
                         }
 
                         friendsViewModel.setFollowersLiveData(followers);
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {
@@ -303,6 +314,6 @@ public class FriendsActivity extends BaseActivity {
                 .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
         Long userId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
-        Log.d("USER_ID ", String.valueOf(userId));
+        Log.d(this.getClass().getSimpleName() + " USER_ID ", String.valueOf(userId));
     }
 }

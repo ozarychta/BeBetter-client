@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -48,6 +49,7 @@ public class UsersActivity extends BaseActivity {
     private RecyclerView recyclerView;
 
     private ArrayList<User> users;
+    private TextView noResultsLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +74,12 @@ public class UsersActivity extends BaseActivity {
         adapter = new UserAdapter(users);
         recyclerView.setAdapter(adapter);
 
+        noResultsLabel = findViewById(R.id.noResultsLabel);
+        noResultsLabel.setVisibility(View.GONE);
+
         searchBtn.setOnClickListener(v -> silentSignInAndGetUsers());
 
-        connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
 //            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -84,7 +89,7 @@ public class UsersActivity extends BaseActivity {
 //                return;
 //            }
 //
-//            Log.d("TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
+//            Log.d(this.getClass().getSimpleName() + " TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
         } else {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
@@ -94,10 +99,10 @@ public class UsersActivity extends BaseActivity {
         }
 
         SharedPreferences sharedPref = getApplicationContext()
-                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+                .getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
         signedUserId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
-        if (signedUserId == -1){
+        if (signedUserId == -1) {
             Toast.makeText(getApplicationContext(), "Account error. Please sign in.", Toast.LENGTH_LONG)
                     .show();
             startLoginActivity();
@@ -125,7 +130,7 @@ public class UsersActivity extends BaseActivity {
     private void getUsersFromServer(String token) {
         progressBar.setVisibility(View.VISIBLE);
         users.clear();
-
+        noResultsLabel.setVisibility(View.GONE);
         String search = searchEdit.getText().toString();
 
         if (search.isEmpty()) {
@@ -141,50 +146,58 @@ public class UsersActivity extends BaseActivity {
                 null,
                 response -> {
                     try {
-                        if (response.length()==0){
-                            Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
-                                    .show();
+                        if (response.length() == 0) {
+                            noResultsLabel.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
                         }
-                        Log.d("response", response.toString(2));
+                        Log.d(this.getClass().getSimpleName() + " response", response.toString(2));
 
                         for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject jsonObject = (JSONObject) response.get(i);
+//                            try {
+                            JSONObject jsonObject = (JSONObject) response.get(i);
 
-                                Long id = jsonObject.getLong("id");
-                                String username = jsonObject.getString("username");
-                                String aboutMe = jsonObject.getString("aboutMe");
-                                String mainGoal = jsonObject.getString("mainGoal");
-                                Integer points = jsonObject.getInt("rankingPoints");
-                                Integer strike = jsonObject.getInt("highestStreak");
+                            Long id = jsonObject.getLong("id");
+                            String username = jsonObject.getString("username");
+                            String aboutMe = jsonObject.getString("aboutMe");
+                            String mainGoal = jsonObject.getString("mainGoal");
+                            Integer points = jsonObject.getInt("rankingPoints");
+                            Integer strike = jsonObject.getInt("highestStreak");
 
-                                User u = new User(id, username, aboutMe, mainGoal, points, strike);
+                            User u = new User(id, username, aboutMe, mainGoal, points, strike);
 
-                                if(!signedUserId.equals(u.getId())){
-                                    users.add(u);
-                                }
-                                adapter.notifyDataSetChanged();
-
-                                Log.d("jsonObject user", users.get(i).getUsername());
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } finally {
-                                progressBar.setVisibility(View.GONE);
+                            if (!signedUserId.equals(u.getId())) {
+                                users.add(u);
                             }
+                            adapter.notifyDataSetChanged();
+
+                            Log.d(this.getClass().getSimpleName() + " jsonObject user", jsonObject.toString(2));
+
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            } finally {
+//                                progressBar.setVisibility(View.GONE);
+//                            }
                         }
 
+                        if(users.isEmpty()){
+                            noResultsLabel.setVisibility(View.VISIBLE);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }
@@ -206,7 +219,7 @@ public class UsersActivity extends BaseActivity {
         String url = "";
 
         String search = searchEdit.getText().toString();
-        if(!search.isEmpty()){
+        if (!search.isEmpty()) {
             url += "&search=" + search;
         }
 
@@ -217,10 +230,10 @@ public class UsersActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         SharedPreferences sharedPref = getApplicationContext()
-                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+                .getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
         Long userId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
-        Log.d("USER_ID ", String.valueOf(userId));
+        Log.d(this.getClass().getSimpleName() + " USER_ID ", String.valueOf(userId));
     }
 
     private void startLoginActivity() {

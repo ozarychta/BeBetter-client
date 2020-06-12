@@ -155,7 +155,7 @@ public class ProfileActivity extends BaseActivity{
 
                         Integer id = jsonObject.getInt("id");
 
-                        Log.d("", id+" followed user " + userIdFromIntent);
+                        Log.d(this.getClass().getSimpleName(), id+" followed user " + userIdFromIntent);
 
                         Toast.makeText(getApplicationContext(), "followed user" + userIdFromIntent, Toast.LENGTH_LONG)
                                 .show();
@@ -167,7 +167,9 @@ public class ProfileActivity extends BaseActivity{
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
                         progressBar.setVisibility(View.GONE);
                     }
@@ -205,7 +207,7 @@ public class ProfileActivity extends BaseActivity{
 
                         Integer id = jsonObject.getInt("id");
 
-                        Log.d("", id+" followed user " + userIdFromIntent);
+                        Log.d(this.getClass().getSimpleName() , id+" followed user " + userIdFromIntent);
 
                         Toast.makeText(getApplicationContext(), "unfollowed user" + userIdFromIntent, Toast.LENGTH_LONG)
                                 .show();
@@ -217,7 +219,9 @@ public class ProfileActivity extends BaseActivity{
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
                         progressBar.setVisibility(View.GONE);
                     }
@@ -279,7 +283,9 @@ public class ProfileActivity extends BaseActivity{
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
                         progressBar.setVisibility(View.GONE);
                     }

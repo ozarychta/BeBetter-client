@@ -100,7 +100,7 @@ public class EditProfileActivity extends BaseActivity{
         requestBody.put("mainGoal", mainGoal);
 
         JSONObject jsonRequestBody = new JSONObject(requestBody);
-        Log.d("request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
+        Log.d(this.getClass().getSimpleName() + " request body", "\n\n" + jsonRequestBody.toString() + "\n\n");
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.PUT,
@@ -128,7 +128,9 @@ public class EditProfileActivity extends BaseActivity{
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.w("", "request response:failed message=" + e.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
                     } finally {
                         progressBar.setVisibility(View.GONE);
                     }
