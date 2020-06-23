@@ -67,4 +67,6 @@
     <string name="added_comment">Komentarz został dodany</string>
     <string name="unknown_error_occurred">Wystąpił błąd. Spróbuj jeszcze raz.</string>
     <string name="error_occurred">Wystąpił błąd</string>
+    <string name="created">Utworzone</string>
+    <string name="joined">Dołączone</string>
 </resources>

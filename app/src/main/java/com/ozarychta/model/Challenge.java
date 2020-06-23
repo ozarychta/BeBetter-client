@@ -8,6 +8,7 @@ import com.ozarychta.enums.RepeatPeriod;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 public class Challenge implements Serializable {
 
@@ -185,11 +186,36 @@ public class Challenge implements Serializable {
     @Override
     public String toString() {
         return "Challenge{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", accessType=" + accessType +
                 ", category=" + category +
                 ", repeatPeriod=" + repeatPeriod +
                 ", city='" + city + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", state=" + state +
+                ", confirmationType=" + confirmationType +
+                ", done=" + done +
                 ", goal=" + goal +
+                ", isMoreBetter=" + isMoreBetter +
+                ", isUserParticipant=" + isUserParticipant +
+                ", creatorId=" + creatorId +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Challenge challenge = (Challenge) o;
+        return Objects.equals(id, challenge.id) &&
+                Objects.equals(title, challenge.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title);
     }
 }

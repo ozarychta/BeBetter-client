@@ -12,18 +12,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.ozarychta.ChallengesViewModel;
+import com.ozarychta.ChallengesViewPagerAdapter;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
@@ -33,7 +34,6 @@ import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.enums.ConfirmationType;
 import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.model.Challenge;
-import com.ozarychta.model.ChallengeAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +44,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MyChallengesActivity extends BaseActivity {
 
@@ -61,16 +63,20 @@ public class MyChallengesActivity extends BaseActivity {
     private Button searchBtn;
     private ProgressBar progressBar;
 
-    private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private RecyclerView recyclerView;
-    private ArrayList<Challenge> challenges;
-    private TextView noResultsLabel;
+    private ArrayList<Challenge> created;
+    private ArrayList<Challenge> joined;
+    private ArrayList<Challenge> all;
+
+    private ViewPager viewPager;
+    private ChallengesViewPagerAdapter viewPagerAdapter;
+    private TabLayout tabLayout;
+
+    private ChallengesViewModel challengesViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_my_challenges);
         getSupportActionBar().setTitle(R.string.my_challenges);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -96,10 +102,14 @@ public class MyChallengesActivity extends BaseActivity {
         stateSpinner.setAdapter(new ArrayAdapter<ChallengeState>(this, android.R.layout.simple_spinner_dropdown_item, ChallengeState.values()));
         stateSpinner.setSelection(0);
 
-        recyclerView = findViewById(R.id.my_recycler_view);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        viewPagerAdapter = new ChallengesViewPagerAdapter(getSupportFragmentManager(), this);
+        viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(viewPagerAdapter);
+
+        tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+
+        challengesViewModel = new ViewModelProvider(this).get(ChallengesViewModel.class);
 
         FloatingActionButton floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -109,25 +119,23 @@ public class MyChallengesActivity extends BaseActivity {
             }
         });
 
+        created = new ArrayList<>();
+        joined = new ArrayList<>();
+        all = new ArrayList<>();
+
         dateFormat = new SimpleDateFormat(DATE_FORMAT);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        challenges = new ArrayList<>();
-        adapter = new ChallengeAdapter(challenges);
-        recyclerView.setAdapter(adapter);
-
-        noResultsLabel = findViewById(R.id.noResultsLabel);
-        noResultsLabel.setVisibility(View.GONE);
-
         searchBtn.setOnClickListener(v -> silentSignInAndGetChallenges());
 
-        connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
         }
 
+        silentSignInAndGetChallenges();
     }
 
     private void startAddChallengeActivity() {
@@ -146,75 +154,77 @@ public class MyChallengesActivity extends BaseActivity {
         Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
         if (task.isSuccessful()) {
             // There's immediate result available.
-            getChallengesFromServer(task.getResult().getIdToken());
+            getCreatedChallengesFromServer(task.getResult().getIdToken());
+            getJoinedChallengesFromServer(task.getResult().getIdToken());
         } else {
             task.addOnCompleteListener(
                     this,
-                    task1 -> getChallengesFromServer(SignInClient.getTokenIdFromResult(task1)));
+                    task1 -> {
+                        getCreatedChallengesFromServer(SignInClient.getTokenIdFromResult(task1));
+                        getJoinedChallengesFromServer(SignInClient.getTokenIdFromResult(task1));
+                    });
         }
     }
 
-    private void getChallengesFromServer(String token) {
+    private void getJoinedChallengesFromServer(String token) {
         progressBar.setVisibility(View.VISIBLE);
-        challenges.clear();
-        noResultsLabel.setVisibility(View.GONE);
+        joined.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/challenges?" + getUrlParameters(),
+                "https://be-better-server.herokuapp.com/users/challenges?" + getUrlParameters(),
                 null,
                 response -> {
                     try {
-                        if (response.length()==0){
+                        if (response.length() == 0) {
                             progressBar.setVisibility(View.GONE);
-                            noResultsLabel.setVisibility(View.VISIBLE);
                         }
 
                         for (int i = 0; i < response.length(); i++) {
 //                            try {
-                                JSONObject jsonObject = (JSONObject) response.get(i);
+                            JSONObject jsonObject = (JSONObject) response.get(i);
 
-                                Integer id = jsonObject.getInt("id");
-                                String title = jsonObject.getString("title");
-                                String description = jsonObject.getString("description");
-                                String city = jsonObject.getString("city");
-                                RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
-                                Category category = Category.valueOf(jsonObject.getString("category"));
-                                AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
-                                Date start = dateFormat.parse(jsonObject.getString("startDate"));
-                                Date end = dateFormat.parse(jsonObject.getString("endDate"));
-                                ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
-                                ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
-                                Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
+                            Integer id = jsonObject.getInt("id");
+                            String title = jsonObject.getString("title");
+                            String description = jsonObject.getString("description");
+                            String city = jsonObject.getString("city");
+                            RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
+                            Category category = Category.valueOf(jsonObject.getString("category"));
+                            AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
+                            Date start = dateFormat.parse(jsonObject.getString("startDate"));
+                            Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                            ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
+                            ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
+                            Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
+                            Integer creatorId = jsonObject.getInt("creatorId");
 
-                                Integer goal = 0;
-                                if(confirmation == ConfirmationType.TIMER_TASK){
-                                    goal = jsonObject.getInt("goal");
-                                }
-                                Boolean isMoreBetter = true;
-                                if(confirmation == ConfirmationType.COUNTER_TASK){
-                                    isMoreBetter = jsonObject.getBoolean("moreBetter");
-                                }
+                            Integer goal = 0;
+                            if (confirmation == ConfirmationType.TIMER_TASK) {
+                                goal = jsonObject.getInt("goal");
+                            }
+                            Boolean isMoreBetter = true;
+                            if (confirmation == ConfirmationType.COUNTER_TASK) {
+                                isMoreBetter = jsonObject.getBoolean("moreBetter");
+                            }
 
-                                Challenge c = new Challenge();
-                                c.setId(Long.valueOf(id));
-                                c.setTitle(title);
-                                c.setDescription(description);
-                                c.setCity(city);
-                                c.setRepeatPeriod(repeat);
-                                c.setCategory(category);
-                                c.setConfirmationType(confirmation);
-                                c.setAccessType(access);
-                                c.setState(state);
-                                c.setGoal(goal);
-                                c.setMoreBetter(isMoreBetter);
-                                c.setStartDate(start);
-                                c.setEndDate(end);
-                                c.setUserParticipant(isUserParticipant);
+                            Challenge c = new Challenge();
+                            c.setId(Long.valueOf(id));
+                            c.setTitle(title);
+                            c.setDescription(description);
+                            c.setCity(city);
+                            c.setRepeatPeriod(repeat);
+                            c.setCategory(category);
+                            c.setConfirmationType(confirmation);
+                            c.setAccessType(access);
+                            c.setState(state);
+                            c.setGoal(goal);
+                            c.setMoreBetter(isMoreBetter);
+                            c.setStartDate(start);
+                            c.setEndDate(end);
+                            c.setUserParticipant(isUserParticipant);
+                            c.setCreatorId(creatorId);
 
-                                challenges.add(c);
-                                adapter.notifyDataSetChanged();
-
-                                Log.d(this.getClass().getSimpleName() + " jsonObject", challenges.get(i).toString());
+                            joined.add(c);
+                            Log.d(this.getClass().getSimpleName() + " jsonObject challenge", joined.get(i).getTitle());
 
 //                            } catch (JSONException e) {
 //                                e.printStackTrace();
@@ -225,6 +235,11 @@ public class MyChallengesActivity extends BaseActivity {
 //                                progressBar.setVisibility(View.GONE);
 //                            }
                         }
+                        challengesViewModel.setJoinedLiveData(joined);
+                        challengesViewModel.setAllLiveData(Stream.concat(created.stream(), joined.stream())
+                                .distinct()
+                                .collect(Collectors.toCollection(ArrayList::new)));
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
@@ -237,10 +252,117 @@ public class MyChallengesActivity extends BaseActivity {
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else{
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                    progressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
+    }
+
+    private void getCreatedChallengesFromServer(String token) {
+        progressBar.setVisibility(View.VISIBLE);
+        created.clear();
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://be-better-server.herokuapp.com/users/created?" + getUrlParameters(),
+                null,
+                response -> {
+                    try {
+                        if (response.length() == 0) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+                        for (int i = 0; i < response.length(); i++) {
+//                            try {
+                            JSONObject jsonObject = (JSONObject) response.get(i);
+
+                            Integer id = jsonObject.getInt("id");
+                            String title = jsonObject.getString("title");
+                            String description = jsonObject.getString("description");
+                            String city = jsonObject.getString("city");
+                            RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
+                            Category category = Category.valueOf(jsonObject.getString("category"));
+                            AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
+                            Date start = dateFormat.parse(jsonObject.getString("startDate"));
+                            Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                            ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
+                            ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
+                            Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
+                            Integer creatorId = jsonObject.getInt("creatorId");
+
+                            Integer goal = 0;
+                            if (confirmation == ConfirmationType.TIMER_TASK) {
+                                goal = jsonObject.getInt("goal");
+                            }
+                            Boolean isMoreBetter = true;
+                            if (confirmation == ConfirmationType.COUNTER_TASK) {
+                                isMoreBetter = jsonObject.getBoolean("moreBetter");
+                            }
+
+                            Challenge c = new Challenge();
+                            c.setId(Long.valueOf(id));
+                            c.setTitle(title);
+                            c.setDescription(description);
+                            c.setCity(city);
+                            c.setRepeatPeriod(repeat);
+                            c.setCategory(category);
+                            c.setConfirmationType(confirmation);
+                            c.setAccessType(access);
+                            c.setState(state);
+                            c.setGoal(goal);
+                            c.setMoreBetter(isMoreBetter);
+                            c.setStartDate(start);
+                            c.setEndDate(end);
+                            c.setUserParticipant(isUserParticipant);
+                            c.setCreatorId(creatorId);
+
+                            created.add(c);
+                            Log.d(this.getClass().getSimpleName() + " jsonObject challenge", created.get(i).getTitle());
+
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                                Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG)
+//                                        .show();
+//                                Log.d(this.getClass().getSimpleName() + " JSON Exception", response.toString(2));
+//                            } finally {
+//                                progressBar.setVisibility(View.GONE);
+//                            }
+                        }
+                        challengesViewModel.setCreatedLiveData(created);
+                        challengesViewModel.setAllLiveData(Stream.concat(created.stream(), joined.stream())
+                                .distinct()
+                                .collect(Collectors.toCollection(ArrayList::new)));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }
@@ -260,23 +382,23 @@ public class MyChallengesActivity extends BaseActivity {
 
     private String getUrlParameters() {
         String url = "";
-        url += "&type=" + AccessType.PRIVATE;
+//        url += "&type=" + AccessType.PRIVATE;
 
-        if(categorySpinner.getSelectedItem() != Category.ALL){
+        if (categorySpinner.getSelectedItem() != Category.ALL) {
             url += "&category=" + categorySpinner.getSelectedItem();
         }
-        if(repeatSpinner.getSelectedItem() != RepeatPeriod.ALL){
+        if (repeatSpinner.getSelectedItem() != RepeatPeriod.ALL) {
             url += "&repeat=" + repeatSpinner.getSelectedItem();
         }
-        if(stateSpinner.getSelectedItem() != ChallengeState.ALL){
+        if (stateSpinner.getSelectedItem() != ChallengeState.ALL) {
             url += "&state=" + stateSpinner.getSelectedItem();
         }
         String city = cityEdit.getText().toString();
-        if(!city.isEmpty()){
+        if (!city.isEmpty()) {
             url += "&city=" + city;
         }
         String search = searchEdit.getText().toString();
-        if(!search.isEmpty()){
+        if (!search.isEmpty()) {
             url += "&search=" + search;
         }
         return url;

@@ -15,32 +15,32 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ozarychta.enums.FriendType;
-import com.ozarychta.model.FriendAdapter;
-import com.ozarychta.model.User;
+import com.ozarychta.enums.ChallengeType;
+import com.ozarychta.model.ChallengeAdapter;
+import com.ozarychta.model.Challenge;
 
 import java.util.ArrayList;
 
-public class FriendsFragment extends Fragment {
-    private static final String ARG_TYPE = "friendType";
+public class ChallengesFragment extends Fragment {
+    private static final String ARG_TYPE = "challengeType";
 
-    private FriendType friendType;
-    private ArrayList<User> friends;
+    private ChallengeType challengeType;
+    private ArrayList<Challenge> challenges;
 
-    private FriendsViewModel friendsViewModel;
+    private ChallengesViewModel challengesViewModel;
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
 
     private TextView noResultsLabel;
 
-    public FriendsFragment() {
+    public ChallengesFragment() {
     }
 
-    public static FriendsFragment newInstance(FriendType friendType) {
-        FriendsFragment fragment = new FriendsFragment();
+    public static ChallengesFragment newInstance(ChallengeType challengeType) {
+        ChallengesFragment fragment = new ChallengesFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_TYPE, friendType);
+        args.putSerializable(ARG_TYPE, challengeType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,7 +48,7 @@ public class FriendsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            friendType = (FriendType) getArguments().getSerializable(ARG_TYPE);
+            challengeType = (ChallengeType) getArguments().getSerializable(ARG_TYPE);
         }
     }
     @Override
@@ -67,21 +67,23 @@ public class FriendsFragment extends Fragment {
         noResultsLabel = view.findViewById(R.id.noResultsLabel);
         noResultsLabel.setVisibility(View.GONE);
 
-        friendsViewModel = new ViewModelProvider(requireActivity()).get(FriendsViewModel.class);
-        if(friendType==FriendType.FOLLOWING){
-            friendsViewModel.getFollowingLiveData().observe(getViewLifecycleOwner(), friendsListUpdateObserver);
+        challengesViewModel = new ViewModelProvider(requireActivity()).get(ChallengesViewModel.class);
+        if(challengeType == ChallengeType.CREATED){
+            challengesViewModel.getCreatedLiveData().observe(getViewLifecycleOwner(), challengesListUpdateObserver);
+        } else if(challengeType == ChallengeType.JOINED){
+            challengesViewModel.getJoinedLiveData().observe(getViewLifecycleOwner(), challengesListUpdateObserver);
         } else {
-            friendsViewModel.getFollowersLiveData().observe(getViewLifecycleOwner(), friendsListUpdateObserver);
+            challengesViewModel.getAllLiveData().observe(getViewLifecycleOwner(), challengesListUpdateObserver);
         }
 
     }
 
-    Observer<ArrayList<User>> friendsListUpdateObserver = new Observer<ArrayList<User>>() {
+    Observer<ArrayList<Challenge>> challengesListUpdateObserver = new Observer<ArrayList<Challenge>>() {
         @Override
-        public void onChanged(ArrayList<User> userArrayList) {
-            adapter = new FriendAdapter(userArrayList);
+        public void onChanged(ArrayList<Challenge> challengeArrayList) {
+            adapter = new ChallengeAdapter(challengeArrayList);
             recyclerView.setAdapter(adapter);
-            if(userArrayList.isEmpty()){
+            if(challengeArrayList.isEmpty()){
                 noResultsLabel.setVisibility(View.VISIBLE);
             } else {
                 noResultsLabel.setVisibility(View.GONE);
