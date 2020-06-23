@@ -1,8 +1,9 @@
 package com.ozarychta.enums;
 
 public enum ChallengeState {
-    ALL,
-    NOT_STARTED,
     STARTED,
-    FINISHED
+    NOT_STARTED_YET,
+    FINISHED,
+    NOT_FINISHED_YET,
+    ALL
 }

@@ -390,9 +390,9 @@ public class MyChallengesActivity extends BaseActivity {
         if (repeatSpinner.getSelectedItem() != RepeatPeriod.ALL) {
             url += "&repeat=" + repeatSpinner.getSelectedItem();
         }
-        if (stateSpinner.getSelectedItem() != ChallengeState.ALL) {
+//        if (stateSpinner.getSelectedItem() != ChallengeState.ALL) {
             url += "&state=" + stateSpinner.getSelectedItem();
-        }
+//        }
         String city = cityEdit.getText().toString();
         if (!city.isEmpty()) {
             url += "&city=" + city;

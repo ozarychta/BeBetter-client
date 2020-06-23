@@ -495,7 +495,7 @@ public class ChallengeActivity extends BaseActivity {
     private void updateStateDependentUI() {
         ChallengeState state = challenge.getState();
 
-        if(ChallengeState.NOT_STARTED == state){
+        if(ChallengeState.NOT_STARTED_YET == state){
             daysLayout.setVisibility(View.GONE);
             notStartedYetLabel.setVisibility(View.VISIBLE);
         } else if(ChallengeState.STARTED == state){
@@ -546,7 +546,7 @@ public class ChallengeActivity extends BaseActivity {
                         Boolean done = jsonObject.getBoolean("done");
                         Integer currentStatus = jsonObject.getInt("currentStatus");
 
-                        if(state==ChallengeState.STARTED){
+                        if(state== ChallengeState.STARTED){
                             today = new Day(id, date, done, currentStatus);
 
                             todayDate.setText(simpleDateFormat.format(date));

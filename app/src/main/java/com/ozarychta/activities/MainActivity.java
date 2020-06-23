@@ -92,7 +92,8 @@ public class MainActivity extends BaseActivity {
 
 //        List<ChallengeState> states = Arrays.asList(ChallengeState.values());
 //        states.remove(3);
-        stateSpinner.setAdapter(new ArrayAdapter<ChallengeState>(this, android.R.layout.simple_spinner_dropdown_item, ChallengeState.values()));
+        stateSpinner.setAdapter(new ArrayAdapter<ChallengeState>(this, android.R.layout.simple_spinner_dropdown_item,
+                new ChallengeState[]{ChallengeState.ALL, ChallengeState.STARTED, ChallengeState.NOT_STARTED_YET }));
         stateSpinner.setSelection(0);
 
         recyclerView = findViewById(R.id.my_recycler_view);
