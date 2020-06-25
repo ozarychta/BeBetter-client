@@ -14,9 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ozarychta.R;
 import com.ozarychta.activities.ChallengeActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.ChallengeViewHolder> {
+
+    private static final String SIMPLE_DATE_FORMAT = "dd.MM";
+    private SimpleDateFormat simpleDateFormat;
 
     private ArrayList<Challenge> dataSet;
 
@@ -27,6 +32,9 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
         public TextView categoryTextView;
         public TextView cityTextView;
         public TextView goalTextView;
+        public TextView startDateTextView;
+        public TextView endDateTextView;
+        public Context ctx;
 
         public ChallengeViewHolder(View itemView) {
             super(itemView);
@@ -35,12 +43,17 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
             this.categoryTextView = (TextView) itemView.findViewById(R.id.categoryTextView);
             this.cityTextView = (TextView) itemView.findViewById(R.id.cityTextView);
             this.goalTextView = (TextView) itemView.findViewById(R.id.goalTextView);
+            this.startDateTextView = (TextView) itemView.findViewById(R.id.startDayTextView);
+            this.endDateTextView = (TextView) itemView.findViewById(R.id.endDayTextView);
+            this.ctx = itemView.getContext();
             Log.d("constructor view holder", "constructor view holder");
         }
     }
 
     public ChallengeAdapter(ArrayList<Challenge> data) {
         this.dataSet = data;
+        simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
@@ -55,19 +68,15 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
 
     @Override
     public void onBindViewHolder(@NonNull ChallengeViewHolder holder, int position) {
-        TextView titleTextView = holder.titleTextView;
-        TextView repeatTextView = holder.repeatTextView;
-        TextView categoryTextView = holder.categoryTextView;
-        TextView cityTextView = holder.cityTextView;
+        Log.d("on bind view holder", "on bind view holder \n" + dataSet.get(position));
         TextView goalTextView = holder.goalTextView;
 
-        Log.d("on bind view holder", "on bind view holder \n" + dataSet.get(position));
-
-
         holder.titleTextView.setText(dataSet.get(position).getTitle());
-        repeatTextView.setText("Powtórzeń w tygodniu: " + dataSet.get(position).getRepeatPeriod().getTimesPerWeek());
-        categoryTextView.setText("Kategoria: " + dataSet.get(position).getCategory().toString());
-        cityTextView.setText("Miasto: " + dataSet.get(position).getCity());
+        holder.repeatTextView.setText(holder.ctx.getText(R.string.times_per_week).toString() + " " + dataSet.get(position).getRepeatPeriod().getTimesPerWeek());
+        holder.categoryTextView.setText(holder.ctx.getText(R.string.category) + " " + dataSet.get(position).getCategory().toString());
+        holder.cityTextView.setText(holder.ctx.getText(R.string.city) + " " + dataSet.get(position).getCity());
+        holder.startDateTextView.setText(holder.ctx.getText(R.string.start_date) + "\n" + simpleDateFormat.format(dataSet.get(position).getStartDate()));
+        holder.endDateTextView.setText(holder.ctx.getText(R.string.end_date) + "\n" + simpleDateFormat.format(dataSet.get(position).getEndDate()));
         if(dataSet.get(position).getGoal() == 0){
             goalTextView.setVisibility(View.GONE);
             goalTextView.setText("");
