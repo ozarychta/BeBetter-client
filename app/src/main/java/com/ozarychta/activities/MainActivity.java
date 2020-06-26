@@ -321,13 +321,13 @@ public class MainActivity extends BaseActivity {
         url += "&type=" + AccessType.PUBLIC;
 
         if (categorySpinner.getSelectedItem() != Category.ALL) {
-            url += "&category=" + categorySpinner.getSelectedItem();
+            url += "&category=" + ((Category)categorySpinner.getSelectedItem()).name();
         }
         if (repeatSpinner.getSelectedItem() != RepeatPeriod.ALL) {
-            url += "&repeat=" + repeatSpinner.getSelectedItem();
+            url += "&repeat=" + ((RepeatPeriod)repeatSpinner.getSelectedItem()).name();
         }
         if (stateSpinner.getSelectedItem() != ChallengeState.ALL) {
-            url += "&state=" + stateSpinner.getSelectedItem();
+            url += "&state=" + ((ChallengeState)stateSpinner.getSelectedItem()).name();
         }
         String city = cityEdit.getText().toString();
         if (!city.isEmpty()) {

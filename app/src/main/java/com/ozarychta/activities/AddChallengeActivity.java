@@ -25,9 +25,11 @@ import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
+import com.ozarychta.enums.Category;
 import com.ozarychta.enums.CategoryDTO;
 import com.ozarychta.enums.ConfirmationType;
 import com.ozarychta.enums.MoreOrLess;
+import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.enums.RepeatPeriodDTO;
 
 import org.json.JSONException;
@@ -180,12 +182,12 @@ public class AddChallengeActivity extends BaseActivity {
         requestBody.put("title", title);
         requestBody.put("description", desc);
         requestBody.put("city", city);
-        requestBody.put("accessType", accessSpinner.getSelectedItem().toString());
-        requestBody.put("category", categorySpinner.getSelectedItem().toString());
-        requestBody.put("repeatPeriod", repeatSpinner.getSelectedItem().toString());
+        requestBody.put("accessType", ((AccessType)accessSpinner.getSelectedItem()).name());
+        requestBody.put("category", ((Category)categorySpinner.getSelectedItem()).name());
+        requestBody.put("repeatPeriod", ((RepeatPeriod)repeatSpinner.getSelectedItem()).name());
 
         ConfirmationType confirmationType = (ConfirmationType) confirmationSpinner.getSelectedItem();
-        requestBody.put("confirmationType", confirmationType.toString());
+        requestBody.put("confirmationType", confirmationType.name());
 
         Integer goal = 0;
         Boolean isMoreBetter = true;
