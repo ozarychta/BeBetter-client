@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -21,6 +20,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.Task;
+import com.ozarychta.EnumArrayAdapter;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
@@ -94,13 +94,13 @@ public class AddChallengeActivity extends BaseActivity {
         moreOrLessSpinner = findViewById(R.id.moreOrLessSpinner);
         moreOrLessSpinner.setVisibility(View.GONE);
 
-        categorySpinner.setAdapter(new ArrayAdapter<CategoryDTO>(this, android.R.layout.simple_spinner_dropdown_item, CategoryDTO.values()));
+        categorySpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CategoryDTO.values()));
         categorySpinner.setSelection(0);
 
-        repeatSpinner.setAdapter(new ArrayAdapter<RepeatPeriodDTO>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriodDTO.values()));
+        repeatSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriodDTO.values()));
         repeatSpinner.setSelection(0);
 
-        confirmationSpinner.setAdapter(new ArrayAdapter<ConfirmationType>(this, android.R.layout.simple_spinner_dropdown_item, ConfirmationType.values()));
+        confirmationSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ConfirmationType.values()));
         confirmationSpinner.setSelection(0);
         confirmationSpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
@@ -117,12 +117,13 @@ public class AddChallengeActivity extends BaseActivity {
                             moreOrLessTextView.setVisibility(View.VISIBLE);
                             goalEdit.setVisibility(View.GONE);
                             moreOrLessSpinner.setVisibility(View.VISIBLE);
-                        } else if(c == ConfirmationType.TIMER_TASK){
-                            goalTextView.setVisibility(View.VISIBLE);
-                            moreOrLessTextView.setVisibility(View.GONE);
-                            goalEdit.setVisibility(View.VISIBLE);
-                            moreOrLessSpinner.setVisibility(View.GONE);
                         }
+//                        else if(c == ConfirmationType.TIMER_TASK){
+//                            goalTextView.setVisibility(View.VISIBLE);
+//                            moreOrLessTextView.setVisibility(View.GONE);
+//                            goalEdit.setVisibility(View.VISIBLE);
+//                            moreOrLessSpinner.setVisibility(View.GONE);
+//                        }
                     }
 
                     @Override
@@ -131,10 +132,10 @@ public class AddChallengeActivity extends BaseActivity {
                     }
                 });
 
-        moreOrLessSpinner.setAdapter(new ArrayAdapter<MoreOrLess>(this, android.R.layout.simple_spinner_dropdown_item, MoreOrLess.values()));
+        moreOrLessSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, MoreOrLess.values()));
         moreOrLessSpinner.setSelection(0);
 
-        accessSpinner.setAdapter(new ArrayAdapter<AccessType>(this, android.R.layout.simple_spinner_dropdown_item, AccessType.values()));
+        accessSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, AccessType.values()));
         accessSpinner.setSelection(0);
 
         startDatePicker = findViewById(R.id.startDatePicker);
@@ -194,12 +195,13 @@ public class AddChallengeActivity extends BaseActivity {
 
         if(confirmationType == ConfirmationType.COUNTER_TASK){
             isMoreBetter = ((MoreOrLess)moreOrLessSpinner.getSelectedItem()).getBooleanValue();
-        } else if(confirmationType == ConfirmationType.TIMER_TASK){
-            String goalString = goalEdit.getText().toString();
-            if(!goalString.isEmpty()){
-                goal = Integer.valueOf(goalString);
-            }
         }
+//        else if(confirmationType == ConfirmationType.TIMER_TASK){
+//            String goalString = goalEdit.getText().toString();
+//            if(!goalString.isEmpty()){
+//                goal = Integer.valueOf(goalString);
+//            }
+//        }
 
         requestBody.put("goal", goal);
         requestBody.put("moreBetter", isMoreBetter);

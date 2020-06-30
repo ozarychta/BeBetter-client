@@ -31,6 +31,7 @@ import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.ChallengeState;
+import com.ozarychta.enums.ConfirmationType;
 import com.ozarychta.model.Challenge;
 import com.ozarychta.model.Comment;
 import com.ozarychta.model.CommentAdapter;
@@ -63,6 +64,9 @@ public class ChallengeActivity extends BaseActivity {
 
     private TextView goalText;
     private TextView moreOrLessText;
+
+    private TextView goalLabel;
+    private TextView moreOrLessLabel;
 
     private TextView titleText;
     private TextView descText;
@@ -139,7 +143,9 @@ public class ChallengeActivity extends BaseActivity {
         accessText = findViewById(R.id.accessTextView);
 
         goalText = findViewById(R.id.goalTextView);
+        goalLabel = findViewById(R.id.goalLabel);
         moreOrLessText = findViewById(R.id.moreOrLessTextView);
+        moreOrLessLabel = findViewById(R.id.moreOrLessLabel);
 
         startText = findViewById(R.id.startTextView);
         endText = findViewById(R.id.endTextView);
@@ -186,10 +192,10 @@ public class ChallengeActivity extends BaseActivity {
         descText.setText(challenge.getDescription());
         cityText.setText(challenge.getCity());
 
-        categoryText.setText(challenge.getCategory().toString());
-        repeatText.setText(challenge.getRepeatPeriod().toString());
-        confirmationText.setText(challenge.getConfirmationType().toString());
-        accessText.setText(challenge.getAccessType().toString());
+        categoryText.setText(challenge.getCategory().getLabel(getApplicationContext()));
+        repeatText.setText(challenge.getRepeatPeriod().getLabel(getApplicationContext()));
+        confirmationText.setText(challenge.getConfirmationType().getLabel(getApplicationContext()));
+        accessText.setText(challenge.getAccessType().getLabel(getApplicationContext()));
 
         goalText.setText(challenge.getGoal().toString());
         moreOrLessText.setText(challenge.getMoreBetter().toString());
@@ -232,6 +238,18 @@ public class ChallengeActivity extends BaseActivity {
             joinBtn.setVisibility(View.GONE);
 
             updateStateDependentUI();
+        }
+
+        if(challenge.getConfirmationType() == ConfirmationType.CHECK_TASK){
+            goalLabel.setVisibility(View.GONE);
+            moreOrLessLabel.setVisibility(View.GONE);
+            goalText.setVisibility(View.GONE);
+            moreOrLessText.setVisibility(View.GONE);
+        } else {
+            goalLabel.setVisibility(View.VISIBLE);
+            moreOrLessLabel.setVisibility(View.VISIBLE);
+            goalText.setVisibility(View.VISIBLE);
+            moreOrLessText.setVisibility(View.VISIBLE);
         }
 
         joinBtn.setOnClickListener(v -> silentSignInAndJoinChallenge());

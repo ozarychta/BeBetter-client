@@ -69,4 +69,26 @@
     <string name="error_occurred">Error</string>
     <string name="created">Created</string>
     <string name="joined">Joined</string>
+    <string name="category_all">ALL</string>
+    <string name="category_sport">SPORT</string>
+    <string name="category_family">FAMILY</string>
+    <string name="category_education">EDUCATION</string>
+    <string name="category_work">WORK</string>
+    <string name="category_lifestyle">LIFESTYLE</string>
+    <string name="category_health">HEALTH</string>
+    <string name="repeat_1_per_week">1 per week</string>
+    <string name="repeat_2_per_week">2 per week</string>
+    <string name="repeat_3_per_week">3 per week</string>
+    <string name="repeat_4_per_week">4 per week</string>
+    <string name="repeat_5_per_week">5 per week</string>
+    <string name="repeat_6_per_week">6 per week</string>
+    <string name="repeat_7_per_week">7 per week</string>
+    <string name="state_not_started">NOT STARTED YET</string>
+    <string name="state_started">STARTED</string>
+    <string name="state_finished">FINISHED</string>
+    <string name="state_not_finished">NOT FINISHED</string>
+    <string name="private_access">PRIVATE</string>
+    <string name="public_access">PUBLIC</string>
+    <string name="check_task">CHECK TASK</string>
+    <string name="counter_task">COUNTER TASK</string>
 </resources>

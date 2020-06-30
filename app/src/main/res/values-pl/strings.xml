@@ -69,4 +69,26 @@
     <string name="error_occurred">Wystąpił błąd</string>
     <string name="created">Utworzone</string>
     <string name="joined">Dołączone</string>
+    <string name="category_all">WSZYSTKIE</string>
+    <string name="category_sport">SPORT</string>
+    <string name="category_family">RODZINA</string>
+    <string name="category_education">EDUKACJA</string>
+    <string name="category_work">PRACA</string>
+    <string name="category_lifestyle">STYL ŻYCIA</string>
+    <string name="category_health">ZDROWIE</string>
+    <string name="repeat_1_per_week">1 w tygodniu</string>
+    <string name="repeat_2_per_week">2 w tygodniu</string>
+    <string name="repeat_3_per_week">3 w tygodniu</string>
+    <string name="repeat_4_per_week">4 w tygodniu</string>
+    <string name="repeat_5_per_week">5 w tygodniu</string>
+    <string name="repeat_6_per_week">6 w tygodniu</string>
+    <string name="repeat_7_per_week">7 w tygodniu</string>
+    <string name="state_not_started">Jeszcze nie rozpoczęte</string>
+    <string name="state_started">Rozpoczęte</string>
+    <string name="state_finished">Zakończone</string>
+    <string name="state_not_finished">Jeszcze nie zakończone</string>
+    <string name="private_access">PRYWATNY</string>
+    <string name="public_access">PUBLICZNY</string>
+    <string name="check_task">ZAZNACZENIE</string>
+    <string name="counter_task">LICZNIK</string>
 </resources>

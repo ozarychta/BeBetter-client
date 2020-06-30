@@ -73,7 +73,7 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
 
         holder.titleTextView.setText(dataSet.get(position).getTitle());
         holder.repeatTextView.setText(holder.ctx.getText(R.string.times_per_week).toString() + " " + dataSet.get(position).getRepeatPeriod().getTimesPerWeek());
-        holder.categoryTextView.setText(holder.ctx.getText(R.string.category) + " " + dataSet.get(position).getCategory().toString());
+        holder.categoryTextView.setText(holder.ctx.getText(R.string.category) + " " + dataSet.get(position).getCategory().getLabel(holder.ctx));
         holder.cityTextView.setText(holder.ctx.getText(R.string.city) + " " + dataSet.get(position).getCity());
         holder.startDateTextView.setText(holder.ctx.getText(R.string.start_date) + " " + simpleDateFormat.format(dataSet.get(position).getStartDate()));
         holder.endDateTextView.setText(holder.ctx.getText(R.string.end_date) + " " + simpleDateFormat.format(dataSet.get(position).getEndDate()));

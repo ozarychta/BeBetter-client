@@ -1,6 +1,22 @@
 package com.ozarychta.enums;
 
-public enum AccessType {
-    PRIVATE,
-    PUBLIC
+import android.content.Context;
+
+import com.ozarychta.R;
+import com.ozarychta.EnumWithLabel;
+
+public enum AccessType implements EnumWithLabel {
+    PRIVATE(R.string.private_access),
+    PUBLIC(R.string.public_access);
+
+    private Integer resourceId;
+
+    AccessType(Integer resourceId){
+        this.resourceId = resourceId;
+    }
+
+    @Override
+    public String getLabel(Context ctx){
+        return ctx.getString(resourceId);
+    }
 }

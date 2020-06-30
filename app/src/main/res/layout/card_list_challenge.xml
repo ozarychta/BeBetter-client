@@ -83,6 +83,7 @@
             android:layout_marginLeft="6sp"
             android:layout_weight="1"
             android:text=""
+            android:textColor="@color/darkGrey"
             android:textSize="16sp" />
 
         <TextView
@@ -94,6 +95,7 @@
             android:layout_marginRight="6sp"
             android:layout_weight="1"
             android:text=""
+            android:textColor="@color/darkGrey"
             android:textSize="16sp" />
 
     </LinearLayout>

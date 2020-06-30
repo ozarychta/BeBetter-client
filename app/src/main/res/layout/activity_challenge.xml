@@ -114,7 +114,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="4sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -137,6 +137,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -150,7 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5sp"
-                    android:layout_marginTop="2sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:textColor="@color/darkGrey"
                     android:textSize="18sp" />
@@ -159,6 +160,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -171,17 +173,17 @@
                     android:id="@+id/accessTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="0sp"
+                    android:layout_marginHorizontal="5sp"
+                    android:layout_marginTop="2sp"
                     android:gravity="center"
-                    android:paddingVertical="0sp"
-                    android:paddingLeft="2sp"
-                    android:paddingRight="22sp"
-                    android:textColor="@color/darkGrey" />
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -194,17 +196,17 @@
                     android:id="@+id/repeatTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="0sp"
+                    android:layout_marginHorizontal="5sp"
+                    android:layout_marginTop="2sp"
                     android:gravity="center"
-                    android:paddingVertical="0sp"
-                    android:paddingLeft="2sp"
-                    android:paddingRight="22sp"
-                    android:textColor="@color/darkGrey" />
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -217,17 +219,17 @@
                     android:id="@+id/categoryTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="0sp"
+                    android:layout_marginHorizontal="5sp"
+                    android:layout_marginTop="2sp"
                     android:gravity="center"
-                    android:paddingVertical="0sp"
-                    android:paddingLeft="2sp"
-                    android:paddingRight="22sp"
-                    android:textColor="@color/darkGrey" />
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -240,18 +242,18 @@
                     android:id="@+id/confirmationTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="0sp"
+                    android:layout_marginHorizontal="5sp"
+                    android:layout_marginTop="2sp"
                     android:gravity="center"
-                    android:paddingVertical="0sp"
-                    android:paddingLeft="2sp"
-                    android:paddingRight="22sp"
-                    android:textColor="@color/darkGrey" />
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/goalLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -267,15 +269,15 @@
                     android:layout_marginHorizontal="5sp"
                     android:layout_marginTop="2sp"
                     android:gravity="center"
-                    android:inputType="number"
                     android:textColor="@color/darkGrey"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/moreOrLessLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -288,17 +290,17 @@
                     android:id="@+id/moreOrLessTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="0sp"
+                    android:layout_marginHorizontal="5sp"
+                    android:layout_marginTop="2sp"
                     android:gravity="center"
-                    android:paddingVertical="0sp"
-                    android:paddingLeft="2sp"
-                    android:paddingRight="22sp"
-                    android:textColor="@color/darkGrey" />
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -312,13 +314,17 @@
                     style="@android:style/Widget.Material.Light.TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:colorControlNormal="@color/secondaryDarkColor"
-                    android:gravity="center" />
+                    android:layout_marginHorizontal="5sp"
+                    android:layout_marginTop="2sp"
+                    android:gravity="center"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
+                    android:layout_marginTop="8sp"
                     android:gravity="center"
                     android:paddingHorizontal="4sp"
                     android:paddingTop="5sp"
@@ -333,8 +339,11 @@
                     style="@android:style/Widget.Material.Light.TextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:colorControlNormal="@color/secondaryDarkColor"
-                    android:gravity="center" />
+                    android:layout_marginHorizontal="5sp"
+                    android:layout_marginTop="2sp"
+                    android:gravity="center"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="16sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/joinBtn"
@@ -342,7 +351,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10sp"
-                    android:layout_marginTop="2sp"
+                    android:layout_marginTop="4sp"
                     android:layout_marginBottom="2sp"
                     android:text="@string/join"
                     android:textColor="@color/white"
@@ -358,7 +367,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10sp"
-                    android:layout_marginVertical="2sp"
+                    android:layout_marginTop="4sp"
                     android:text="@string/statistics"
                     android:textColor="@color/white"
                     android:textSize="15sp"
@@ -373,7 +382,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10sp"
-                    android:layout_marginVertical="2sp"
+                    android:layout_marginTop="4sp"
                     android:text="@string/show_comments"
                     android:textColor="@color/white"
                     android:textSize="15sp"
@@ -388,7 +397,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10sp"
-                    android:layout_marginVertical="2sp"
+                    android:layout_marginTop="4sp"
                     android:text="@string/hide_comments"
                     android:textColor="@color/white"
                     android:textSize="15sp"

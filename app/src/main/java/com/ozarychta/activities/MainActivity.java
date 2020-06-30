@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -28,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
+import com.ozarychta.EnumArrayAdapter;
 import com.ozarychta.enums.AccessType;
 import com.ozarychta.enums.Category;
 import com.ozarychta.enums.ChallengeState;
@@ -84,15 +84,15 @@ public class MainActivity extends BaseActivity {
         cityEdit = findViewById(R.id.cityEdit);
         searchEdit = findViewById(R.id.searchEdit);
 
-        categorySpinner.setAdapter(new ArrayAdapter<Category>(this, android.R.layout.simple_spinner_dropdown_item, Category.values()));
+        categorySpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, Category.values()));
         categorySpinner.setSelection(0);
 
-        repeatSpinner.setAdapter(new ArrayAdapter<RepeatPeriod>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
+        repeatSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
         repeatSpinner.setSelection(0);
 
 //        List<ChallengeState> states = Arrays.asList(ChallengeState.values());
 //        states.remove(3);
-        stateSpinner.setAdapter(new ArrayAdapter<ChallengeState>(this, android.R.layout.simple_spinner_dropdown_item,
+        stateSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
                 new ChallengeState[]{ChallengeState.ALL, ChallengeState.STARTED, ChallengeState.NOT_STARTED_YET }));
         stateSpinner.setSelection(0);
 
@@ -246,9 +246,9 @@ public class MainActivity extends BaseActivity {
                             Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
 
                             Integer goal = 0;
-                            if (confirmation == ConfirmationType.TIMER_TASK) {
-                                goal = jsonObject.getInt("goal");
-                            }
+//                            if (confirmation == ConfirmationType.TIMER_TASK) {
+//                                goal = jsonObject.getInt("goal");
+//                            }
                             Boolean isMoreBetter = true;
                             if (confirmation == ConfirmationType.COUNTER_TASK) {
                                 isMoreBetter = jsonObject.getBoolean("moreBetter");
