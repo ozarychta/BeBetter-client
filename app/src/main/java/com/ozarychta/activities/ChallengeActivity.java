@@ -222,12 +222,31 @@ public class ChallengeActivity extends BaseActivity {
         });
 
         counterLinearLayout = todayCard.findViewById(R.id.counterLinearLayout);
-        minusBtn = todayCard.findViewById(R.id.minusButton);
-        plusBtn = todayCard.findViewById(R.id.plusButton);
         counterText = todayCard.findViewById(R.id.counterTextView);
-        ///pozostałe buttony itd z counera z listenerami
 
-        if(challenge.getConfirmationType() == ConfirmationType.CHECK_TASK){
+        minusBtn = todayCard.findViewById(R.id.minusButton);
+        minusBtn.setOnClickListener(v -> {
+            Integer counter = Integer.valueOf(counterText.getText().toString());
+            if (counter > 0) {
+                counter -= 1;
+                today.setCurrentStatus(counter);
+                counterText.setText(String.valueOf(counter));
+                silentSignInAndSaveChange();
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string.error_less_that_zero), Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
+
+        plusBtn = todayCard.findViewById(R.id.plusButton);
+        plusBtn.setOnClickListener(v -> {
+            Integer counter = Integer.valueOf(counterText.getText().toString()) + 1;
+            today.setCurrentStatus(counter);
+            counterText.setText(String.valueOf(counter));
+            silentSignInAndSaveChange();
+        });
+
+        if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
             todayToggle.setVisibility(View.VISIBLE);
             counterLinearLayout.setVisibility(View.GONE);
         } else {
@@ -240,13 +259,13 @@ public class ChallengeActivity extends BaseActivity {
         commentsLinearLayout.setVisibility(View.GONE);
         noCommentsLabel.setVisibility(View.GONE);
 
-        if(challenge.getAccessType() == AccessType.PUBLIC && challenge.isUserParticipant() == true){
+        if (challenge.getAccessType() == AccessType.PUBLIC && challenge.isUserParticipant() == true) {
             showCommentsBtn.setVisibility(View.VISIBLE);
         } else {
             showCommentsBtn.setVisibility(View.GONE);
         }
 
-        if(challenge.isUserParticipant() == false){
+        if (challenge.isUserParticipant() == false) {
             daysLabel.setVisibility(View.GONE);
             daysLayout.setVisibility(View.GONE);
             statisticsBtn.setVisibility(View.GONE);
@@ -260,7 +279,7 @@ public class ChallengeActivity extends BaseActivity {
             updateStateDependentUI();
         }
 
-        if(challenge.getConfirmationType() == ConfirmationType.CHECK_TASK){
+        if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
             goalLabel.setVisibility(View.GONE);
             moreOrLessLabel.setVisibility(View.GONE);
             goalText.setVisibility(View.GONE);
@@ -390,29 +409,29 @@ public class ChallengeActivity extends BaseActivity {
                 null,
                 response -> {
                     try {
-                        if (response.length()==0){
+                        if (response.length() == 0) {
                             noCommentsLabel.setVisibility(View.VISIBLE);
                         }
 
                         for (int i = 0; i < response.length(); i++) {
 //                            try {
-                                JSONObject jsonObject = (JSONObject) response.get(i);
+                            JSONObject jsonObject = (JSONObject) response.get(i);
 
-                                Long id = jsonObject.getLong("id");
-                                Long creatorId = jsonObject.getLong("creatorId");
-                                String creatorUsername = jsonObject.getString("creatorUsername");
-                                String text = jsonObject.getString("text");
-                                Date createdAt = dateFormat.parse(jsonObject.getString("createdAt"));
+                            Long id = jsonObject.getLong("id");
+                            Long creatorId = jsonObject.getLong("creatorId");
+                            String creatorUsername = jsonObject.getString("creatorUsername");
+                            String text = jsonObject.getString("text");
+                            Date createdAt = dateFormat.parse(jsonObject.getString("createdAt"));
 
-                                Comment c = new Comment();
-                                c.setId(id);
-                                c.setCreatorId(creatorId);
-                                c.setCreatorUsername(creatorUsername);
-                                c.setText(text);
-                                c.setCreatedAt(createdAt);
+                            Comment c = new Comment();
+                            c.setId(id);
+                            c.setCreatorId(creatorId);
+                            c.setCreatorUsername(creatorUsername);
+                            c.setText(text);
+                            c.setCreatedAt(createdAt);
 
-                                comments.add(c);
-                                commentsAdapter.notifyDataSetChanged();
+                            comments.add(c);
+                            commentsAdapter.notifyDataSetChanged();
 
 //                                Log.d(this.getClass().getSimpleName() + " comment", comments.get(i).toString());
 
@@ -442,10 +461,10 @@ public class ChallengeActivity extends BaseActivity {
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }
@@ -509,10 +528,10 @@ public class ChallengeActivity extends BaseActivity {
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }
@@ -533,10 +552,10 @@ public class ChallengeActivity extends BaseActivity {
     private void updateStateDependentUI() {
         ChallengeState state = challenge.getState();
 
-        if(ChallengeState.NOT_STARTED_YET == state){
+        if (ChallengeState.NOT_STARTED_YET == state) {
             daysLayout.setVisibility(View.GONE);
             notStartedYetLabel.setVisibility(View.VISIBLE);
-        } else if(ChallengeState.STARTED == state){
+        } else if (ChallengeState.STARTED == state) {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
             silentSignInAndGetLastFourDays();
@@ -567,11 +586,11 @@ public class ChallengeActivity extends BaseActivity {
         pastDays.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/days?challengeState=" +state,
+                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/days?challengeState=" + state,
                 null,
                 response -> {
                     try {
-                        if (response.length()==0){
+                        if (response.length() == 0) {
                             Toast.makeText(getApplicationContext(), getString(R.string.no_results), Toast.LENGTH_LONG)
                                     .show();
 //                            progressBar.setVisibility(View.GONE);
@@ -584,7 +603,7 @@ public class ChallengeActivity extends BaseActivity {
                         Boolean done = jsonObject.getBoolean("done");
                         Integer currentStatus = jsonObject.getInt("currentStatus");
 
-                        if(state== ChallengeState.STARTED){
+                        if (state == ChallengeState.STARTED) {
                             today = new Day(id, date, done, currentStatus);
                             today.setConfirmationType(challenge.getConfirmationType());
 
@@ -602,18 +621,18 @@ public class ChallengeActivity extends BaseActivity {
 
                         for (int i = 1; i < response.length(); i++) {
 //                            try {
-                                jsonObject = (JSONObject) response.get(i);
+                            jsonObject = (JSONObject) response.get(i);
 
-                                id = jsonObject.getLong("id");
-                                date = dateFormat.parse(jsonObject.getString("date"));
-                                done = jsonObject.getBoolean("done");
-                                currentStatus = jsonObject.getInt("currentStatus");
+                            id = jsonObject.getLong("id");
+                            date = dateFormat.parse(jsonObject.getString("date"));
+                            done = jsonObject.getBoolean("done");
+                            currentStatus = jsonObject.getInt("currentStatus");
 
-                                Day day = new Day(id, date, done, currentStatus);
-                                day.setConfirmationType(challenge.getConfirmationType());
+                            Day day = new Day(id, date, done, currentStatus);
+                            day.setConfirmationType(challenge.getConfirmationType());
 
-                                pastDays.add(day);
-                                daysAdapter.notifyDataSetChanged();
+                            pastDays.add(day);
+                            daysAdapter.notifyDataSetChanged();
 
 //                            } catch (JSONException e) {
 //                                e.printStackTrace();
@@ -632,10 +651,10 @@ public class ChallengeActivity extends BaseActivity {
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }
@@ -706,10 +725,10 @@ public class ChallengeActivity extends BaseActivity {
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
                     }

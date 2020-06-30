@@ -91,4 +91,5 @@
     <string name="public_access">PUBLICZNY</string>
     <string name="check_task">ZAZNACZENIE</string>
     <string name="counter_task">LICZNIK</string>
+    <string name="error_less_that_zero">Ta wartość nie może być mniejsza od zera</string>
 </resources>

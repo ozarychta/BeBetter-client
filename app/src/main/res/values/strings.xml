@@ -91,4 +91,5 @@
     <string name="public_access">PUBLIC</string>
     <string name="check_task">CHECK TASK</string>
     <string name="counter_task">COUNTER TASK</string>
+    <string name="error_less_that_zero">Value can\'t be less than zero</string>
 </resources>
