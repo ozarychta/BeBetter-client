@@ -83,7 +83,6 @@
                     android:layout_marginHorizontal="0sp"
                     android:paddingHorizontal="4sp"
                     android:gravity="center"
-                    android:text="100"
                     android:textColor="@color/darkGrey"
                     android:textSize="18sp" />
 

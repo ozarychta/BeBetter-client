@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ozarychta.R;
+import com.ozarychta.enums.ConfirmationType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,11 +29,15 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
 
         public TextView dateText;
         public ToggleButton toggleDone;
+        public LinearLayout counterLinearLayout;
+        public TextView counterText;
 
         public DayViewHolder(View itemView) {
             super(itemView);
-            this.dateText = (TextView) itemView.findViewById(R.id.dateTextView);
-            this.toggleDone = (ToggleButton) itemView.findViewById(R.id.toggleButton);
+            this.dateText = itemView.findViewById(R.id.dateTextView);
+            this.toggleDone = itemView.findViewById(R.id.toggleButton);
+            this.counterLinearLayout = itemView.findViewById(R.id.counterLinearLayout);
+            this.counterText = itemView.findViewById(R.id.counterTextView);
             Log.d("constructor view holder", "constructor view holder");
         }
     }
@@ -54,10 +60,21 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
-        Log.d("on bind view holder", "on bind view holder \n" + dataSet.get(position));
+        Day d = dataSet.get(position);
+        Log.d("on bind view holder", "on bind view holder \n" + d);
 
-        holder.dateText.setText(simpleDateFormat.format(dataSet.get(position).getDate()));
-        holder.toggleDone.setChecked(dataSet.get(position).getDone());
+        holder.dateText.setText(simpleDateFormat.format(d.getDate()));
+        holder.toggleDone.setChecked(d.getDone());
+        holder.counterText.setText(String.valueOf(d.getCurrentStatus()));
+
+        if(d.getConfirmationType() == ConfirmationType.CHECK_TASK){
+            holder.toggleDone.setVisibility(View.VISIBLE);
+            holder.counterLinearLayout.setVisibility(View.GONE);
+        } else {
+            holder.toggleDone.setVisibility(View.GONE);
+            holder.counterLinearLayout.setVisibility(View.VISIBLE);
+
+        }
     }
 
     @Override

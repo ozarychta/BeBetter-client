@@ -1,5 +1,7 @@
 package com.ozarychta.model;
 
+import com.ozarychta.enums.ConfirmationType;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,11 +14,14 @@ public class Day implements Serializable {
 
     private Integer currentStatus;
 
+    private ConfirmationType confirmationType;
+
     public Day(Long id, Date date, Boolean done, Integer currentStatus) {
         this.id = id;
         this.date = date;
         this.done = done;
         this.currentStatus = currentStatus;
+        this.confirmationType = ConfirmationType.CHECK_TASK;
     }
 
     public Long getId() {
@@ -49,5 +54,13 @@ public class Day implements Serializable {
 
     public void setCurrentStatus(Integer currentStatus) {
         this.currentStatus = currentStatus;
+    }
+
+    public ConfirmationType getConfirmationType() {
+        return confirmationType;
+    }
+
+    public void setConfirmationType(ConfirmationType confirmationType) {
+        this.confirmationType = confirmationType;
     }
 }

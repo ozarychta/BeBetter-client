@@ -88,10 +88,15 @@ public class ChallengeActivity extends BaseActivity {
     private TextView daysLabel;
     private TextView notStartedYetLabel;
     private LinearLayout daysLayout;
+
     private MaterialCardView todayCard;
     private TextView todayDate;
     private ToggleButton todayToggle;
+
     private LinearLayout counterLinearLayout;
+    private Button minusBtn;
+    private Button plusBtn;
+    private TextView counterText;
 
     private RecyclerView.Adapter daysAdapter;
     private RecyclerView.LayoutManager daysLayoutManager;
@@ -217,6 +222,9 @@ public class ChallengeActivity extends BaseActivity {
         });
 
         counterLinearLayout = todayCard.findViewById(R.id.counterLinearLayout);
+        minusBtn = todayCard.findViewById(R.id.minusButton);
+        plusBtn = todayCard.findViewById(R.id.plusButton);
+        counterText = todayCard.findViewById(R.id.counterTextView);
         ///pozostałe buttony itd z counera z listenerami
 
         if(challenge.getConfirmationType() == ConfirmationType.CHECK_TASK){
@@ -578,11 +586,15 @@ public class ChallengeActivity extends BaseActivity {
 
                         if(state== ChallengeState.STARTED){
                             today = new Day(id, date, done, currentStatus);
+                            today.setConfirmationType(challenge.getConfirmationType());
 
                             todayDate.setText(simpleDateFormat.format(date));
                             todayToggle.setChecked(done);
+                            counterText.setText(String.valueOf(currentStatus));
                         } else {
                             Day day = new Day(id, date, done, currentStatus);
+                            day.setConfirmationType(challenge.getConfirmationType());
+
                             pastDays.add(day);
                             daysAdapter.notifyDataSetChanged();
                         }
@@ -598,6 +610,8 @@ public class ChallengeActivity extends BaseActivity {
                                 currentStatus = jsonObject.getInt("currentStatus");
 
                                 Day day = new Day(id, date, done, currentStatus);
+                                day.setConfirmationType(challenge.getConfirmationType());
+
                                 pastDays.add(day);
                                 daysAdapter.notifyDataSetChanged();
 
