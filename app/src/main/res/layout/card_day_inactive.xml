@@ -14,7 +14,7 @@
     app:cardBackgroundColor="@color/lightGrey"
     app:cardUseCompatPadding="false"
     android:layout_marginVertical="10sp"
-    android:layout_marginHorizontal="8sp"
+    android:layout_marginHorizontal="4sp"
     app:strokeWidth="1sp">
 
     <LinearLayout
@@ -38,10 +38,69 @@
             android:id="@+id/toggleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:background="@drawable/toggle_check"
             android:enabled="false"
             android:textOn=""
             android:textOff="" />
+
+        <LinearLayout
+            android:id="@+id/counterLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10sp"
+            android:orientation="horizontal">
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Small"
+                android:id="@+id/minusButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0sp"
+                android:layout_margin="0sp"
+                android:background="@drawable/ic_remove_12"
+                android:enabled="false" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/counter"
+                style="@style/Widget.AppCompat.TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:layout_marginHorizontal="0sp"
+                android:backgroundTint="@color/lightGrey"
+                android:padding="0sp"
+                app:cornerRadius="2sp"
+                app:strokeColor="@color/mediumGrey"
+                app:strokeWidth="2sp" >
+
+                <TextView
+                    android:id="@+id/counterTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="0sp"
+                    android:paddingHorizontal="4sp"
+                    android:text="100"
+                    android:backgroundTint="@color/lightGrey"
+                    android:textColor="@color/darkGrey"
+                    android:textSize="18sp" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Small"
+                android:id="@+id/plusButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0sp"
+                android:layout_margin="0sp"
+                android:background="@drawable/ic_add_12"
+                android:enabled="false" />
+        </LinearLayout>
 
     </LinearLayout>
 

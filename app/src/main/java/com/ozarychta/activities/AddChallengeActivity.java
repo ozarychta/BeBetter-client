@@ -25,11 +25,9 @@ import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
-import com.ozarychta.enums.Category;
 import com.ozarychta.enums.CategoryDTO;
 import com.ozarychta.enums.ConfirmationType;
 import com.ozarychta.enums.MoreOrLess;
-import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.enums.RepeatPeriodDTO;
 
 import org.json.JSONException;
@@ -113,9 +111,9 @@ public class AddChallengeActivity extends BaseActivity {
                             goalEdit.setVisibility(View.GONE);
                             moreOrLessSpinner.setVisibility(View.GONE);
                         } else if(c == ConfirmationType.COUNTER_TASK){
-                            goalTextView.setVisibility(View.GONE);
+                            goalTextView.setVisibility(View.VISIBLE);
                             moreOrLessTextView.setVisibility(View.VISIBLE);
-                            goalEdit.setVisibility(View.GONE);
+                            goalEdit.setVisibility(View.VISIBLE);
                             moreOrLessSpinner.setVisibility(View.VISIBLE);
                         }
 //                        else if(c == ConfirmationType.TIMER_TASK){
@@ -171,6 +169,7 @@ public class AddChallengeActivity extends BaseActivity {
         String title = titleEdit.getText().toString();
         String desc = descEdit.getText().toString();
         String city = cityEdit.getText().toString();
+        String goalText = goalEdit.getText().toString();
 
         if (Strings.isEmptyOrWhitespace(title) || Strings.isEmptyOrWhitespace(desc) || Strings.isEmptyOrWhitespace(city)) {
             Toast.makeText(getApplicationContext(), getString(R.string.empty_fields_error), Toast.LENGTH_LONG)
@@ -184,8 +183,8 @@ public class AddChallengeActivity extends BaseActivity {
         requestBody.put("description", desc);
         requestBody.put("city", city);
         requestBody.put("accessType", ((AccessType)accessSpinner.getSelectedItem()).name());
-        requestBody.put("category", ((Category)categorySpinner.getSelectedItem()).name());
-        requestBody.put("repeatPeriod", ((RepeatPeriod)repeatSpinner.getSelectedItem()).name());
+        requestBody.put("category", ((CategoryDTO)categorySpinner.getSelectedItem()).name());
+        requestBody.put("repeatPeriod", ((RepeatPeriodDTO)repeatSpinner.getSelectedItem()).name());
 
         ConfirmationType confirmationType = (ConfirmationType) confirmationSpinner.getSelectedItem();
         requestBody.put("confirmationType", confirmationType.name());
@@ -195,13 +194,10 @@ public class AddChallengeActivity extends BaseActivity {
 
         if(confirmationType == ConfirmationType.COUNTER_TASK){
             isMoreBetter = ((MoreOrLess)moreOrLessSpinner.getSelectedItem()).getBooleanValue();
+            if(!Strings.isEmptyOrWhitespace(goalText)){
+                goal = Integer.valueOf(goalText);
+            }
         }
-//        else if(confirmationType == ConfirmationType.TIMER_TASK){
-//            String goalString = goalEdit.getText().toString();
-//            if(!goalString.isEmpty()){
-//                goal = Integer.valueOf(goalString);
-//            }
-//        }
 
         requestBody.put("goal", goal);
         requestBody.put("moreBetter", isMoreBetter);

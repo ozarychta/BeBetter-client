@@ -85,15 +85,13 @@
                 <LinearLayout
                     android:id="@+id/daysLinearLayout"
                     android:layout_width="match_parent"
-                    android:weightSum="4"
                     android:layout_marginTop="5sp"
                     android:layout_marginHorizontal="5sp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <include
-                        android:layout_width="0sp"
-                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5sp"
                         android:layout_marginVertical="10sp"
@@ -102,11 +100,10 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/past_days_recycler_view"
-                        android:layout_width="0sp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="0sp"
                         android:padding="0sp"
-                        android:layout_weight="3"
                         android:scrollbars="none" />
 
                 </LinearLayout>

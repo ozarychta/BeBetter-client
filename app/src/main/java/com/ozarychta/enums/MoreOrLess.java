@@ -11,7 +11,7 @@ public enum MoreOrLess implements EnumWithLabel {
     private Boolean booleanValue;
 
     MoreOrLess(Boolean booleanValue) {
-        booleanValue = booleanValue;
+        this.booleanValue = booleanValue;
     }
 
     public boolean getBooleanValue() {

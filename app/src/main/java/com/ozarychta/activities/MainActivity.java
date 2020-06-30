@@ -246,12 +246,10 @@ public class MainActivity extends BaseActivity {
                             Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
 
                             Integer goal = 0;
-//                            if (confirmation == ConfirmationType.TIMER_TASK) {
-//                                goal = jsonObject.getInt("goal");
-//                            }
                             Boolean isMoreBetter = true;
                             if (confirmation == ConfirmationType.COUNTER_TASK) {
                                 isMoreBetter = jsonObject.getBoolean("moreBetter");
+                                goal = jsonObject.getInt("goal");
                             }
 
                             Challenge c = new Challenge();

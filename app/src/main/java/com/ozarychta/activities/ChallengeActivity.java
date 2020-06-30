@@ -91,6 +91,7 @@ public class ChallengeActivity extends BaseActivity {
     private MaterialCardView todayCard;
     private TextView todayDate;
     private ToggleButton todayToggle;
+    private LinearLayout counterLinearLayout;
 
     private RecyclerView.Adapter daysAdapter;
     private RecyclerView.LayoutManager daysLayoutManager;
@@ -214,6 +215,17 @@ public class ChallengeActivity extends BaseActivity {
                 silentSignInAndSaveChange();
             }
         });
+
+        counterLinearLayout = todayCard.findViewById(R.id.counterLinearLayout);
+        ///pozostałe buttony itd z counera z listenerami
+
+        if(challenge.getConfirmationType() == ConfirmationType.CHECK_TASK){
+            todayToggle.setVisibility(View.VISIBLE);
+            counterLinearLayout.setVisibility(View.GONE);
+        } else {
+            todayToggle.setVisibility(View.GONE);
+            counterLinearLayout.setVisibility(View.VISIBLE);
+        }
 
         commentEdit = findViewById(R.id.commentEdit);
         hideCommentsBtn.setVisibility(View.GONE);
