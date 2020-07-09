@@ -53,6 +53,7 @@ public class ChallengeActivity extends BaseActivity {
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     private static final String SIMPLE_DATE_FORMAT = "dd.MM";
     private static final String BASIC_DATE_FORMAT = "dd.MM.yyyy";
+    private static final Integer DEFAULT_DAYS_NUM = 7;
     private SimpleDateFormat simpleDateFormat;
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat basicDateFormat;
@@ -216,6 +217,12 @@ public class ChallengeActivity extends BaseActivity {
         todayToggle = todayCard.findViewById(R.id.toggleButton);
         todayToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!buttonView.isPressed()) return;
+
+                if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.no_connection), Toast.LENGTH_LONG)
+                            .show();
+                }
                 today.setDone(isChecked);
                 silentSignInAndSaveChange();
             }
@@ -226,6 +233,11 @@ public class ChallengeActivity extends BaseActivity {
 
         minusBtn = todayCard.findViewById(R.id.minusButton);
         minusBtn.setOnClickListener(v -> {
+            if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                Toast.makeText(getApplicationContext(), getString(R.string.no_connection), Toast.LENGTH_LONG)
+                        .show();
+            }
+
             Integer counter = Integer.valueOf(counterText.getText().toString());
             if (counter > 0) {
                 counter -= 1;
@@ -286,9 +298,9 @@ public class ChallengeActivity extends BaseActivity {
             moreOrLessText.setVisibility(View.GONE);
         } else {
             goalLabel.setVisibility(View.VISIBLE);
-            moreOrLessLabel.setVisibility(View.VISIBLE);
+            moreOrLessLabel.setVisibility(View.GONE);
             goalText.setVisibility(View.VISIBLE);
-            moreOrLessText.setVisibility(View.VISIBLE);
+            moreOrLessText.setVisibility(View.GONE);
         }
 
         joinBtn.setOnClickListener(v -> silentSignInAndJoinChallenge());
@@ -510,10 +522,23 @@ public class ChallengeActivity extends BaseActivity {
                     try {
                         JSONObject jsonObject = (JSONObject) response;
 
-                        Integer id = jsonObject.getInt("id");
+                        Integer points = jsonObject.getInt("points");
+                        String message = "";
 
-//                        Toast.makeText(getApplicationContext(), getString(R.string.updated_state), Toast.LENGTH_LONG)
-//                                .show();
+                        if(points == -1) {
+                            Toast.makeText(getApplicationContext(), points + " " + getString(R.string.point), Toast.LENGTH_LONG)
+                                    .show();
+                        } else if (points < -1){
+                            Toast.makeText(getApplicationContext(), points + " " + getString(R.string.points), Toast.LENGTH_LONG)
+                                    .show();
+                        } else if (points == 1){
+                            Toast.makeText(getApplicationContext(), "+" + points + " " + getString(R.string.point), Toast.LENGTH_LONG)
+                                    .show();
+                        } else if(points > 1){
+                            Toast.makeText(getApplicationContext(), "+" + points + " " + getString(R.string.points), Toast.LENGTH_LONG)
+                                    .show();
+                        }
+
                         Log.d(this.getClass().getSimpleName(), "Updated day");
 
                     } catch (JSONException e) {
@@ -558,35 +583,36 @@ public class ChallengeActivity extends BaseActivity {
         } else if (ChallengeState.STARTED == state) {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
-            silentSignInAndGetLastFourDays();
+            silentSignInAndGetLastDays();
             todayCard.setVisibility(View.VISIBLE);
         } else {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
             todayCard.setVisibility(View.GONE);
-            silentSignInAndGetLastFourDays();
+            silentSignInAndGetLastDays();
         }
     }
 
-    private void silentSignInAndGetLastFourDays() {
+    private void silentSignInAndGetLastDays() {
 
         Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
         if (task.isSuccessful()) {
             // There's immediate result available.
-            getLastFourDays(task.getResult().getIdToken());
+            getLastDays(task.getResult().getIdToken());
         } else {
             task.addOnCompleteListener(
                     this,
-                    task1 -> getLastFourDays(SignInClient.getTokenIdFromResult(task1)));
+                    task1 -> getLastDays(SignInClient.getTokenIdFromResult(task1)));
         }
     }
 
-    private void getLastFourDays(String idToken) {
+    private void getLastDays(String idToken) {
         ChallengeState state = challenge.getState();
         pastDays.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId() + "/days?challengeState=" + state,
+                "https://be-better-server.herokuapp.com/challenges/" + challenge.getId()
+                        + "/days?challengeState=" + state + "&daysNum=" + DEFAULT_DAYS_NUM,
                 null,
                 response -> {
                     try {
@@ -595,6 +621,8 @@ public class ChallengeActivity extends BaseActivity {
                                     .show();
 //                            progressBar.setVisibility(View.GONE);
                         }
+
+                        Log.d("", response.toString(2));
 
                         JSONObject jsonObject = (JSONObject) response.get(0);
 

@@ -7,7 +7,7 @@
     <string name="my_challenges">Moje wyzwania</string>
     <string name="profile">Profil</string>
     <string name="friends">Znajomi</string>
-    <string name="achievements">Osiągnięcia</string>
+    <string name="achievements">Osiągnięcia:</string>
     <string name="statistics">Statystyki</string>
     <string name="settings">Ustawienia</string>
     <string name="sign_out">Wyloguj się</string>
@@ -45,7 +45,6 @@
     <string name="challenge_not_started_yet">Wyzwanie jeszcze się nie rozpoczęło.</string>
     <string name="edit_user_info">Edytuj</string>
     <string name="username">Nazwa użytkownika: </string>
-    <string name="about_me">O mnie: </string>
     <string name="main_goal">Główny cel: </string>
     <string name="ranking_points">Punkty rankingowe: </string>
     <string name="highest_streak">Najdłuższy streak: </string>
@@ -92,4 +91,8 @@
     <string name="check_task">ZAZNACZENIE</string>
     <string name="counter_task">LICZNIK</string>
     <string name="error_less_that_zero">Ta wartość nie może być mniejsza od zera</string>
+    <string name="no_connection">Brak połączenia z siecią. Ta zmiana nie zostanie zapisana.</string>
+    <string name="points">punkty</string>
+    <string name="point">punkt</string>
+    <string name="about_me">O mnie:</string>
 </resources>

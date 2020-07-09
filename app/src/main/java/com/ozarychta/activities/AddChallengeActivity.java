@@ -112,9 +112,9 @@ public class AddChallengeActivity extends BaseActivity {
                             moreOrLessSpinner.setVisibility(View.GONE);
                         } else if(c == ConfirmationType.COUNTER_TASK){
                             goalTextView.setVisibility(View.VISIBLE);
-                            moreOrLessTextView.setVisibility(View.VISIBLE);
+                            moreOrLessTextView.setVisibility(View.GONE);
                             goalEdit.setVisibility(View.VISIBLE);
-                            moreOrLessSpinner.setVisibility(View.VISIBLE);
+                            moreOrLessSpinner.setVisibility(View.GONE);
                         }
 //                        else if(c == ConfirmationType.TIMER_TASK){
 //                            goalTextView.setVisibility(View.VISIBLE);

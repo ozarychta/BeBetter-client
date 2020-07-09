@@ -82,7 +82,7 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
             goalTextView.setText("");
         } else {
             goalTextView.setVisibility(View.VISIBLE);
-            goalTextView.setText("Przez: " + dataSet.get(position).getGoal() + " min");
+            goalTextView.setText(holder.ctx.getText(R.string.goal) + " " + dataSet.get(position).getGoal());
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
