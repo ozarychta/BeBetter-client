@@ -13,7 +13,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.util.Strings;
@@ -21,11 +26,13 @@ import com.google.android.gms.tasks.Task;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
+import com.ozarychta.model.Achievement;
 import com.ozarychta.model.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +57,14 @@ public class ProfileActivity extends BaseActivity{
     private Button unfollowBtn;
 
     private ProgressBar progressBar;
+    private ProgressBar achievementsProgressBar;
+
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+
+    private ArrayList<Achievement> achievements;
+    private TextView noResultsLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +82,21 @@ public class ProfileActivity extends BaseActivity{
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
+
+        achievementsProgressBar = findViewById(R.id.achievementsProgressBar);
+        achievementsProgressBar.setVisibility(View.GONE);
+
+        recyclerView = findViewById(R.id.achievementsRecyclerView);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        achievements = new ArrayList<>();
+        adapter = new AchievementAdapter(achievements);
+        recyclerView.setAdapter(adapter);
+
+        noResultsLabel = findViewById(R.id.noResultsLabel);
+        noResultsLabel.setVisibility(View.GONE);
 
         editBtn = findViewById(R.id.editBtn);
         editBtn.setOnClickListener(v -> {
@@ -107,6 +137,95 @@ public class ProfileActivity extends BaseActivity{
         }
 
         silentSignInAndGetUserInfo();
+        silentSignInAndGetAchievements();
+    }
+
+    private void silentSignInAndGetAchievements() {
+        achievementsProgressBar.setVisibility(View.VISIBLE);
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            getAchievements(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> getAchievements(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void getAchievements(String idToken) {
+        achievementsProgressBar.setVisibility(View.VISIBLE);
+        achievements.clear();
+        noResultsLabel.setVisibility(View.GONE);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://be-better-server.herokuapp.com/users/" + userIdFromIntent + "/achievements",
+                null,
+                response -> {
+                    try {
+                        if (response.length() == 0) {
+                            noResultsLabel.setVisibility(View.VISIBLE);
+                            achievementsProgressBar.setVisibility(View.GONE);
+                        }
+                        Log.d(this.getClass().getSimpleName() + " response", response.toString(2));
+
+                        for (int i = 0; i < response.length(); i++) {
+//                            try {
+                            JSONObject jsonObject = (JSONObject) response.get(i);
+
+                            Long id = jsonObject.getLong("id");
+                            String title = jsonObject.getString("title");
+                            String desc = jsonObject.getString("description");
+
+                            Achievement a = new Achievement(id, title, desc);
+                            achievements.add(a);
+
+                            adapter.notifyDataSetChanged();
+
+                            Log.d(this.getClass().getSimpleName() + " jsonObject user", jsonObject.toString(2));
+
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            } finally {
+//                                progressBar.setVisibility(View.GONE);
+//                            }
+                        }
+
+                        if(achievements.isEmpty()){
+                            noResultsLabel.setVisibility(View.VISIBLE);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
+                    } finally {
+                        achievementsProgressBar.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                    achievementsProgressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + idToken);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
     }
 
     private void followUser() {
