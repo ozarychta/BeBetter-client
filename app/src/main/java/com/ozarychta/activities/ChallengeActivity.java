@@ -1,7 +1,14 @@
 package com.ozarychta.activities;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -26,12 +34,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
+import com.ozarychta.AlarmReceiver;
 import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
+import com.ozarychta.enums.Category;
 import com.ozarychta.enums.ChallengeState;
 import com.ozarychta.enums.ConfirmationType;
+import com.ozarychta.enums.RepeatPeriod;
 import com.ozarychta.model.Challenge;
 import com.ozarychta.model.Comment;
 import com.ozarychta.model.CommentAdapter;
@@ -43,6 +54,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,12 +66,14 @@ public class ChallengeActivity extends BaseActivity {
     private static final String SIMPLE_DATE_FORMAT = "dd.MM";
     private static final String BASIC_DATE_FORMAT = "dd.MM.yyyy";
     private static final Integer DEFAULT_DAYS_NUM = 7;
+    private static final String CHANNEL_ID = "CHANNEL_1";
     private SimpleDateFormat simpleDateFormat;
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat basicDateFormat;
 
     private ConnectivityManager connectivityManager;
 
+    private Long challengeIdFromIntent;
     private Challenge challenge;
     private Day today;
 
@@ -120,14 +134,27 @@ public class ChallengeActivity extends BaseActivity {
 
     private ScrollView scrollView;
 
+    private MaterialCardView reminderCardView;
+    private ToggleButton reminderToggle;
+    private TextView reminderTimeTextView;
+
+    private Integer reminderHour;
+    private Integer reminderMin;
+
+    private AlarmManager alarmManager;
+    private PendingIntent alarmIntent;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenge);
         getSupportActionBar().setTitle(R.string.challenge);
 
-        challenge = (Challenge) getIntent().getSerializableExtra("CHALLENGE");
-        Log.d(this.getClass().getSimpleName() + " challenge", challenge.getId().toString());
+        challengeIdFromIntent = getIntent().getLongExtra("CHALLENGE_ID", -1);
+        challenge = new Challenge();
+//        challenge = (Challenge) getIntent().getSerializableExtra("CHALLENGE");
+        Log.d(this.getClass().getSimpleName() + " challenge id ", challengeIdFromIntent.toString());
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -195,21 +222,6 @@ public class ChallengeActivity extends BaseActivity {
 
         noCommentsLabel = findViewById(R.id.noCommentsLabel);
 
-        titleText.setText(challenge.getTitle());
-        descText.setText(challenge.getDescription());
-        cityText.setText(challenge.getCity());
-
-        categoryText.setText(challenge.getCategory().getLabel(getApplicationContext()));
-        repeatText.setText(challenge.getRepeatPeriod().getLabel(getApplicationContext()));
-        confirmationText.setText(challenge.getConfirmationType().getLabel(getApplicationContext()));
-        accessText.setText(challenge.getAccessType().getLabel(getApplicationContext()));
-
-        goalText.setText(challenge.getGoal().toString());
-        moreOrLessText.setText(challenge.getMoreBetter().toString());
-
-        startText.setText(basicDateFormat.format(challenge.getStartDate()));
-        endText.setText(basicDateFormat.format(challenge.getEndDate()));
-
         notStartedYetLabel = findViewById(R.id.notStartedYetLabel);
         notStartedYetLabel.setVisibility(View.GONE);
 
@@ -217,7 +229,7 @@ public class ChallengeActivity extends BaseActivity {
         todayToggle = todayCard.findViewById(R.id.toggleButton);
         todayToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!buttonView.isPressed()) return;
+                if (!buttonView.isPressed()) return;
 
                 if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                     Toast.makeText(getApplicationContext(), getString(R.string.no_connection), Toast.LENGTH_LONG)
@@ -258,56 +270,187 @@ public class ChallengeActivity extends BaseActivity {
             silentSignInAndSaveChange();
         });
 
-        if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
-            todayToggle.setVisibility(View.VISIBLE);
-            counterLinearLayout.setVisibility(View.GONE);
-        } else {
-            todayToggle.setVisibility(View.GONE);
-            counterLinearLayout.setVisibility(View.VISIBLE);
-        }
-
         commentEdit = findViewById(R.id.commentEdit);
         hideCommentsBtn.setVisibility(View.GONE);
         commentsLinearLayout.setVisibility(View.GONE);
         noCommentsLabel.setVisibility(View.GONE);
 
-        if (challenge.getAccessType() == AccessType.PUBLIC && challenge.isUserParticipant() == true) {
-            showCommentsBtn.setVisibility(View.VISIBLE);
-        } else {
-            showCommentsBtn.setVisibility(View.GONE);
-        }
+        reminderCardView = findViewById(R.id.reminderCardView);
+        reminderToggle = findViewById(R.id.reminderToggleButton);
+        reminderTimeTextView = findViewById(R.id.reminderTimeTextView);
 
-        if (challenge.isUserParticipant() == false) {
-            daysLabel.setVisibility(View.GONE);
-            daysLayout.setVisibility(View.GONE);
-            statisticsBtn.setVisibility(View.GONE);
+        reminderHour = 12;
+        reminderMin = 0;
 
-            joinBtn.setVisibility(View.VISIBLE);
-        } else {
-            daysLabel.setVisibility(View.VISIBLE);
-            statisticsBtn.setVisibility(View.VISIBLE);
-            joinBtn.setVisibility(View.GONE);
+        reminderTimeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(ChallengeActivity.this, new TimePickerDialog.OnTimeSetListener() {
 
-            updateStateDependentUI();
-        }
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
+                        reminderTimeTextView.setText(String.format("%02d:%02d", hourOfDay, minutes));
+                        reminderHour = hourOfDay;
+                        reminderMin = minutes;
+                    }
+                }, Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), true);
+                timePickerDialog.show();
+            }
+        });
 
-        if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
-            goalLabel.setVisibility(View.GONE);
-            moreOrLessLabel.setVisibility(View.GONE);
-            goalText.setVisibility(View.GONE);
-            moreOrLessText.setVisibility(View.GONE);
-        } else {
-            goalLabel.setVisibility(View.VISIBLE);
-            moreOrLessLabel.setVisibility(View.GONE);
-            goalText.setVisibility(View.VISIBLE);
-            moreOrLessText.setVisibility(View.GONE);
-        }
+        reminderToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!buttonView.isPressed()) return;
+
+                if(isChecked){
+                    reminderCardView.setBackgroundColor(getColor(R.color.white));
+                    createNotificationChannel();
+
+                    Intent intent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
+                    intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
+                    intent.putExtra("TITLE", challenge.getTitle());
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    alarmIntent = PendingIntent.getBroadcast(ChallengeActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    calendar.set(Calendar.HOUR_OF_DAY, reminderHour);
+                    calendar.set(Calendar.MINUTE, reminderMin);
+
+                    alarmManager = (AlarmManager) ChallengeActivity.this.getSystemService(Context.ALARM_SERVICE);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                            AlarmManager.INTERVAL_DAY, alarmIntent);
+                    Toast.makeText(getApplicationContext(), getString(R.string.reminder_set), Toast.LENGTH_LONG)
+                            .show();
+                } else {
+                    reminderCardView.setBackgroundColor(getColor(R.color.lightGrey));
+                    if (alarmManager!= null && alarmIntent != null) {
+                        alarmManager.cancel(alarmIntent);
+                        Toast.makeText(getApplicationContext(), getString(R.string.reminder_canceled), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                }
+            }
+        });
+
+        silentSignInAndGetChallenge();
 
         joinBtn.setOnClickListener(v -> silentSignInAndJoinChallenge());
         showCommentsBtn.setOnClickListener(v -> silentSignInAndShowComments());
         hideCommentsBtn.setOnClickListener(v -> hideComments());
         addCommentBtn.setOnClickListener(v -> silentSignInAndAddComment());
     }
+
+    private void silentSignInAndGetChallenge() {
+        progressBar.setVisibility(View.VISIBLE);
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            getChallengeFromServer(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> getChallengeFromServer(SignInClient.getTokenIdFromResult(task1)));
+        }
+    }
+
+    private void getChallengeFromServer(String idToken) {
+        progressBar.setVisibility(View.VISIBLE);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                "https://be-better-server.herokuapp.com/challenges/" + challengeIdFromIntent,
+                null,
+                response -> {
+                    try {
+                        JSONObject jsonObject = (JSONObject) response;
+
+                        Integer id = jsonObject.getInt("id");
+                        String title = jsonObject.getString("title");
+                        String description = jsonObject.getString("description");
+                        String city = jsonObject.getString("city");
+                        RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
+                        Category category = Category.valueOf(jsonObject.getString("category"));
+                        AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
+                        Date start = dateFormat.parse(jsonObject.getString("startDate"));
+                        Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                        ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
+                        ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
+                        Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
+
+                        Integer goal = 0;
+                        Boolean isMoreBetter = true;
+                        if (confirmation == ConfirmationType.COUNTER_TASK) {
+                            isMoreBetter = jsonObject.getBoolean("moreBetter");
+                            goal = jsonObject.getInt("goal");
+                        }
+
+                        challenge.setId(Long.valueOf(id));
+                        challenge.setTitle(title);
+                        challenge.setDescription(description);
+                        challenge.setCity(city);
+                        challenge.setRepeatPeriod(repeat);
+                        challenge.setCategory(category);
+                        challenge.setConfirmationType(confirmation);
+                        challenge.setAccessType(access);
+                        challenge.setState(state);
+                        challenge.setGoal(goal);
+                        challenge.setMoreBetter(isMoreBetter);
+                        challenge.setStartDate(start);
+                        challenge.setEndDate(end);
+                        challenge.setUserParticipant(isUserParticipant);
+
+                        Log.d(this.getClass().getSimpleName() + " jsonObject", challenge.toString());
+
+                        updateUIWithChallenge();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                                .show();
+                        Log.d(this.getClass().getName(), e.getMessage());
+                    } finally {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                                .show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                    progressBar.setVisibility(View.GONE);
+                }
+        ) {
+            /** Passing some request headers* */
+            @Override
+            public Map getHeaders() {
+                HashMap headers = new HashMap();
+                headers.put("authorization", "Bearer " + idToken);
+                return headers;
+            }
+        };
+        ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = CHANNEL_ID;
+            String description = CHANNEL_ID;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     private void silentSignInAndShowComments() {
         progressBar.setVisibility(View.VISIBLE);
@@ -525,16 +668,16 @@ public class ChallengeActivity extends BaseActivity {
                         Integer points = jsonObject.getInt("points");
                         String message = "";
 
-                        if(points == -1) {
+                        if (points == -1) {
                             Toast.makeText(getApplicationContext(), points + " " + getString(R.string.point), Toast.LENGTH_LONG)
                                     .show();
-                        } else if (points < -1){
+                        } else if (points < -1) {
                             Toast.makeText(getApplicationContext(), points + " " + getString(R.string.points), Toast.LENGTH_LONG)
                                     .show();
-                        } else if (points == 1){
+                        } else if (points == 1) {
                             Toast.makeText(getApplicationContext(), "+" + points + " " + getString(R.string.point), Toast.LENGTH_LONG)
                                     .show();
-                        } else if(points > 1){
+                        } else if (points > 1) {
                             Toast.makeText(getApplicationContext(), "+" + points + " " + getString(R.string.points), Toast.LENGTH_LONG)
                                     .show();
                         }
@@ -590,6 +733,63 @@ public class ChallengeActivity extends BaseActivity {
             notStartedYetLabel.setVisibility(View.GONE);
             todayCard.setVisibility(View.GONE);
             silentSignInAndGetLastDays();
+        }
+    }
+
+    private void updateUIWithChallenge() {
+        titleText.setText(challenge.getTitle());
+        descText.setText(challenge.getDescription());
+        cityText.setText(challenge.getCity());
+
+        categoryText.setText(challenge.getCategory().getLabel(getApplicationContext()));
+        repeatText.setText(challenge.getRepeatPeriod().getLabel(getApplicationContext()));
+        confirmationText.setText(challenge.getConfirmationType().getLabel(getApplicationContext()));
+        accessText.setText(challenge.getAccessType().getLabel(getApplicationContext()));
+
+        goalText.setText(challenge.getGoal().toString());
+        moreOrLessText.setText(challenge.getMoreBetter().toString());
+
+        startText.setText(basicDateFormat.format(challenge.getStartDate()));
+        endText.setText(basicDateFormat.format(challenge.getEndDate()));
+
+        if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
+            todayToggle.setVisibility(View.VISIBLE);
+            counterLinearLayout.setVisibility(View.GONE);
+        } else {
+            todayToggle.setVisibility(View.GONE);
+            counterLinearLayout.setVisibility(View.VISIBLE);
+        }
+
+        if (challenge.getAccessType() == AccessType.PUBLIC && challenge.isUserParticipant() == true) {
+            showCommentsBtn.setVisibility(View.VISIBLE);
+        } else {
+            showCommentsBtn.setVisibility(View.GONE);
+        }
+
+        if (challenge.isUserParticipant() == false) {
+            daysLabel.setVisibility(View.GONE);
+            daysLayout.setVisibility(View.GONE);
+            statisticsBtn.setVisibility(View.GONE);
+
+            joinBtn.setVisibility(View.VISIBLE);
+        } else {
+            daysLabel.setVisibility(View.VISIBLE);
+            statisticsBtn.setVisibility(View.VISIBLE);
+            joinBtn.setVisibility(View.GONE);
+
+            updateStateDependentUI();
+        }
+
+        if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
+            goalLabel.setVisibility(View.GONE);
+            moreOrLessLabel.setVisibility(View.GONE);
+            goalText.setVisibility(View.GONE);
+            moreOrLessText.setVisibility(View.GONE);
+        } else {
+            goalLabel.setVisibility(View.VISIBLE);
+            moreOrLessLabel.setVisibility(View.GONE);
+            goalText.setVisibility(View.VISIBLE);
+            moreOrLessText.setVisibility(View.GONE);
         }
     }
 

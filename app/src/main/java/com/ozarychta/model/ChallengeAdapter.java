@@ -90,7 +90,7 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ChallengeActivity.class);
-                intent.putExtra("CHALLENGE", dataSet.get(position));
+                intent.putExtra("CHALLENGE_ID", dataSet.get(position).getId());
                 context.startActivity(intent);
             }
         });

@@ -22,21 +22,21 @@
         android:title="@string/friends"
         app:showAsAction="never">
     </item>
-    <item
-        android:id="@+id/action_achievements"
-        android:title="@string/achievements"
-        app:showAsAction="never">
-    </item>
-    <item
-        android:id="@+id/action_statistics"
-        android:title="@string/statistics"
-        app:showAsAction="never">
-    </item>
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/settings"
-        app:showAsAction="never">
-    </item>
+<!--    <item-->
+<!--        android:id="@+id/action_achievements"-->
+<!--        android:title="@string/achievements"-->
+<!--        app:showAsAction="never">-->
+<!--    </item>-->
+<!--    <item-->
+<!--        android:id="@+id/action_statistics"-->
+<!--        android:title="@string/statistics"-->
+<!--        app:showAsAction="never">-->
+<!--    </item>-->
+<!--    <item-->
+<!--        android:id="@+id/action_settings"-->
+<!--        android:title="@string/settings"-->
+<!--        app:showAsAction="never">-->
+<!--    </item>-->
     <item
         android:id="@+id/action_sign_out"
         android:title="@string/sign_out"

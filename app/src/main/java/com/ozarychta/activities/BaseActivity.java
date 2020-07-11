@@ -50,15 +50,15 @@ public class BaseActivity extends AppCompatActivity {
                 startFriendsActivity();
                 finish();
                 break;
-            case R.id.action_achievements:
-                //
-                break;
-            case R.id.action_statistics:
-                //
-                break;
-            case R.id.action_settings:
-                //
-                break;
+//            case R.id.action_achievements:
+//                //
+//                break;
+//            case R.id.action_statistics:
+//                //
+//                break;
+//            case R.id.action_settings:
+//                //
+//                break;
             case R.id.action_sign_out:
                 signOut();
                 break;

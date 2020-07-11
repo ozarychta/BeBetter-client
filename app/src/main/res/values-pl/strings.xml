@@ -96,4 +96,10 @@
     <string name="point">punkt</string>
     <string name="about_me">O mnie:</string>
     <string name="achievements_profile">Zdobyte osiągnięcia:</string>
+    <string name="reminder_text_default">Nie zapomnij wypełnić dziś wyzwania!</string>
+    <string name="set_reminder">Ustaw przypomnienie:</string>
+    <string name="default_time">12:00</string>
+    <string name="setTime">Ustaw czas</string>
+    <string name="reminder_set">Przypomnienie ustawione</string>
+    <string name="reminder_canceled">Przypomnienie anulowane</string>
 </resources>
