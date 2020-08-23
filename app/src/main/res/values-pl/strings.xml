@@ -104,4 +104,8 @@
     <string name="reminder_canceled">Przypomnienie anulowane</string>
     <string name="hs_in_challenge">Highest streak in this challenge:</string>
     <string name="points_in_challenge">Total points gained in this challenge:</string>
+    <string name="rp_desc">Punkty rankingowe malejąco</string>
+    <string name="rp_asc">"Punkty rankingowe rosnąco "</string>
+    <string name="hs_desc">Najdłuższy streak malejąco</string>
+    <string name="hs_asc">Najdłuższy streak rosnąco</string>
 </resources>

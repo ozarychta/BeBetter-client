@@ -24,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.ozarychta.EnumArrayAdapter;
 import com.ozarychta.FriendsViewModel;
 import com.ozarychta.FriendsViewPagerAdapter;
 import com.ozarychta.R;
@@ -73,7 +74,7 @@ public class FriendsActivity extends BaseActivity {
         sortTypeSpinner = findViewById(R.id.sortBySpinner);
         searchEdit = findViewById(R.id.searchEdit);
 
-        sortTypeSpinner.setAdapter(new ArrayAdapter<SortType>(this, android.R.layout.simple_spinner_dropdown_item, SortType.values()));
+        sortTypeSpinner.setAdapter(new EnumArrayAdapter<SortType>(this, android.R.layout.simple_spinner_dropdown_item, SortType.values()));
         sortTypeSpinner.setSelection(0);
 
         viewPagerAdapter = new FriendsViewPagerAdapter(getSupportFragmentManager(), this);
