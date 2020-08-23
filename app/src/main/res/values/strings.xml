@@ -102,4 +102,6 @@
     <string name="setTime">Set time</string>
     <string name="reminder_set">Reminder set</string>
     <string name="reminder_canceled">Reminder canceled</string>
+    <string name="hs_in_challenge">Highest streak in this challenge:</string>
+    <string name="points_in_challenge">Total points gained in this challenge:</string>
 </resources>

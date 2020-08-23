@@ -340,6 +340,11 @@ public class ChallengeActivity extends BaseActivity {
         showCommentsBtn.setOnClickListener(v -> silentSignInAndShowComments());
         hideCommentsBtn.setOnClickListener(v -> hideComments());
         addCommentBtn.setOnClickListener(v -> silentSignInAndAddComment());
+        statisticsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, StatisticsActivity.class);
+            intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
+            startActivity(intent);
+        });
     }
 
     private void silentSignInAndGetChallenge() {
@@ -450,7 +455,6 @@ public class ChallengeActivity extends BaseActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
-
 
     private void silentSignInAndShowComments() {
         progressBar.setVisibility(View.VISIBLE);
@@ -899,7 +903,6 @@ public class ChallengeActivity extends BaseActivity {
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
     }
-
 
     private void silentSignInAndJoinChallenge() {
 //        progressBar.setVisibility(View.VISIBLE);
