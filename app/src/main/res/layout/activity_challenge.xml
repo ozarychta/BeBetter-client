@@ -533,6 +533,7 @@
                     android:hint="@string/comment_hint"
                     android:minLines="2"
                     android:textColor="@color/darkGrey"
+                    android:maxLength="255"
                     android:textSize="15sp"/>
 
                 <com.google.android.material.button.MaterialButton

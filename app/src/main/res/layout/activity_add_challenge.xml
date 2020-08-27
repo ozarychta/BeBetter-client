@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:textColor="@color/darkGrey"
+                android:maxLength="255"
                 android:textSize="18sp"/>
 
             <TextView
@@ -58,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:textColor="@color/darkGrey"
+                android:maxLength="255"
                 android:textSize="18sp"/>
 
             <TextView
@@ -79,6 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:textColor="@color/darkGrey"
+                android:maxLength="255"
                 android:textSize="18sp"/>
 
             <TextView
@@ -206,6 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="5sp"
                 android:textColor="@color/darkGrey"
+                android:maxLength="8"
                 android:textSize="18sp"/>
 
             <TextView

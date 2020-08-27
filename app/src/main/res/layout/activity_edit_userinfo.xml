@@ -27,6 +27,7 @@
                 android:layout_marginHorizontal="5sp"
                 android:layout_weight="1"
                 android:textColor="@color/darkGrey"
+                android:maxLength="255"
                 android:textSize="18sp"/>
 
             <TextView
@@ -50,6 +51,7 @@
                 android:layout_marginHorizontal="5sp"
                 android:layout_weight="1"
                 android:textColor="@color/darkGrey"
+                android:maxLength="255"
                 android:textSize="18sp"/>
 
             <TextView
@@ -73,6 +75,7 @@
                 android:layout_marginHorizontal="5sp"
                 android:layout_weight="1"
                 android:textColor="@color/darkGrey"
+                android:maxLength="255"
                 android:textSize="18sp"/>
 
             <ProgressBar
