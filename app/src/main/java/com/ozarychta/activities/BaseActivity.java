@@ -34,21 +34,24 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home :
+                onBackPressed();
+                break;
             case R.id.action_challenges:
                 startChallengesActivity();
-                finish();
+//                finish();
                 break;
             case R.id.action_my_challenges:
                 startMyChallengesActivity();
-                finish();
+//                finish();
                 break;
             case R.id.action_profile:
                 startProfileActivity();
-                finish();
+//                finish();
                 break;
             case R.id.action_friends:
                 startFriendsActivity();
-                finish();
+//                finish();
                 break;
 //            case R.id.action_achievements:
 //                //

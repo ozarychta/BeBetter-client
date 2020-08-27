@@ -150,6 +150,8 @@ public class ChallengeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenge);
         getSupportActionBar().setTitle(R.string.challenge);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         challengeIdFromIntent = getIntent().getLongExtra("CHALLENGE_ID", -1);
         challenge = new Challenge();
@@ -345,6 +347,12 @@ public class ChallengeActivity extends BaseActivity {
             intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
             startActivity(intent);
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void silentSignInAndGetChallenge() {
@@ -976,5 +984,4 @@ public class ChallengeActivity extends BaseActivity {
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
     }
-
 }

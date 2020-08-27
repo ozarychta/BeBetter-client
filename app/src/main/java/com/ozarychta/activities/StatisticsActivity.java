@@ -17,6 +17,8 @@ public class StatisticsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
         getSupportActionBar().setTitle(R.string.statistics);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         challengeIdFromIntent = getIntent().getLongExtra("CHALLENGE_ID", -1);
         Log.d(this.getClass().getSimpleName() + " challenge id ", challengeIdFromIntent.toString());
