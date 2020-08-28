@@ -1,8 +1,11 @@
 package com.ozarychta.activities;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -124,6 +127,8 @@ public class MainActivity extends BaseActivity {
         searchBtn.setOnClickListener(v -> silentSignInAndGetChallenges());
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        
+        createNotificationChannel();
 
         if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -186,6 +191,23 @@ public class MainActivity extends BaseActivity {
             startLoginActivity();
             finish();
             return;
+        }
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String CHANNEL_ID = getString(R.string.channel_id_1);
+            CharSequence name = CHANNEL_ID;
+            String description = CHANNEL_ID;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 

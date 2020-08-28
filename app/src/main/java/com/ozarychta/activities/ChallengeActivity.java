@@ -1,14 +1,11 @@
 package com.ozarychta.activities;
 
 import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -66,7 +63,7 @@ public class ChallengeActivity extends BaseActivity {
     private static final String SIMPLE_DATE_FORMAT = "dd.MM";
     private static final String BASIC_DATE_FORMAT = "dd.MM.yyyy";
     private static final Integer DEFAULT_DAYS_NUM = 7;
-    private static final String CHANNEL_ID = "CHANNEL_1";
+
     private SimpleDateFormat simpleDateFormat;
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat basicDateFormat;
@@ -313,7 +310,6 @@ public class ChallengeActivity extends BaseActivity {
 
                 if(isChecked){
                     reminderCardView.setBackgroundColor(getColor(R.color.white));
-                    createNotificationChannel();
 
                     Intent intent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
                     intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
@@ -468,22 +464,6 @@ public class ChallengeActivity extends BaseActivity {
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = CHANNEL_ID;
-            String description = CHANNEL_ID;
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     private void silentSignInAndShowComments() {
