@@ -82,6 +82,36 @@
                     android:textColor="@color/primaryDarkColor"
                     android:textSize="24sp" />
 
+                <TextView
+                    android:id="@+id/noNetworkLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4sp"
+                    android:layout_marginVertical="20sp"
+                    android:gravity="center"
+                    android:paddingHorizontal="4sp"
+                    android:paddingTop="5sp"
+                    android:paddingBottom="5sp"
+                    android:text="@string/turn_network_on_and_refresh"
+                    android:textColor="@color/primaryDarkColor"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:id="@+id/refreshBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="2sp"
+                    android:layout_marginHorizontal="10sp"
+                    android:text="@string/refresh"
+                    app:strokeColor="@color/secondaryDarkColor"
+                    app:strokeWidth="2sp"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    app:backgroundTint="@color/secondaryColor"
+                    app:cornerRadius="8sp"
+                    />
+
                 <LinearLayout
                     android:id="@+id/daysLinearLayout"
                     android:layout_width="match_parent"
@@ -269,29 +299,29 @@
                     android:textColor="@color/darkGrey"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/moreOrLessLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="4sp"
-                    android:layout_marginTop="8sp"
-                    android:gravity="center"
-                    android:paddingHorizontal="4sp"
-                    android:paddingTop="5sp"
-                    android:paddingBottom="2sp"
-                    android:text="@string/more_or_less"
-                    android:textColor="@color/secondaryDarkColor"
-                    android:textSize="16sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/moreOrLessLabel"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginHorizontal="4sp"-->
+<!--                    android:layout_marginTop="8sp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:paddingHorizontal="4sp"-->
+<!--                    android:paddingTop="5sp"-->
+<!--                    android:paddingBottom="2sp"-->
+<!--                    android:text="@string/more_or_less"-->
+<!--                    android:textColor="@color/secondaryDarkColor"-->
+<!--                    android:textSize="16sp" />-->
 
-                <TextView
-                    android:id="@+id/moreOrLessTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="5sp"
-                    android:layout_marginTop="2sp"
-                    android:gravity="center"
-                    android:textColor="@color/darkGrey"
-                    android:textSize="16sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/moreOrLessTextView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginHorizontal="5sp"-->
+<!--                    android:layout_marginTop="2sp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:textColor="@color/darkGrey"-->
+<!--                    android:textSize="16sp" />-->
 
                 <TextView
                     android:layout_width="match_parent"

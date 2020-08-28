@@ -124,8 +124,8 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putLong(getString(R.string.user_id_field), id);
                         editor.commit();
 
-                        Toast.makeText(getApplicationContext(), "added user to server", Toast.LENGTH_LONG)
-                                .show();
+//                        Toast.makeText(getApplicationContext(), "added user to server", Toast.LENGTH_LONG)
+//                                .show();
 
                     } catch (JSONException e) {
                         e.printStackTrace();

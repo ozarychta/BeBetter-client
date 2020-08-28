@@ -108,4 +108,6 @@
     <string name="rp_asc">"Punkty rankingowe rosnąco "</string>
     <string name="hs_desc">Najdłuższy streak malejąco</string>
     <string name="hs_asc">Najdłuższy streak rosnąco</string>
+    <string name="refresh">Odśwież</string>
+    <string name="turn_network_on_and_refresh">Brak połączenia z internetem. Połącz się z siecią aby wyświetlić informacje o wyzwaniu. </string>
 </resources>

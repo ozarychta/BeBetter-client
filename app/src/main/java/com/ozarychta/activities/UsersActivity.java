@@ -83,23 +83,6 @@ public class UsersActivity extends BaseActivity {
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
-//            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//            if (account == null) {
-//                startLoginActivity();
-//                finish();
-//                return;
-//            }
-//
-//            Log.d(this.getClass().getSimpleName() + " TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
-        } else {
-            Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
-                    .show();
-            startLoginActivity();
-            finish();
-            return;
-        }
-
         SharedPreferences sharedPref = getApplicationContext()
                 .getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
         signedUserId = sharedPref.getLong(getString(R.string.user_id_field), -1);

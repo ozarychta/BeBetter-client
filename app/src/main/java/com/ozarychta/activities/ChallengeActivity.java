@@ -78,10 +78,8 @@ public class ChallengeActivity extends BaseActivity {
     private Day today;
 
     private TextView goalText;
-    private TextView moreOrLessText;
 
     private TextView goalLabel;
-    private TextView moreOrLessLabel;
 
     private TextView titleText;
     private TextView descText;
@@ -144,6 +142,8 @@ public class ChallengeActivity extends BaseActivity {
     private AlarmManager alarmManager;
     private PendingIntent alarmIntent;
 
+    private TextView noNetworkLabel;
+    private Button refreshBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,8 +180,6 @@ public class ChallengeActivity extends BaseActivity {
 
         goalText = findViewById(R.id.goalTextView);
         goalLabel = findViewById(R.id.goalLabel);
-        moreOrLessText = findViewById(R.id.moreOrLessTextView);
-        moreOrLessLabel = findViewById(R.id.moreOrLessLabel);
 
         startText = findViewById(R.id.startTextView);
         endText = findViewById(R.id.endTextView);
@@ -226,6 +224,15 @@ public class ChallengeActivity extends BaseActivity {
 
         notStartedYetLabel = findViewById(R.id.notStartedYetLabel);
         notStartedYetLabel.setVisibility(View.GONE);
+
+        noNetworkLabel = findViewById(R.id.noNetworkLabel);
+        noNetworkLabel.setVisibility(View.GONE);
+
+        refreshBtn = findViewById(R.id.refreshBtn);
+        refreshBtn.setOnClickListener(v -> {
+            silentSignInAndGetChallenge();
+        });
+        refreshBtn.setVisibility(View.GONE);
 
         todayDate = todayCard.findViewById(R.id.dateTextView);
         todayToggle = todayCard.findViewById(R.id.toggleButton);
@@ -376,6 +383,14 @@ public class ChallengeActivity extends BaseActivity {
                 null,
                 response -> {
                     try {
+                        todayCard.setVisibility(View.VISIBLE);
+                        reminderCardView.setVisibility(View.VISIBLE);
+                        joinBtn.setVisibility(View.VISIBLE);
+                        statisticsBtn.setVisibility(View.VISIBLE);
+                        showCommentsBtn.setVisibility(View.VISIBLE);
+                        noNetworkLabel.setVisibility(View.GONE);
+                        refreshBtn.setVisibility(View.GONE);
+
                         JSONObject jsonObject = (JSONObject) response;
 
                         Integer id = jsonObject.getInt("id");
@@ -430,6 +445,13 @@ public class ChallengeActivity extends BaseActivity {
                     if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
+                        todayCard.setVisibility(View.GONE);
+                        reminderCardView.setVisibility(View.GONE);
+                        joinBtn.setVisibility(View.GONE);
+                        statisticsBtn.setVisibility(View.GONE);
+                        showCommentsBtn.setVisibility(View.GONE);
+                        noNetworkLabel.setVisibility(View.VISIBLE);
+                        refreshBtn.setVisibility(View.VISIBLE);
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                                 .show();
@@ -759,7 +781,6 @@ public class ChallengeActivity extends BaseActivity {
         accessText.setText(challenge.getAccessType().getLabel(getApplicationContext()));
 
         goalText.setText(challenge.getGoal().toString());
-        moreOrLessText.setText(challenge.getMoreBetter().toString());
 
         startText.setText(basicDateFormat.format(challenge.getStartDate()));
         endText.setText(basicDateFormat.format(challenge.getEndDate()));
@@ -794,14 +815,10 @@ public class ChallengeActivity extends BaseActivity {
 
         if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
             goalLabel.setVisibility(View.GONE);
-            moreOrLessLabel.setVisibility(View.GONE);
             goalText.setVisibility(View.GONE);
-            moreOrLessText.setVisibility(View.GONE);
         } else {
             goalLabel.setVisibility(View.VISIBLE);
-            moreOrLessLabel.setVisibility(View.GONE);
             goalText.setVisibility(View.VISIBLE);
-            moreOrLessText.setVisibility(View.GONE);
         }
     }
 

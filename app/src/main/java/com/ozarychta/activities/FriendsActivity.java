@@ -103,23 +103,6 @@ public class FriendsActivity extends BaseActivity {
 
         connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        if (ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
-//            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//            if (account == null) {
-//                startLoginActivity();
-//                finish();
-//                return;
-//            }
-//
-//            Log.d(this.getClass().getSimpleName() + " TOKEN ", account.getIdToken()==null ? "null" : account.getIdToken());
-        } else {
-            Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
-                    .show();
-            startLoginActivity();
-            finish();
-            return;
-        }
-
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {

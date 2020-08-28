@@ -108,4 +108,6 @@
     <string name="rp_asc">Ranking points ascending</string>
     <string name="hs_desc">Highest streak descencing</string>
     <string name="hs_asc">Highest streak ascencing</string>
+    <string name="refresh">Refresh</string>
+    <string name="turn_network_on_and_refresh">There is no network connection. Please turn the internet connection on and refresh.</string>
 </resources>
