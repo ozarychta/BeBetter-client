@@ -33,6 +33,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.ozarychta.AlarmReceiver;
 import com.ozarychta.R;
+import com.ozarychta.Reminder;
+import com.ozarychta.ReminderDatabase;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
 import com.ozarychta.enums.AccessType;
@@ -54,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -133,14 +136,16 @@ public class ChallengeActivity extends BaseActivity {
     private ToggleButton reminderToggle;
     private TextView reminderTimeTextView;
 
-    private Integer reminderHour;
-    private Integer reminderMin;
 
     private AlarmManager alarmManager;
     private PendingIntent alarmIntent;
 
     private TextView noNetworkLabel;
     private Button refreshBtn;
+
+    private ReminderDatabase reminderDatabase;
+    private Reminder reminder;
+    private Long reminderId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -281,12 +286,22 @@ public class ChallengeActivity extends BaseActivity {
         commentsLinearLayout.setVisibility(View.GONE);
         noCommentsLabel.setVisibility(View.GONE);
 
+        reminderDatabase = ReminderDatabase.getInstance(this);
+
         reminderCardView = findViewById(R.id.reminderCardView);
         reminderToggle = findViewById(R.id.reminderToggleButton);
         reminderTimeTextView = findViewById(R.id.reminderTimeTextView);
 
-        reminderHour = 12;
-        reminderMin = 0;
+        reminder = reminderDatabase.reminderDao().findByChallengeId(challengeIdFromIntent);
+
+        if(reminder == null){
+            reminder = new Reminder(challengeIdFromIntent, false, 12, 0);
+            reminderId = reminderDatabase.reminderDao().insert(reminder);
+        } else {
+            reminderId = reminder.getId();
+        }
+
+        reminderTimeTextView.setText(String.format("%02d:%02d", reminder.getHour(), reminder.getMin()));
 
         reminderTimeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -296,13 +311,20 @@ public class ChallengeActivity extends BaseActivity {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
                         reminderTimeTextView.setText(String.format("%02d:%02d", hourOfDay, minutes));
-                        reminderHour = hourOfDay;
-                        reminderMin = minutes;
+                        reminder.setHour(hourOfDay);
+                        reminder.setMin(minutes);
+                        reminderDatabase.reminderDao().update(reminder);
+
+                        if(reminder.getEnabled()){
+                            setReminder();
+                        }
                     }
                 }, Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), true);
                 timePickerDialog.show();
             }
         });
+
+        reminderToggle.setChecked(reminder.getEnabled());
 
         reminderToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -310,31 +332,14 @@ public class ChallengeActivity extends BaseActivity {
 
                 if(isChecked){
                     reminderCardView.setBackgroundColor(getColor(R.color.white));
-
-                    Intent intent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
-                    intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
-                    intent.putExtra("TITLE", challenge.getTitle());
-
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    alarmIntent = PendingIntent.getBroadcast(ChallengeActivity.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(System.currentTimeMillis());
-                    calendar.set(Calendar.HOUR_OF_DAY, reminderHour);
-                    calendar.set(Calendar.MINUTE, reminderMin);
-
-                    alarmManager = (AlarmManager) ChallengeActivity.this.getSystemService(Context.ALARM_SERVICE);
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                            AlarmManager.INTERVAL_DAY, alarmIntent);
-                    Toast.makeText(getApplicationContext(), getString(R.string.reminder_set), Toast.LENGTH_LONG)
-                            .show();
+                    reminder.setEnabled(true);
+                    reminderDatabase.reminderDao().update(reminder);
+                    setReminder();
                 } else {
                     reminderCardView.setBackgroundColor(getColor(R.color.lightGrey));
-                    if (alarmManager!= null && alarmIntent != null) {
-                        alarmManager.cancel(alarmIntent);
-                        Toast.makeText(getApplicationContext(), getString(R.string.reminder_canceled), Toast.LENGTH_LONG)
-                                .show();
-                    }
+                    reminder.setEnabled(false);
+                    reminderDatabase.reminderDao().update(reminder);
+                    cancelReminder();
                 }
             }
         });
@@ -350,6 +355,47 @@ public class ChallengeActivity extends BaseActivity {
             intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
             startActivity(intent);
         });
+
+//        List<Reminder> list = reminderDatabase.reminderDao().getAll();
+//        for(Reminder r : list){
+//            Log.d(this.getClass().getSimpleName() + " reminders from database: ", r.toString());
+//        }
+    }
+
+    private void setReminder() {
+        Intent intent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
+        intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
+        intent.putExtra("TITLE", challenge.getTitle());
+        intent.putExtra("ALARM_ID", reminderId);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        alarmIntent = PendingIntent.getBroadcast(ChallengeActivity.this, reminderId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, reminder.getHour());
+        calendar.set(Calendar.MINUTE, reminder.getMin());
+
+        alarmManager = (AlarmManager) ChallengeActivity.this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
+        Toast.makeText(getApplicationContext(), getString(R.string.reminder_set), Toast.LENGTH_LONG)
+                .show();
+    }
+
+    private void cancelReminder() {
+        Intent intent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
+        intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
+        intent.putExtra("TITLE", challenge.getTitle());
+        intent.putExtra("ALARM_ID", reminderId);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        alarmIntent = PendingIntent.getBroadcast(ChallengeActivity.this, reminderId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager = (AlarmManager) ChallengeActivity.this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(alarmIntent);
+        Toast.makeText(getApplicationContext(), getString(R.string.reminder_canceled), Toast.LENGTH_LONG)
+                .show();
     }
 
     @Override

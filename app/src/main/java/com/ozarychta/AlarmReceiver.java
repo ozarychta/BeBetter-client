@@ -23,6 +23,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
         Long id = (Long) bundle.get("CHALLENGE_ID");
         String title = (String) bundle.get("TITLE");
+        Long alarmId = (Long) bundle.get("ALARM_ID");
 //        int test = Integer.parseInt(testString);
 //        Challenge challenge = (Challenge) bundle.getSerializable("CHALLENGE");
         Log.d(this.getClass().getSimpleName() + " challenge", id.toString());
@@ -35,7 +36,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         intent.putExtra("CHALLENGE_ID", id);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, alarmId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
