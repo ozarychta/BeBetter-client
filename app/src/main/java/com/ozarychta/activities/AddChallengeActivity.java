@@ -141,6 +141,10 @@ public class AddChallengeActivity extends BaseActivity {
         startDatePicker = findViewById(R.id.startDatePicker);
         endDatePicker = findViewById(R.id.endDatePicker);
 
+        Calendar c = Calendar.getInstance();
+        startDatePicker.setMinDate(c.getTimeInMillis());
+        endDatePicker.setMinDate(c.getTimeInMillis());
+
         addBtn = findViewById(R.id.addBtn);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
