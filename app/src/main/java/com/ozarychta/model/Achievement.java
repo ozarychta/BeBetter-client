@@ -10,7 +10,13 @@ public class Achievement implements Serializable {
 
     private String description;
 
-    public Achievement() {
+    private Boolean achieved;
+
+    public Achievement(Long id, String title, String desc, Boolean achieved) {
+        this.id = id;
+        this.title = title;
+        this.description = desc;
+        this.achieved = achieved;
     }
 
     public Achievement(Long id, String title, String description) {
@@ -41,5 +47,13 @@ public class Achievement implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getAchieved() {
+        return achieved;
+    }
+
+    public void setAchieved(Boolean achieved) {
+        this.achieved = achieved;
     }
 }

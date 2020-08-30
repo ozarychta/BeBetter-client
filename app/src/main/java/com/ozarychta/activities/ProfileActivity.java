@@ -188,11 +188,14 @@ public class ProfileActivity extends BaseActivity{
                             Long id = jsonObject.getLong("id");
                             String title = jsonObject.getString("title");
                             String desc = jsonObject.getString("description");
+                            Boolean achieved = jsonObject.getBoolean("achieved");
 
-                            Achievement a = new Achievement(id, title, desc);
-                            achievements.add(a);
+                            Achievement a = new Achievement(id, title, desc, achieved);
 
-                            adapter.notifyDataSetChanged();
+                            if(achieved){
+                                achievements.add(a);
+                                adapter.notifyDataSetChanged();
+                            }
 
                             Log.d(this.getClass().getSimpleName() + " jsonObject user", jsonObject.toString(2));
 
