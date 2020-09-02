@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ozarychta.R;
-import com.ozarychta.enums.ConfirmationType;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,12 +59,15 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
 
         holder.dateText.setText(simpleDateFormat.format(d.getDate()));
 
-        if(d.getConfirmationType() == ConfirmationType.CHECK_TASK){
-            if(d.getDone()) holder.imageView.setImageResource(R.drawable.ic_check_24);
-            else holder.imageView.setImageResource(R.drawable.ic_clear_24);
-        } else if(d.getConfirmationType() == ConfirmationType.COUNTER_TASK){
-            if(d.getCurrentStatus() >= d.getGoal()) holder.imageView.setImageResource(R.drawable.ic_check_24);
-            else holder.imageView.setImageResource(R.drawable.ic_clear_24);
+        switch (d.getConfirmationType()){
+            case CHECK_TASK:
+                if(d.getDone()) holder.imageView.setImageResource(R.drawable.ic_check_24);
+                else holder.imageView.setImageResource(R.drawable.ic_clear_24);
+                break;
+            case COUNTER_TASK:
+                if(d.getCurrentStatus() >= d.getGoal()) holder.imageView.setImageResource(R.drawable.ic_check_24);
+                else holder.imageView.setImageResource(R.drawable.ic_clear_24);
+                break;
         }
     }
 

@@ -48,7 +48,8 @@
             android:id="@+id/history_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4sp"
+            android:layout_marginHorizontal="4sp"
+            android:layout_marginVertical="8sp"
             android:padding="0sp"
             android:scrollbars="none" />
 
@@ -64,16 +65,44 @@
             android:textColor="@color/secondaryDarkColor"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/highestStreak"
+        <LinearLayout
+            android:id="@+id/streakLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="5sp"
-            android:layout_marginTop="2sp"
-            android:layout_marginBottom="5sp"
-            android:gravity="center"
-            android:textColor="@color/darkGrey"
-            android:textSize="18sp" />
+            android:orientation="horizontal"
+            android:layout_marginVertical="8sp"
+            android:weightSum="3">
+
+            <TextView
+                android:id="@+id/fromTextView"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="2sp"
+                android:gravity="center"
+                android:textColor="@color/darkGrey"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/highestStreakTextView"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="2sp"
+                android:gravity="center"
+                android:textColor="@color/darkGrey"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/toTextView"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="2sp"
+                android:gravity="center"
+                android:textColor="@color/darkGrey"
+                android:textSize="18sp" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -92,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5sp"
-            android:layout_marginTop="2sp"
+            android:layout_marginVertical="8sp"
             android:gravity="center"
             android:textColor="@color/darkGrey"
             android:textSize="18sp" />
@@ -110,15 +139,6 @@
             android:textColor="@color/secondaryDarkColor"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/cityTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="5sp"
-            android:layout_marginTop="8sp"
-            android:gravity="center"
-            android:textColor="@color/darkGrey"
-            android:textSize="18sp" />
 
 
     </LinearLayout>

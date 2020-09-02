@@ -112,4 +112,6 @@
     <string name="turn_network_on_and_refresh">There is no network connection. Please turn the internet connection on and refresh.</string>
     <string name="channel_id_1">CHANNEL_1</string>
     <string name="challenge_history">Full challenge history:</string>
+    <string name="from">"From "</string>
+    <string name="to">"To "</string>
 </resources>

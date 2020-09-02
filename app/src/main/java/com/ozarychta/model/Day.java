@@ -18,6 +18,10 @@ public class Day implements Serializable {
 
     private ConfirmationType confirmationType;
 
+    private Integer streak;
+
+    private Integer points;
+
     public Day(Long id, Date date, Boolean done, Integer currentStatus) {
         this.id = id;
         this.date = date;
@@ -25,6 +29,8 @@ public class Day implements Serializable {
         this.currentStatus = currentStatus;
         this.confirmationType = ConfirmationType.CHECK_TASK;
         this.goal = 0;
+        this.streak = 0;
+        this.points = 0;
     }
 
     public Day(Long id, Date date, Boolean done, Integer currentStatus, Integer goal, ConfirmationType confirmationType) {
@@ -34,6 +40,19 @@ public class Day implements Serializable {
         this.currentStatus = currentStatus;
         this.goal = goal;
         this.confirmationType = confirmationType;
+        this.streak = 0;
+        this.points = 0;
+    }
+
+    public Day(Long id, Date date, Boolean done, Integer currentStatus, Integer goal, ConfirmationType confirmationType, Integer streak, Integer points) {
+        this.id = id;
+        this.date = date;
+        this.done = done;
+        this.currentStatus = currentStatus;
+        this.goal = goal;
+        this.confirmationType = confirmationType;
+        this.streak = streak;
+        this.points = points;
     }
 
     public Long getId() {
@@ -82,5 +101,21 @@ public class Day implements Serializable {
 
     public void setGoal(Integer goal) {
         this.goal = goal;
+    }
+
+    public Integer getStreak() {
+        return streak;
+    }
+
+    public void setStreak(Integer streak) {
+        this.streak = streak;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
     }
 }

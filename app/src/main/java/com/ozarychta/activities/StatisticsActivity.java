@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class StatisticsActivity extends BaseActivity {
     private ConnectivityManager connectivityManager;
 
     private Long challengeIdFromIntent;
+    private ConfirmationType confirmationType;
 
     private ProgressBar progressBar;
     private TextView titleText;
@@ -57,6 +59,11 @@ public class StatisticsActivity extends BaseActivity {
     private RecyclerView.LayoutManager allDaysLayoutManager;
     private RecyclerView allDaysRecyclerView;
     private ArrayList<Day> allDays;
+
+    private TextView fromTextView;
+    private TextView highestStreakTextView;
+    private TextView toTextView;
+    private TextView totalPointsTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +94,8 @@ public class StatisticsActivity extends BaseActivity {
         titleText = findViewById(R.id.titleTextView);
         titleText.setText(title);
 
+        confirmationType = ConfirmationType.CHECK_TASK;
+
         allDaysRecyclerView = findViewById(R.id.history_recycler_view);
 //        daysLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         allDaysLayoutManager = new GridLayoutManager(this, 7, GridLayoutManager.VERTICAL, false);
@@ -96,6 +105,11 @@ public class StatisticsActivity extends BaseActivity {
         allDays = new ArrayList<>();
         allDaysAdapter = new HistoryDayAdapter(allDays);
         allDaysRecyclerView.setAdapter(allDaysAdapter);
+
+        fromTextView = findViewById(R.id.fromTextView);
+        highestStreakTextView = findViewById(R.id.highestStreakTextView);
+        toTextView = findViewById(R.id.toTextView);
+        totalPointsTextView = findViewById(R.id.totalPoints);
 
         silentSignInAndGetStatisticsData();
     }
@@ -138,25 +152,26 @@ public class StatisticsActivity extends BaseActivity {
                         ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
                         Integer goal = jsonObject.getInt("goal");
 
+                        confirmationType = confirmation;
+
                         JSONArray allDaysJsonArray = jsonObject.getJSONArray("allDays");
 
                         for (int i = 0; i < allDaysJsonArray.length(); i++) {
-//                            try {
                             JSONObject dayJsonObject = (JSONObject) allDaysJsonArray.get(i);
 
                             Long id = dayJsonObject.getLong("id");
                             Date date = dateFormat.parse(dayJsonObject.getString("date"));
                             Boolean done = dayJsonObject.getBoolean("done");
                             Integer currentStatus = dayJsonObject.getInt("currentStatus");
+                            Integer streak = dayJsonObject.getInt("streak");
+                            Integer points = dayJsonObject.getInt("points");
 
-                            Day day = new Day(id, date, done, currentStatus, goal, confirmation);
+                            Day day = new Day(id, date, done, currentStatus, goal, confirmation, streak, points);
 
                             allDays.add(day);
                             allDaysAdapter.notifyDataSetChanged();
 
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
+                            showStatistics();
                         }
 
                     } catch (JSONException e) {
@@ -190,5 +205,32 @@ public class StatisticsActivity extends BaseActivity {
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
+    }
+
+    private void showStatistics() {
+        //Comparator gets the last max value
+        Day maxStreakDay = allDays.stream().max((a, b) -> a.getStreak() > b.getStreak() ? 1 : -1).orElse(null);
+        if(maxStreakDay == null || maxStreakDay.getStreak() == 0) {
+            highestStreakTextView.setText("0");
+            fromTextView.setText("");
+            toTextView.setText("");
+        } else {
+            Integer highestStreak = maxStreakDay.getStreak();
+            highestStreakTextView.setText(highestStreak.toString());
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(maxStreakDay.getDate());
+            c.add(Calendar.DAY_OF_YEAR, -(highestStreak-1));
+
+            Date streakFirsDay = c.getTime();
+            fromTextView.setText(basicDateFormat.format(streakFirsDay));
+            toTextView.setText(basicDateFormat.format(maxStreakDay.getDate()));
+        }
+
+        Integer totalPoints = 0;
+        for(Day d : allDays){
+            totalPoints += d.getPoints();
+        }
+        totalPointsTextView.setText(totalPoints.toString());
     }
 }
