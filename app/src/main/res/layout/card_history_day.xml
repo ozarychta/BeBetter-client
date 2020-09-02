@@ -1,0 +1,44 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    style="@style/Widget.MaterialComponents.CardView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="2sp"
+    android:backgroundTint="@color/lightGrey"
+    app:cardCornerRadius="2sp"
+    app:cardElevation="2sp"
+    app:cardUseCompatPadding="false"
+    app:cornerRadius="2sp"
+    app:strokeColor="@color/secondaryColor"
+    app:strokeWidth="1sp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1sp"
+        android:layout_marginBottom="1sp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginHorizontal="2sp"
+            android:layout_marginTop="2sp"
+            android:text=""
+            android:textColor="@color/primaryDarkColor"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textOff=""
+            android:textOn="" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

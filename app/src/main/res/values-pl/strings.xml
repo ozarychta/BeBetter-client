@@ -102,8 +102,8 @@
     <string name="setTime">Ustaw czas</string>
     <string name="reminder_set">Przypomnienie ustawione</string>
     <string name="reminder_canceled">Przypomnienie anulowane</string>
-    <string name="hs_in_challenge">Highest streak in this challenge:</string>
-    <string name="points_in_challenge">Total points gained in this challenge:</string>
+    <string name="hs_in_challenge">Najdłuższy streak w wyzwaniu:</string>
+    <string name="points_in_challenge">Suma punktów zdobytych w wyzwaniu:</string>
     <string name="rp_desc">Punkty rankingowe malejąco</string>
     <string name="rp_asc">"Punkty rankingowe rosnąco "</string>
     <string name="hs_desc">Najdłuższy streak malejąco</string>
@@ -111,4 +111,5 @@
     <string name="refresh">Odśwież</string>
     <string name="turn_network_on_and_refresh">Brak połączenia z internetem. Połącz się z siecią aby wyświetlić informacje o wyzwaniu. </string>
     <string name="channel_id_1">CHANNEL_1</string>
+    <string name="challenge_history">Pełna historia wyzwania:</string>
 </resources>

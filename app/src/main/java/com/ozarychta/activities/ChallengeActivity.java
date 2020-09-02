@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -353,6 +352,7 @@ public class ChallengeActivity extends BaseActivity {
         statisticsBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, StatisticsActivity.class);
             intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
+            intent.putExtra("TITLE", challenge.getTitle());
             startActivity(intent);
         });
 
@@ -783,6 +783,7 @@ public class ChallengeActivity extends BaseActivity {
         if (ChallengeState.NOT_STARTED_YET == state) {
             daysLayout.setVisibility(View.GONE);
             notStartedYetLabel.setVisibility(View.VISIBLE);
+            statisticsBtn.setVisibility(View.GONE);
         } else if (ChallengeState.STARTED == state) {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);

@@ -14,6 +14,8 @@ public class Day implements Serializable {
 
     private Integer currentStatus;
 
+    private Integer goal;
+
     private ConfirmationType confirmationType;
 
     public Day(Long id, Date date, Boolean done, Integer currentStatus) {
@@ -22,6 +24,16 @@ public class Day implements Serializable {
         this.done = done;
         this.currentStatus = currentStatus;
         this.confirmationType = ConfirmationType.CHECK_TASK;
+        this.goal = 0;
+    }
+
+    public Day(Long id, Date date, Boolean done, Integer currentStatus, Integer goal, ConfirmationType confirmationType) {
+        this.id = id;
+        this.date = date;
+        this.done = done;
+        this.currentStatus = currentStatus;
+        this.goal = goal;
+        this.confirmationType = confirmationType;
     }
 
     public Long getId() {
@@ -62,5 +74,13 @@ public class Day implements Serializable {
 
     public void setConfirmationType(ConfirmationType confirmationType) {
         this.confirmationType = confirmationType;
+    }
+
+    public Integer getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Integer goal) {
+        this.goal = goal;
     }
 }
