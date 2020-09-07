@@ -9,7 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginBottom="4sp">
 
         <TextView
             android:id="@+id/titleTextView"
@@ -48,7 +49,7 @@
             android:id="@+id/history_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4sp"
+            android:layout_marginHorizontal="12sp"
             android:layout_marginVertical="8sp"
             android:padding="0sp"
             android:scrollbars="none" />
@@ -135,9 +136,40 @@
             android:paddingHorizontal="4sp"
             android:paddingTop="5sp"
             android:paddingBottom="2sp"
-            android:text=":"
+            android:text="@string/days_with_goal_met_by_week_day"
             android:textColor="@color/secondaryDarkColor"
             android:textSize="16sp" />
+
+        <com.github.mikephil.charting.charts.HorizontalBarChart
+            android:id="@+id/horizontalBarChart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="220sp"
+            android:layout_marginHorizontal="4sp"
+            android:layout_marginVertical="8sp"
+            />
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginHorizontal="4sp"-->
+<!--            android:layout_marginTop="8sp"-->
+<!--            android:gravity="center"-->
+<!--            android:paddingHorizontal="4sp"-->
+<!--            android:paddingTop="5sp"-->
+<!--            android:paddingBottom="2sp"-->
+<!--            android:text="@string/num_of_people_who_met_goal_each_day"-->
+<!--            android:textColor="@color/secondaryDarkColor"-->
+<!--            android:textSize="16sp" />-->
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200sp"
+            android:layout_marginHorizontal="4sp"
+            android:layout_marginVertical="8sp"
+            />
 
 
 

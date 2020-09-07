@@ -114,4 +114,13 @@
     <string name="challenge_history">Full challenge history:</string>
     <string name="from">"From "</string>
     <string name="to">"To "</string>
+    <string name="days_with_goal_met_by_week_day">On how many days was the challenge goal met by week day:</string>
+    <string name="monday">MONDAY</string>
+    <string name="tuesday">TUESDAY</string>
+    <string name="wednesday">WEDNESDAY</string>
+    <string name="thursday">THURSDAY</string>
+    <string name="friday">FRIDAY</string>
+    <string name="saturday">SATURDAY</string>
+    <string name="sunday">SUNDAY</string>
+    <string name="num_of_people_who_met_goal_each_day">How many participants done challenge in the following days:</string>
 </resources>

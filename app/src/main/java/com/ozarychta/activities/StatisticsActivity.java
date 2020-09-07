@@ -9,12 +9,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.ozarychta.R;
@@ -34,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -42,6 +52,7 @@ public class StatisticsActivity extends BaseActivity {
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     private static final String SIMPLE_DATE_FORMAT = "dd.MM";
     private static final String BASIC_DATE_FORMAT = "dd.MM.yyyy";
+    private static final String[] DAYS = { "SUN", "MONDAY", "TUESDAY", "WED", "THU", "FRI", "SAT" };
 
     private SimpleDateFormat simpleDateFormat;
     private SimpleDateFormat dateFormat;
@@ -64,6 +75,8 @@ public class StatisticsActivity extends BaseActivity {
     private TextView highestStreakTextView;
     private TextView toTextView;
     private TextView totalPointsTextView;
+
+    private HorizontalBarChart weekdaysChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +123,26 @@ public class StatisticsActivity extends BaseActivity {
         highestStreakTextView = findViewById(R.id.highestStreakTextView);
         toTextView = findViewById(R.id.toTextView);
         totalPointsTextView = findViewById(R.id.totalPoints);
+
+
+        weekdaysChart = (HorizontalBarChart) findViewById(R.id.horizontalBarChart);
+
+        LineChart chart = (LineChart) findViewById(R.id.chart);
+        chart.setVisibility(View.GONE);
+
+//        List<Entry> entries = new ArrayList<Entry>();
+//        entries.add(new Entry(1, 2));
+//        entries.add(new Entry(2, 3));
+//        entries.add(new Entry(3, 4));
+//        entries.add(new Entry(4, 20));
+//
+//        LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
+//        dataSet.setColor(Color.rgb(0, 155, 0));
+//        dataSet.setValueTextColor(Color.rgb(0, 0, 155));
+//
+//        LineData lineData = new LineData(dataSet);
+//        chart.setData(lineData);
+//        chart.invalidate(); // refresh
 
         silentSignInAndGetStatisticsData();
     }
@@ -232,5 +265,94 @@ public class StatisticsActivity extends BaseActivity {
             totalPoints += d.getPoints();
         }
         totalPointsTextView.setText(totalPoints.toString());
+
+        showWeekDaysChart();
+    }
+
+    private void showWeekDaysChart() {
+        weekdaysChart.getDescription().setEnabled(false);
+        weekdaysChart.setDrawGridBackground(false);
+        weekdaysChart.setDrawValueAboveBar(false);
+        weekdaysChart.getLegend().setEnabled(false);
+
+        XAxis xAxis = weekdaysChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1);
+        xAxis.setTextSize(12);
+        xAxis.setTextColor(ContextCompat.getColor(this, R.color.black));
+
+        String[] DAYS = {getString(R.string.sunday), getString(R.string.saturday),
+                getString(R.string.friday), getString(R.string.thursday),
+                getString(R.string.wednesday), getString(R.string.tuesday),
+                getString(R.string.monday)};
+
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(DAYS){
+        });
+
+        YAxis axisLeft = weekdaysChart.getAxisLeft();
+        axisLeft.setGranularity(1);
+        axisLeft.setAxisMinimum(0);
+
+        YAxis axisRight = weekdaysChart.getAxisRight();
+        axisRight.setGranularity(1);
+        axisRight.setAxisMinimum(0);
+
+        int monCount = 0;
+        int tueCount = 0;
+        int wedCount = 0;
+        int thuCount = 0;
+        int friCount = 0;
+        int satCount = 0;
+        int sunCount = 0;
+
+        for(Day day : allDays){
+            Calendar c = Calendar.getInstance();
+            c.setTime(day.getDate());
+
+            if(day.getPoints() > 0){
+                switch(c.get(Calendar.DAY_OF_WEEK)){
+                    case Calendar.MONDAY:
+                        monCount += 1;
+                        break;
+                    case Calendar.TUESDAY:
+                        tueCount +=1;
+                        break;
+                    case Calendar.WEDNESDAY:
+                        wedCount += 1;
+                        break;
+                    case Calendar.THURSDAY:
+                        thuCount +=1;
+                        break;
+                    case Calendar.FRIDAY:
+                        friCount += 1;
+                        break;
+                    case Calendar.SATURDAY:
+                        satCount +=1;
+                        break;
+                    case Calendar.SUNDAY:
+                        sunCount += 1;
+                        break;
+                }
+            }
+        }
+
+
+        List<BarEntry> entries = new ArrayList<BarEntry>();
+        entries.add(new BarEntry(6, monCount));
+        entries.add(new BarEntry(5, tueCount));
+        entries.add(new BarEntry(4, wedCount));
+        entries.add(new BarEntry(3, thuCount));
+        entries.add(new BarEntry(2, friCount));
+        entries.add(new BarEntry(1, satCount));
+        entries.add(new BarEntry(0, sunCount));
+
+        BarDataSet barDataSet = new BarDataSet(entries, "");
+        barDataSet.setColor(R.color.primaryColor);
+        barDataSet.setDrawValues(false);
+
+        BarData barData = new BarData(barDataSet);
+        weekdaysChart.setData(barData);
+        weekdaysChart.invalidate();
+
     }
 }

@@ -14,6 +14,8 @@ import com.ozarychta.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.DayViewHolder> {
@@ -26,11 +28,13 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
     public static class DayViewHolder extends RecyclerView.ViewHolder {
 
         public TextView dateText;
+        public TextView weekdayText;
         public ImageView imageView;
 
         public DayViewHolder(View itemView) {
             super(itemView);
             this.dateText = itemView.findViewById(R.id.dateTextView);
+            this.weekdayText = itemView.findViewById(R.id.weekDayTextView);
             this.imageView = itemView.findViewById(R.id.imageView);
             Log.d("constructor view holder", "constructor view holder");
         }
@@ -58,6 +62,10 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
         Log.d("on bind view holder", "on bind view holder \n" + d);
 
         holder.dateText.setText(simpleDateFormat.format(d.getDate()));
+        Calendar c = Calendar.getInstance();
+        c.setTime(d.getDate());
+        String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(d.getDate()).substring(0,3);
+        holder.weekdayText.setText(dayOfWeek);
 
         switch (d.getConfirmationType()){
             case CHECK_TASK:
