@@ -23,6 +23,10 @@ public interface ReminderDao {
     @Query("SELECT * FROM reminder WHERE challenge_id LIKE :challengeId LIMIT 1")
     Reminder findByChallengeId(Long challengeId);
 
+    @Query("SELECT * FROM reminder WHERE challenge_id LIKE :challengeId AND " +
+            "user_id LIKE :userId LIMIT 1")
+    Reminder findByChallengeIdAndUserId(Long challengeId, Long userId);
+
     @Insert
     Long insert(Reminder reminder);
 

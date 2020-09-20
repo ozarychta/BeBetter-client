@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -141,6 +142,8 @@ public class ChallengeActivity extends BaseActivity {
 
     private TextView noNetworkLabel;
     private Button refreshBtn;
+
+    private Long signedUserId;
 
     private ReminderDatabase reminderDatabase;
     private Reminder reminder;
@@ -291,10 +294,19 @@ public class ChallengeActivity extends BaseActivity {
         reminderToggle = findViewById(R.id.reminderToggleButton);
         reminderTimeTextView = findViewById(R.id.reminderTimeTextView);
 
-        reminder = reminderDatabase.reminderDao().findByChallengeId(challengeIdFromIntent);
+        SharedPreferences sharedPref = getApplicationContext()
+                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+        signedUserId = sharedPref.getLong(getString(R.string.user_id_field), -1);
+
+        if (signedUserId == -1){
+            Toast.makeText(getApplicationContext(), getString(R.string.sign_in_result_error), Toast.LENGTH_LONG)
+                    .show();
+        }
+
+        reminder = reminderDatabase.reminderDao().findByChallengeIdAndUserId(challengeIdFromIntent, signedUserId);
 
         if(reminder == null){
-            reminder = new Reminder(challengeIdFromIntent, false, 12, 0);
+            reminder = new Reminder(challengeIdFromIntent, signedUserId, false, 12, 0);
             reminderId = reminderDatabase.reminderDao().insert(reminder);
         } else {
             reminderId = reminder.getId();

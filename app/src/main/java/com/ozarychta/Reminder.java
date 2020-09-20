@@ -12,6 +12,9 @@ public class Reminder {
     @ColumnInfo(name = "challenge_id")
     public Long challengeId;
 
+    @ColumnInfo(name = "user_id")
+    public Long userId;
+
     @ColumnInfo(name = "enabled")
     public Boolean enabled;
 
@@ -21,8 +24,9 @@ public class Reminder {
     @ColumnInfo(name = "min")
     public int min;
 
-    public Reminder(Long challengeId, Boolean enabled, int hour, int min) {
+    public Reminder(Long challengeId, Long userId, Boolean enabled, int hour, int min) {
         this.challengeId = challengeId;
+        this.userId = userId;
         this.enabled = enabled;
         this.hour = hour;
         this.min = min;
@@ -42,6 +46,14 @@ public class Reminder {
 
     public void setChallengeId(Long challengeId) {
         this.challengeId = challengeId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Boolean getEnabled() {
