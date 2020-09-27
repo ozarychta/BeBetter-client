@@ -69,7 +69,7 @@
     <string name="error_occurred">Error</string>
     <string name="created">Created</string>
     <string name="joined">Joined</string>
-    <string name="category_all">ALL</string>
+    <string name="uppercase_all">ALL</string>
     <string name="category_sport">SPORT</string>
     <string name="category_family">FAMILY</string>
     <string name="category_education">EDUCATION</string>

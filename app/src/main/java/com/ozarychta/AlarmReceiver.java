@@ -35,6 +35,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         stackBuilder.addNextIntentWithParentStack(intent);
 
         intent.putExtra("CHALLENGE_ID", id);
+        intent.putExtra("TITLE", title);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, alarmId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

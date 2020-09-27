@@ -38,8 +38,6 @@ public class Challenge implements Serializable {
 
     private Integer goal;
 
-    private Boolean isMoreBetter;
-
     private Boolean isUserParticipant;
 
     private Integer creatorId;
@@ -119,14 +117,6 @@ public class Challenge implements Serializable {
         this.done = done;
     }
 
-    public Boolean getMoreBetter() {
-        return isMoreBetter;
-    }
-
-    public void setMoreBetter(Boolean moreBetter) {
-        isMoreBetter = moreBetter;
-    }
-
     public Integer getCreatorId() {
         return creatorId;
     }
@@ -199,7 +189,6 @@ public class Challenge implements Serializable {
                 ", confirmationType=" + confirmationType +
                 ", done=" + done +
                 ", goal=" + goal +
-                ", isMoreBetter=" + isMoreBetter +
                 ", isUserParticipant=" + isUserParticipant +
                 ", creatorId=" + creatorId +
                 '}';

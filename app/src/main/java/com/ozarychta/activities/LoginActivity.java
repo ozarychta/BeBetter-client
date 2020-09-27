@@ -23,8 +23,6 @@ import com.ozarychta.R;
 import com.ozarychta.ServerRequestUtil;
 import com.ozarychta.SignInClient;
 
-import org.json.JSONException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,18 +115,12 @@ public class LoginActivity extends AppCompatActivity {
                 response -> {
                     try {
                         Long id = response.getLong("id");
-                        String username = response.getString("username");
 
                         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
                         editor.putLong(getString(R.string.user_id_field), id);
                         editor.commit();
 
-//                        Toast.makeText(getApplicationContext(), "added user to server", Toast.LENGTH_LONG)
-//                                .show();
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
@@ -137,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    if (!!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
                     } else

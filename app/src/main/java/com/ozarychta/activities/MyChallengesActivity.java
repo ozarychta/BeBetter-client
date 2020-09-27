@@ -205,17 +205,8 @@ public class MyChallengesActivity extends BaseActivity {
                             Date end = dateFormat.parse(jsonObject.getString("endDate"));
                             ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                             ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
-                            Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
+                            Integer goal = jsonObject.getInt("goal");
                             Integer creatorId = jsonObject.getInt("creatorId");
-
-                            Integer goal = 0;
-//                            if (confirmation == ConfirmationType.TIMER_TASK) {
-//                                goal = jsonObject.getInt("goal");
-//                            }
-                            Boolean isMoreBetter = true;
-                            if (confirmation == ConfirmationType.COUNTER_TASK) {
-                                isMoreBetter = jsonObject.getBoolean("moreBetter");
-                            }
 
                             Challenge c = new Challenge();
                             c.setId(Long.valueOf(id));
@@ -228,10 +219,8 @@ public class MyChallengesActivity extends BaseActivity {
                             c.setAccessType(access);
                             c.setState(state);
                             c.setGoal(goal);
-                            c.setMoreBetter(isMoreBetter);
                             c.setStartDate(start);
                             c.setEndDate(end);
-                            c.setUserParticipant(isUserParticipant);
                             c.setCreatorId(creatorId);
 
                             joined.add(c);
@@ -312,17 +301,8 @@ public class MyChallengesActivity extends BaseActivity {
                             Date end = dateFormat.parse(jsonObject.getString("endDate"));
                             ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                             ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
-                            Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
+                            Integer goal = jsonObject.getInt("goal");
                             Integer creatorId = jsonObject.getInt("creatorId");
-
-                            Integer goal = 0;
-//                            if (confirmation == ConfirmationType.TIMER_TASK) {
-//                                goal = jsonObject.getInt("goal");
-//                            }
-                            Boolean isMoreBetter = true;
-                            if (confirmation == ConfirmationType.COUNTER_TASK) {
-                                isMoreBetter = jsonObject.getBoolean("moreBetter");
-                            }
 
                             Challenge c = new Challenge();
                             c.setId(Long.valueOf(id));
@@ -335,10 +315,8 @@ public class MyChallengesActivity extends BaseActivity {
                             c.setAccessType(access);
                             c.setState(state);
                             c.setGoal(goal);
-                            c.setMoreBetter(isMoreBetter);
                             c.setStartDate(start);
                             c.setEndDate(end);
-                            c.setUserParticipant(isUserParticipant);
                             c.setCreatorId(creatorId);
 
                             created.add(c);

@@ -74,6 +74,7 @@ public class ChallengeActivity extends BaseActivity {
     private ConnectivityManager connectivityManager;
 
     private Long challengeIdFromIntent;
+    private String titleFromIntent;
     private Challenge challenge;
     private Day today;
 
@@ -157,7 +158,12 @@ public class ChallengeActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+//        Bundle bundle = getIntent().getExtras();
+//        Long id = (Long) bundle.get("CHALLENGE_ID");
+//        String title = (String) bundle.get("TITLE");
+
         challengeIdFromIntent = getIntent().getLongExtra("CHALLENGE_ID", -1);
+        titleFromIntent = getIntent().getStringExtra("TITLE");
         challenge = new Challenge();
 //        challenge = (Challenge) getIntent().getSerializableExtra("CHALLENGE");
         Log.d(this.getClass().getSimpleName() + " challenge id ", challengeIdFromIntent.toString());
@@ -174,6 +180,10 @@ public class ChallengeActivity extends BaseActivity {
         basicDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         titleText = findViewById(R.id.titleTextView);
+        if(titleFromIntent != null){
+            titleText.setText(titleFromIntent);
+        }
+
         descText = findViewById(R.id.descriptionTextView);
         cityText = findViewById(R.id.cityTextView);
 
@@ -459,13 +469,7 @@ public class ChallengeActivity extends BaseActivity {
                         ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                         ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
                         Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
-
-                        Integer goal = 0;
-                        Boolean isMoreBetter = true;
-                        if (confirmation == ConfirmationType.COUNTER_TASK) {
-                            isMoreBetter = jsonObject.getBoolean("moreBetter");
-                            goal = jsonObject.getInt("goal");
-                        }
+                        Integer goal = jsonObject.getInt("goal");
 
                         challenge.setId(Long.valueOf(id));
                         challenge.setTitle(title);
@@ -477,7 +481,6 @@ public class ChallengeActivity extends BaseActivity {
                         challenge.setAccessType(access);
                         challenge.setState(state);
                         challenge.setGoal(goal);
-                        challenge.setMoreBetter(isMoreBetter);
                         challenge.setStartDate(start);
                         challenge.setEndDate(end);
                         challenge.setUserParticipant(isUserParticipant);

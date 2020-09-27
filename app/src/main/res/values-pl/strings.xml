@@ -68,7 +68,7 @@
     <string name="error_occurred">Wystąpił błąd</string>
     <string name="created">Utworzone</string>
     <string name="joined">Dołączone</string>
-    <string name="category_all">WSZYSTKIE</string>
+    <string name="uppercase_all">WSZYSTKIE</string>
     <string name="category_sport">SPORT</string>
     <string name="category_family">RODZINA</string>
     <string name="category_education">EDUKACJA</string>
