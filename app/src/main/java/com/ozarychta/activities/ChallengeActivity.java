@@ -139,7 +139,7 @@ public class ChallengeActivity extends BaseActivity {
 
 
     private AlarmManager alarmManager;
-    private PendingIntent alarmIntent;
+    private PendingIntent reminderPendingIntent;
 
     private TextView noNetworkLabel;
     private Button refreshBtn;
@@ -385,37 +385,39 @@ public class ChallengeActivity extends BaseActivity {
     }
 
     private void setReminder() {
-        Intent intent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
-        intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
-        intent.putExtra("TITLE", challenge.getTitle());
-        intent.putExtra("ALARM_ID", reminderId);
+        Intent reminderIntent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
+        reminderIntent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
+        reminderIntent.putExtra("TITLE", challenge.getTitle());
+        reminderIntent.putExtra("REMINDER_ID", reminderId);
+        reminderIntent.putExtra("CHALLENGE_END_DATE", dateFormat.format(challenge.getEndDate()));
 
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        alarmIntent = PendingIntent.getBroadcast(ChallengeActivity.this, reminderId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        reminderIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        reminderPendingIntent = PendingIntent.getBroadcast(this, reminderId.intValue(), reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, reminder.getHour());
-        calendar.set(Calendar.MINUTE, reminder.getMin());
+        Calendar reminderTime = Calendar.getInstance();
+        reminderTime.setTimeInMillis(System.currentTimeMillis());
+        reminderTime.set(Calendar.HOUR_OF_DAY, reminder.getHour());
+        reminderTime.set(Calendar.MINUTE, reminder.getMin());
 
-        alarmManager = (AlarmManager) ChallengeActivity.this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+        alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, reminderTime.getTimeInMillis(),
+                AlarmManager.INTERVAL_HOUR, reminderPendingIntent);
         Toast.makeText(getApplicationContext(), getString(R.string.reminder_set), Toast.LENGTH_LONG)
                 .show();
     }
 
     private void cancelReminder() {
-        Intent intent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
-        intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
-        intent.putExtra("TITLE", challenge.getTitle());
-        intent.putExtra("ALARM_ID", reminderId);
+        Intent reminderIntent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
+        reminderIntent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
+        reminderIntent.putExtra("TITLE", challenge.getTitle());
+        reminderIntent.putExtra("REMINDER_ID", reminderId);
+        reminderIntent.putExtra("CHALLENGE_END_DATE", dateFormat.format(challenge.getEndDate()));
 
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        alarmIntent = PendingIntent.getBroadcast(ChallengeActivity.this, reminderId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        reminderIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        reminderPendingIntent = PendingIntent.getBroadcast(this, reminderId.intValue(), reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager = (AlarmManager) ChallengeActivity.this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(alarmIntent);
+        alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(reminderPendingIntent);
         Toast.makeText(getApplicationContext(), getString(R.string.reminder_canceled), Toast.LENGTH_LONG)
                 .show();
     }

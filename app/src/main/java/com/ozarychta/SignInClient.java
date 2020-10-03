@@ -1,8 +1,6 @@
 package com.ozarychta;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -11,10 +9,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-import java.util.concurrent.Executor;
-
 public class SignInClient {
 
+    private static final String API_KEY = "PUT_YOUR_API_KEY_HERE";
     private static SignInClient INSTANCE = null;
     private static GoogleSignInClient googleSignInClient = null;
     private static Context ctx = null;
@@ -22,7 +19,7 @@ public class SignInClient {
     private SignInClient(Context context) {
         ctx = context;
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("576716243653-528khc4t2dv9oe1u24j38ohqdttvpghl.apps.googleusercontent.com")
+                .requestIdToken(API_KEY)
                 .requestEmail()
                 .build();
 

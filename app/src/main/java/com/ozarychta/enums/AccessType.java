@@ -7,8 +7,7 @@ import com.ozarychta.EnumWithLabel;
 
 public enum AccessType implements EnumWithLabel {
     PRIVATE(R.string.private_access),
-    PUBLIC(R.string.public_access),
-    ALL(R.string.uppercase_all);
+    PUBLIC(R.string.public_access);
 
     private Integer resourceId;
 

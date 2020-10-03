@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -308,7 +309,7 @@ public class ProfileActivity extends BaseActivity{
                     }
                 },
                 error -> {
-                    if (!!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
                     } else
@@ -360,7 +361,7 @@ public class ProfileActivity extends BaseActivity{
                     }
                 },
                 error -> {
-                    if (!!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
                         Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                                 .show();
                     } else
@@ -415,26 +416,16 @@ public class ProfileActivity extends BaseActivity{
                         updateUI();
 
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
-                                .show();
-                        Log.d(this.getClass().getName(), e.getMessage());
+                        showExceptionMessage(e);
                     } finally {
                         progressBar.setVisibility(View.GONE);
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)){
-                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
-                                .show();
-                    }else{
-                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
-                                .show();
-                    }
+                    showVolleyErrorMessage(error);
                     progressBar.setVisibility(View.GONE);
                 }
         ) {
-            /** Passing some request headers* */
             @Override
             public Map getHeaders() {
                 HashMap headers = new HashMap();
@@ -443,6 +434,23 @@ public class ProfileActivity extends BaseActivity{
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
+    }
+
+    private void showVolleyErrorMessage(VolleyError error){
+        if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+            Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                    .show();
+        } else
+            Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                    .show();
+        Log.d(this.getClass().getName(), error.getMessage());
+    }
+
+    private void showExceptionMessage(Exception exception){
+        exception.printStackTrace();
+        Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
+                .show();
+        Log.d(this.getClass().getName(), exception.getMessage());
     }
 
     @Override

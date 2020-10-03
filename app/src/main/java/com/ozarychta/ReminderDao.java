@@ -13,6 +13,9 @@ public interface ReminderDao {
     @Query("SELECT * FROM reminder")
     List<Reminder> getAll();
 
+    @Query("SELECT * FROM reminder WHERE id LIKE :id LIMIT 1")
+    Reminder findById(Long id);
+
     @Query("SELECT * FROM reminder WHERE id IN (:reminderIds)")
     List<Reminder> loadAllByIds(int[] reminderIds);
 

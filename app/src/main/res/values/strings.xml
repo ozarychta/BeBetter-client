@@ -65,7 +65,7 @@
     <string name="hide_comments">Hide comments</string>
     <string name="comment_hint">Add your comment…</string>
     <string name="added_comment">Added comment</string>
-    <string name="unknown_error_occurred">Unknown error occurred. Please try again.</string>
+    <string name="unknown_error_occurred">Error occurred. Please try again.</string>
     <string name="error_occurred">Error</string>
     <string name="created">Created</string>
     <string name="joined">Joined</string>

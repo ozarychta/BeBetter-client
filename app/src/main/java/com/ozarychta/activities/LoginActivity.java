@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -129,15 +130,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
-                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
-                                .show();
-                    } else
-                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
-                                .show();
+                    showVolleyErrorMessage(error);
                 }
         ) {
-            /** Passing some request headers* */
             @Override
             public Map getHeaders() {
                 HashMap headers = new HashMap();
@@ -146,6 +141,16 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
+    }
+
+    private void showVolleyErrorMessage(VolleyError error){
+        if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+            Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                    .show();
+        } else
+            Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                    .show();
+        Log.d(this.getClass().getName(), error.getMessage());
     }
 
 }
