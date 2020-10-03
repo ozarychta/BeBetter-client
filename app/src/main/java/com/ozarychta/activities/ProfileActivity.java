@@ -34,6 +34,7 @@ import com.ozarychta.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -440,10 +441,17 @@ public class ProfileActivity extends BaseActivity{
         if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
             Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
-        } else
+        } else {
             Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
                     .show();
-        Log.d(this.getClass().getName(), error.getMessage());
+        }
+
+        Log.d(this.getClass().getName() + ": Error code :", String.valueOf(error.networkResponse.statusCode));
+        try {
+            Log.d(this.getClass().getName() + ": Error response :", new String(error.networkResponse.data,"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showExceptionMessage(Exception exception){

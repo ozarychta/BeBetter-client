@@ -30,6 +30,10 @@ public interface ReminderDao {
             "user_id LIKE :userId LIMIT 1")
     Reminder findByChallengeIdAndUserId(Long challengeId, Long userId);
 
+    @Query("SELECT * FROM reminder WHERE user_id LIKE :userId AND " +
+            "enabled = :enabled")
+    List<Reminder> findByUserIdAndEnabled(Long userId, Boolean enabled);
+
     @Insert
     Long insert(Reminder reminder);
 

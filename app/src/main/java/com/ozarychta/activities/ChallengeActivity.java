@@ -33,6 +33,7 @@ import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.ozarychta.AlarmReceiver;
+import com.ozarychta.ApplicationExecutor;
 import com.ozarychta.R;
 import com.ozarychta.Reminder;
 import com.ozarychta.ReminderDatabase;
@@ -59,6 +60,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.Executor;
 
 public class ChallengeActivity extends BaseActivity {
 
@@ -150,6 +152,8 @@ public class ChallengeActivity extends BaseActivity {
     private Reminder reminder;
     private Long reminderId;
 
+    private Executor executor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,6 +173,7 @@ public class ChallengeActivity extends BaseActivity {
         Log.d(this.getClass().getSimpleName() + " challenge id ", challengeIdFromIntent.toString());
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        executor = ApplicationExecutor.getInstance().getExecutor();
 
         simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -334,7 +339,13 @@ public class ChallengeActivity extends BaseActivity {
                         reminderTimeTextView.setText(String.format("%02d:%02d", hourOfDay, minutes));
                         reminder.setHour(hourOfDay);
                         reminder.setMin(minutes);
-                        reminderDatabase.reminderDao().update(reminder);
+
+                        executor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                reminderDatabase.reminderDao().update(reminder);
+                            }
+                        });
 
                         if(reminder.getEnabled()){
                             setReminder();
@@ -353,15 +364,19 @@ public class ChallengeActivity extends BaseActivity {
 
                 if(isChecked){
                     reminderCardView.setBackgroundColor(getColor(R.color.white));
-                    reminder.setEnabled(true);
-                    reminderDatabase.reminderDao().update(reminder);
                     setReminder();
+                    reminder.setEnabled(true);
                 } else {
                     reminderCardView.setBackgroundColor(getColor(R.color.lightGrey));
-                    reminder.setEnabled(false);
-                    reminderDatabase.reminderDao().update(reminder);
                     cancelReminder();
+                    reminder.setEnabled(false);
                 }
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        reminderDatabase.reminderDao().update(reminder);
+                    }
+                });
             }
         });
 
@@ -377,15 +392,10 @@ public class ChallengeActivity extends BaseActivity {
             intent.putExtra("TITLE", challenge.getTitle());
             startActivity(intent);
         });
-
-//        List<Reminder> list = reminderDatabase.reminderDao().getAll();
-//        for(Reminder r : list){
-//            Log.d(this.getClass().getSimpleName() + " reminders from database: ", r.toString());
-//        }
     }
 
     private void setReminder() {
-        Intent reminderIntent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
+        Intent reminderIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
         reminderIntent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
         reminderIntent.putExtra("TITLE", challenge.getTitle());
         reminderIntent.putExtra("REMINDER_ID", reminderId);
@@ -401,13 +411,13 @@ public class ChallengeActivity extends BaseActivity {
 
         alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, reminderTime.getTimeInMillis(),
-                AlarmManager.INTERVAL_HOUR, reminderPendingIntent);
+                AlarmManager.INTERVAL_DAY, reminderPendingIntent);
         Toast.makeText(getApplicationContext(), getString(R.string.reminder_set), Toast.LENGTH_LONG)
                 .show();
     }
 
     private void cancelReminder() {
-        Intent reminderIntent = new Intent(ChallengeActivity.this, AlarmReceiver.class);
+        Intent reminderIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
         reminderIntent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
         reminderIntent.putExtra("TITLE", challenge.getTitle());
         reminderIntent.putExtra("REMINDER_ID", reminderId);
