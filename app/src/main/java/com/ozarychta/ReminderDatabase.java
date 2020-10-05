@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Reminder.class}, version = 2)
+@Database(entities = {Reminder.class}, version = 3)
 public abstract class ReminderDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "reminder_db";
     private static ReminderDatabase instance;

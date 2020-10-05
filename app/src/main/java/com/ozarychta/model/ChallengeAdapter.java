@@ -91,6 +91,7 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ChallengeActivity.class);
                 intent.putExtra("CHALLENGE_ID", dataSet.get(position).getId());
+                intent.putExtra("TITLE", dataSet.get(position).getTitle());
                 context.startActivity(intent);
             }
         });

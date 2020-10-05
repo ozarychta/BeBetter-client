@@ -24,12 +24,20 @@ public class Reminder {
     @ColumnInfo(name = "min")
     public int min;
 
-    public Reminder(Long challengeId, Long userId, Boolean enabled, int hour, int min) {
+    @ColumnInfo(name = "title")
+    public String title;
+
+    @ColumnInfo(name = "end_date")
+    public String endDate;
+
+    public Reminder(Long challengeId, Long userId, Boolean enabled, int hour, int min, String title, String endDate) {
         this.challengeId = challengeId;
         this.userId = userId;
         this.enabled = enabled;
         this.hour = hour;
         this.min = min;
+        this.title = title;
+        this.endDate = endDate;
     }
 
     public Long getId() {
@@ -80,14 +88,33 @@ public class Reminder {
         this.min = min;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
     @Override
     public String toString() {
         return "Reminder{" +
                 "id=" + id +
                 ", challengeId=" + challengeId +
+                ", userId=" + userId +
                 ", enabled=" + enabled +
                 ", hour=" + hour +
                 ", min=" + min +
+                ", title='" + title + '\'' +
+                ", endDate='" + endDate + '\'' +
                 '}';
     }
 }

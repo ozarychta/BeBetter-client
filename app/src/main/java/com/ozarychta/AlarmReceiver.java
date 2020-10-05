@@ -29,31 +29,32 @@ public class AlarmReceiver extends BroadcastReceiver {
         DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_WITHOUT_TIMEZONE);
 
         Bundle bundle = intent.getExtras();
-        Long id = (Long) bundle.get("CHALLENGE_ID");
-        String title = (String) bundle.get("TITLE");
         Long alarmId = (Long) bundle.get("REMINDER_ID");
-        String challengeEnd = (String) bundle.get("CHALLENGE_END_DATE");
 
-        Date endDate = null;
+        ReminderDatabase reminderDatabase = ReminderDatabase.getInstance(context);
+        Reminder reminder = reminderDatabase.reminderDao().findById(alarmId);
+        String title = reminder.getTitle();
+        Long challengeId = reminder.getChallengeId();
+
+        Date endDate;
         try {
-            endDate = dateFormat.parse(challengeEnd);
+            endDate = dateFormat.parse(reminder.getEndDate());
         } catch (ParseException e) {
             e.printStackTrace();
+            return;
         }
         Calendar end = Calendar.getInstance();
         end.setTime(endDate);
 
         Calendar now = Calendar.getInstance();
         if(now.after(end)){
-            ReminderDatabase reminderDatabase = ReminderDatabase.getInstance(context);
-            Reminder reminder = reminderDatabase.reminderDao().findById(alarmId);
             reminder.setEnabled(false);
             reminderDatabase.reminderDao().update(reminder);
 
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent reminderPendingIntent = PendingIntent.getBroadcast(context, alarmId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManager.cancel(reminderPendingIntent);
-            Log.d(this.getClass().getSimpleName(), "Cancelled alarm for challenge : " + alarmId + " : " + title);
+            Log.d(this.getClass().getSimpleName(), "Cancelled alarm : " + alarmId + " for challenge : " + title);
 
             return;
         }
@@ -63,10 +64,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntentWithParentStack(intent);
 
-        intent.putExtra("CHALLENGE_ID", id);
+        intent.putExtra("CHALLENGE_ID", challengeId);
         intent.putExtra("TITLE", title);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, alarmId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), alarmId.intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -78,7 +79,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
     }
 }

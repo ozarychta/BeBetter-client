@@ -321,13 +321,18 @@ public class ChallengeActivity extends BaseActivity {
         reminder = reminderDatabase.reminderDao().findByChallengeIdAndUserId(challengeIdFromIntent, signedUserId);
 
         if(reminder == null){
-            reminder = new Reminder(challengeIdFromIntent, signedUserId, false, 12, 0);
+            reminder = new Reminder(challengeIdFromIntent, signedUserId, false, 12, 0, "", "");
             reminderId = reminderDatabase.reminderDao().insert(reminder);
         } else {
             reminderId = reminder.getId();
         }
 
         reminderTimeTextView.setText(String.format("%02d:%02d", reminder.getHour(), reminder.getMin()));
+        if(reminder.getEnabled()){
+            reminderCardView.setBackgroundColor(getColor(R.color.white));
+        } else {
+            reminderCardView.setBackgroundColor(getColor(R.color.lightGrey));
+        }
 
         reminderTimeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -361,7 +366,6 @@ public class ChallengeActivity extends BaseActivity {
         reminderToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!buttonView.isPressed()) return;
-
                 if(isChecked){
                     reminderCardView.setBackgroundColor(getColor(R.color.white));
                     setReminder();
@@ -396,13 +400,10 @@ public class ChallengeActivity extends BaseActivity {
 
     private void setReminder() {
         Intent reminderIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
-        reminderIntent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
-        reminderIntent.putExtra("TITLE", challenge.getTitle());
         reminderIntent.putExtra("REMINDER_ID", reminderId);
-        reminderIntent.putExtra("CHALLENGE_END_DATE", dateFormat.format(challenge.getEndDate()));
 
         reminderIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        reminderPendingIntent = PendingIntent.getBroadcast(this, reminderId.intValue(), reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        reminderPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), reminderId.intValue(), reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Calendar reminderTime = Calendar.getInstance();
         reminderTime.setTimeInMillis(System.currentTimeMillis());
@@ -418,13 +419,10 @@ public class ChallengeActivity extends BaseActivity {
 
     private void cancelReminder() {
         Intent reminderIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
-        reminderIntent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
-        reminderIntent.putExtra("TITLE", challenge.getTitle());
         reminderIntent.putExtra("REMINDER_ID", reminderId);
-        reminderIntent.putExtra("CHALLENGE_END_DATE", dateFormat.format(challenge.getEndDate()));
 
         reminderIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        reminderPendingIntent = PendingIntent.getBroadcast(this, reminderId.intValue(), reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        reminderPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), reminderId.intValue(), reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(reminderPendingIntent);
@@ -459,8 +457,6 @@ public class ChallengeActivity extends BaseActivity {
                 null,
                 response -> {
                     try {
-                        todayCard.setVisibility(View.VISIBLE);
-                        reminderCardView.setVisibility(View.VISIBLE);
                         joinBtn.setVisibility(View.VISIBLE);
                         statisticsBtn.setVisibility(View.VISIBLE);
                         showCommentsBtn.setVisibility(View.VISIBLE);
@@ -498,6 +494,17 @@ public class ChallengeActivity extends BaseActivity {
                         challenge.setUserParticipant(isUserParticipant);
 
                         Log.d(this.getClass().getSimpleName() + " jsonObject", challenge.toString());
+
+                        if(reminder.getTitle().isEmpty()){
+                            reminder.setTitle(challenge.getTitle());
+                            reminder.setEndDate(dateFormat.format(challenge.getEndDate()));
+                        }
+                        executor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                reminderDatabase.reminderDao().update(reminder);
+                            }
+                        });
 
                         updateUIWithChallenge();
 
@@ -853,7 +860,7 @@ public class ChallengeActivity extends BaseActivity {
             showCommentsBtn.setVisibility(View.GONE);
         }
 
-        if (challenge.isUserParticipant() == false) {
+        if (!challenge.isUserParticipant()) {
             daysLabel.setVisibility(View.GONE);
             daysLayout.setVisibility(View.GONE);
             statisticsBtn.setVisibility(View.GONE);

@@ -123,4 +123,6 @@
     <string name="saturday">SATURDAY</string>
     <string name="sunday">SUNDAY</string>
     <string name="num_of_people_who_met_goal_each_day">How many participants done challenge in the following days:</string>
+    <string name="exact_same_challenge_already_exists">That challenge was already added.</string>
+    <string name="end_before_start">Challenge can\'t end before it starts. Please choose different date.</string>
 </resources>

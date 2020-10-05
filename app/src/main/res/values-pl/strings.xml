@@ -123,4 +123,6 @@
     <string name="saturday">SOBOTA</string>
     <string name="sunday">NIEDZIELA</string>
     <string name="num_of_people_who_met_goal_each_day">Ilu uczestników wykonało wyzwanie w kolejnych dniach:</string>
+    <string name="exact_same_challenge_already_exists">"To wyzwanie zostało już dodane."</string>
+    <string name="end_before_start">Data końca wyzwania nie może poprzedzać daty startu. Wybierz inną datę.</string>
 </resources>

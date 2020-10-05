@@ -14,7 +14,7 @@ public class ApplicationExecutor {
 
     public static synchronized ApplicationExecutor getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ApplicationExecutor(Executors.newSingleThreadExecutor());
+            INSTANCE = new ApplicationExecutor(Executors.newFixedThreadPool(3));
         }
         return INSTANCE;
     }
