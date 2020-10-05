@@ -135,6 +135,7 @@ public class ChallengeActivity extends BaseActivity {
 
     private ScrollView scrollView;
 
+    private TextView reminderLabel;
     private MaterialCardView reminderCardView;
     private ToggleButton reminderToggle;
     private TextView reminderTimeTextView;
@@ -220,6 +221,7 @@ public class ChallengeActivity extends BaseActivity {
         daysLabel = findViewById(R.id.daysLabel);
         daysLayout = findViewById(R.id.daysLinearLayout);
         todayCard = findViewById(R.id.today);
+        todayCard.setVisibility(View.GONE);
 
         daysRecyclerView = findViewById(R.id.past_days_recycler_view);
         daysLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -305,7 +307,11 @@ public class ChallengeActivity extends BaseActivity {
 
         reminderDatabase = ReminderDatabase.getInstance(this);
 
+        reminderLabel = findViewById(R.id.reminderLabel);
+        reminderLabel.setVisibility(View.GONE);
         reminderCardView = findViewById(R.id.reminderCardView);
+        reminderCardView.setVisibility(View.GONE);
+
         reminderToggle = findViewById(R.id.reminderToggleButton);
         reminderTimeTextView = findViewById(R.id.reminderTimeTextView);
 
@@ -823,6 +829,8 @@ public class ChallengeActivity extends BaseActivity {
             notStartedYetLabel.setVisibility(View.GONE);
             silentSignInAndGetLastDays();
             todayCard.setVisibility(View.VISIBLE);
+            reminderLabel.setVisibility(View.VISIBLE);
+            reminderCardView.setVisibility(View.VISIBLE);
         } else {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
@@ -928,6 +936,7 @@ public class ChallengeActivity extends BaseActivity {
                             todayDate.setText(simpleDateFormat.format(date));
                             todayToggle.setChecked(done);
                             counterText.setText(String.valueOf(currentStatus));
+                            todayCard.setVisibility(View.VISIBLE);
                         } else {
                             Day day = new Day(id, date, done, currentStatus);
                             day.setConfirmationType(challenge.getConfirmationType());
@@ -977,6 +986,7 @@ public class ChallengeActivity extends BaseActivity {
                                 .show();
                     }
 //                    progressBar.setVisibility(View.GONE);
+                    todayCard.setVisibility(View.GONE);
                 }
         ) {
             /** Passing some request headers* */

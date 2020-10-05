@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.util.Strings;
@@ -33,6 +34,7 @@ import com.ozarychta.enums.RepeatPeriodDTO;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -107,12 +109,12 @@ public class AddChallengeActivity extends BaseActivity {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         ConfirmationType c = (ConfirmationType) confirmationSpinner.getSelectedItem();
-                        if(c == ConfirmationType.CHECK_TASK){
+                        if (c == ConfirmationType.CHECK_TASK) {
                             goalTextView.setVisibility(View.GONE);
                             moreOrLessTextView.setVisibility(View.GONE);
                             goalEdit.setVisibility(View.GONE);
                             moreOrLessSpinner.setVisibility(View.GONE);
-                        } else if(c == ConfirmationType.COUNTER_TASK){
+                        } else if (c == ConfirmationType.COUNTER_TASK) {
                             goalTextView.setVisibility(View.VISIBLE);
                             moreOrLessTextView.setVisibility(View.GONE);
                             goalEdit.setVisibility(View.VISIBLE);
@@ -188,9 +190,9 @@ public class AddChallengeActivity extends BaseActivity {
         requestBody.put("title", title);
         requestBody.put("description", desc);
         requestBody.put("city", city);
-        requestBody.put("accessType", ((AccessType)accessSpinner.getSelectedItem()).name());
-        requestBody.put("category", ((CategoryDTO)categorySpinner.getSelectedItem()).name());
-        requestBody.put("repeatPeriod", ((RepeatPeriodDTO)repeatSpinner.getSelectedItem()).name());
+        requestBody.put("accessType", ((AccessType) accessSpinner.getSelectedItem()).name());
+        requestBody.put("category", ((CategoryDTO) categorySpinner.getSelectedItem()).name());
+        requestBody.put("repeatPeriod", ((RepeatPeriodDTO) repeatSpinner.getSelectedItem()).name());
 
         ConfirmationType confirmationType = (ConfirmationType) confirmationSpinner.getSelectedItem();
         requestBody.put("confirmationType", confirmationType.name());
@@ -198,9 +200,9 @@ public class AddChallengeActivity extends BaseActivity {
         Integer goal = 0;
         Boolean isMoreBetter = true;
 
-        if(confirmationType == ConfirmationType.COUNTER_TASK){
-            isMoreBetter = ((MoreOrLess)moreOrLessSpinner.getSelectedItem()).getBooleanValue();
-            if(!Strings.isEmptyOrWhitespace(goalText)){
+        if (confirmationType == ConfirmationType.COUNTER_TASK) {
+            isMoreBetter = ((MoreOrLess) moreOrLessSpinner.getSelectedItem()).getBooleanValue();
+            if (!Strings.isEmptyOrWhitespace(goalText)) {
                 goal = Integer.valueOf(goalText);
             }
         }
@@ -223,6 +225,13 @@ public class AddChallengeActivity extends BaseActivity {
         end.set(Calendar.YEAR, endDatePicker.getYear());
         end.set(Calendar.MONTH, endDatePicker.getMonth());
         end.set(Calendar.DAY_OF_MONTH, endDatePicker.getDayOfMonth());
+
+        if (end.before(start)) {
+            Toast.makeText(getApplicationContext(), getString(R.string.end_before_start), Toast.LENGTH_LONG)
+                    .show();
+            progressBar.setVisibility(View.GONE);
+            return;
+        }
 
         requestBody.put("endDate", dateFormat.format(end.getTime()));
 
@@ -254,14 +263,7 @@ public class AddChallengeActivity extends BaseActivity {
                     }
                 },
                 error -> {
-                    if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
-                        Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
-                                .show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
-                                .show();
-                    }
-
+                    showVolleyErrorMessage(error);
                     progressBar.setVisibility(View.GONE);
                 }
         ) {
@@ -274,5 +276,29 @@ public class AddChallengeActivity extends BaseActivity {
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
+    }
+
+    private void showVolleyErrorMessage(VolleyError error) {
+        if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
+            Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        Log.d(this.getClass().getName() + ": Error code :", String.valueOf(error.networkResponse.statusCode));
+        try {
+            String errorResponse = new String(error.networkResponse.data, "UTF-8");
+            Log.d(this.getClass().getName() + ": Error response :", errorResponse);
+
+            if(errorResponse.contains("ConstraintViolationException")){
+                Toast.makeText(getApplicationContext(), getString(R.string.exact_same_challenge_already_exists), Toast.LENGTH_LONG)
+                        .show();
+                return;
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(getApplicationContext(), getString(R.string.server_error), Toast.LENGTH_LONG)
+                .show();
     }
 }

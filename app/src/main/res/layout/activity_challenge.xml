@@ -56,6 +56,13 @@
                     android:textColor="@color/darkGrey"
                     android:textSize="18sp" />
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="1sp" />
+
                 <TextView
                     android:id="@+id/daysLabel"
                     android:layout_width="match_parent"
@@ -299,30 +306,6 @@
                     android:textColor="@color/darkGrey"
                     android:textSize="16sp" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/moreOrLessLabel"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginHorizontal="4sp"-->
-<!--                    android:layout_marginTop="8sp"-->
-<!--                    android:gravity="center"-->
-<!--                    android:paddingHorizontal="4sp"-->
-<!--                    android:paddingTop="5sp"-->
-<!--                    android:paddingBottom="2sp"-->
-<!--                    android:text="@string/more_or_less"-->
-<!--                    android:textColor="@color/secondaryDarkColor"-->
-<!--                    android:textSize="16sp" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/moreOrLessTextView"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginHorizontal="5sp"-->
-<!--                    android:layout_marginTop="2sp"-->
-<!--                    android:gravity="center"-->
-<!--                    android:textColor="@color/darkGrey"-->
-<!--                    android:textSize="16sp" />-->
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -373,6 +356,7 @@
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/reminderLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="4sp"
@@ -507,13 +491,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="1sp" />
 
             <TextView
                 android:id="@+id/noCommentsLabel"
