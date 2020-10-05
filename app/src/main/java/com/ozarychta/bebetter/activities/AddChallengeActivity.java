@@ -28,7 +28,6 @@ import com.ozarychta.bebetter.utils.SignInClient;
 import com.ozarychta.bebetter.enums.AccessType;
 import com.ozarychta.bebetter.enums.CategoryDTO;
 import com.ozarychta.bebetter.enums.ConfirmationType;
-import com.ozarychta.bebetter.enums.MoreOrLess;
 import com.ozarychta.bebetter.enums.RepeatPeriodDTO;
 
 import org.json.JSONException;
@@ -49,7 +48,6 @@ public class AddChallengeActivity extends BaseActivity {
     private ConnectivityManager connectivityManager;
 
     private TextView goalTextView;
-    private TextView moreOrLessTextView;
 
     private EditText titleEdit;
     private EditText descEdit;
@@ -60,7 +58,6 @@ public class AddChallengeActivity extends BaseActivity {
     private Spinner repeatSpinner;
     private Spinner confirmationSpinner;
     private Spinner accessSpinner;
-    private Spinner moreOrLessSpinner;
 
     private DatePicker startDatePicker;
     private DatePicker endDatePicker;
@@ -80,8 +77,6 @@ public class AddChallengeActivity extends BaseActivity {
 
         goalTextView = findViewById(R.id.goalTextView);
         goalTextView.setVisibility(View.GONE);
-        moreOrLessTextView = findViewById(R.id.moreOrLessTextView);
-        moreOrLessTextView.setVisibility(View.GONE);
 
         titleEdit = findViewById(R.id.titleEdit);
         descEdit = findViewById(R.id.descriptionEdit);
@@ -93,8 +88,6 @@ public class AddChallengeActivity extends BaseActivity {
         repeatSpinner = findViewById(R.id.repeatSpinner);
         confirmationSpinner = findViewById(R.id.confirmationSpinner);
         accessSpinner = findViewById(R.id.accessSpinner);
-        moreOrLessSpinner = findViewById(R.id.moreOrLessSpinner);
-        moreOrLessSpinner.setVisibility(View.GONE);
 
         categorySpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, CategoryDTO.values()));
         categorySpinner.setSelection(0);
@@ -111,21 +104,11 @@ public class AddChallengeActivity extends BaseActivity {
                         ConfirmationType c = (ConfirmationType) confirmationSpinner.getSelectedItem();
                         if (c == ConfirmationType.CHECK_TASK) {
                             goalTextView.setVisibility(View.GONE);
-                            moreOrLessTextView.setVisibility(View.GONE);
                             goalEdit.setVisibility(View.GONE);
-                            moreOrLessSpinner.setVisibility(View.GONE);
                         } else if (c == ConfirmationType.COUNTER_TASK) {
                             goalTextView.setVisibility(View.VISIBLE);
-                            moreOrLessTextView.setVisibility(View.GONE);
                             goalEdit.setVisibility(View.VISIBLE);
-                            moreOrLessSpinner.setVisibility(View.GONE);
                         }
-//                        else if(c == ConfirmationType.TIMER_TASK){
-//                            goalTextView.setVisibility(View.VISIBLE);
-//                            moreOrLessTextView.setVisibility(View.GONE);
-//                            goalEdit.setVisibility(View.VISIBLE);
-//                            moreOrLessSpinner.setVisibility(View.GONE);
-//                        }
                     }
 
                     @Override
@@ -133,9 +116,6 @@ public class AddChallengeActivity extends BaseActivity {
 
                     }
                 });
-
-        moreOrLessSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, MoreOrLess.values()));
-        moreOrLessSpinner.setSelection(0);
 
         accessSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, AccessType.values()));
         accessSpinner.setSelection(0);
@@ -198,17 +178,12 @@ public class AddChallengeActivity extends BaseActivity {
         requestBody.put("confirmationType", confirmationType.name());
 
         Integer goal = 0;
-        Boolean isMoreBetter = true;
-
         if (confirmationType == ConfirmationType.COUNTER_TASK) {
-            isMoreBetter = ((MoreOrLess) moreOrLessSpinner.getSelectedItem()).getBooleanValue();
             if (!Strings.isEmptyOrWhitespace(goalText)) {
                 goal = Integer.valueOf(goalText);
             }
         }
-
         requestBody.put("goal", goal);
-        requestBody.put("moreBetter", isMoreBetter);
 
         Log.d(this.getClass().getSimpleName() + " startDatePicker yyyy mm dd",
                 startDatePicker.getYear() + " " + startDatePicker.getMonth() + " " + startDatePicker.getDayOfMonth());
@@ -290,7 +265,7 @@ public class AddChallengeActivity extends BaseActivity {
             String errorResponse = new String(error.networkResponse.data, "UTF-8");
             Log.d(this.getClass().getName() + ": Error response :", errorResponse);
 
-            if(errorResponse.contains("ConstraintViolationException")){
+            if (errorResponse.contains("ConstraintViolationException")) {
                 Toast.makeText(getApplicationContext(), getString(R.string.exact_same_challenge_already_exists), Toast.LENGTH_LONG)
                         .show();
                 return;

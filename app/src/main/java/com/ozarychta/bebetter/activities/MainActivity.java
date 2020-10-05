@@ -93,8 +93,6 @@ public class MainActivity extends BaseActivity {
         repeatSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
         repeatSpinner.setSelection(0);
 
-//        List<ChallengeState> states = Arrays.asList(ChallengeState.values());
-//        states.remove(3);
         stateSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
                 new ChallengeState[]{ChallengeState.ALL, ChallengeState.STARTED, ChallengeState.NOT_STARTED_YET }));
         stateSpinner.setSelection(0);
@@ -112,8 +110,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 startAddChallengeActivity();
-//                Toast.makeText(getApplicationContext(), "fab clicked", Toast.LENGTH_LONG)
-//                        .show();
             }
         });
 
@@ -138,53 +134,7 @@ public class MainActivity extends BaseActivity {
                 return;
             }
 
-//            Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-//            if (!task.isSuccessful()) {
-//                startLoginActivity();
-//                finish();
-//                return;
-//            } else {
-//                progressBar.setVisibility(View.VISIBLE);
-//                task.addOnCompleteListener(new OnCompleteListener<GoogleSignInAccount>() {
-//                    @Override
-//                    public void onComplete(Task<GoogleSignInAccount> task) {
-//                        try {
-//                            progressBar.setVisibility(View.GONE);
-//                            GoogleSignInAccount signInAccount = task.getResult(ApiException.class);
-//                        } catch (ApiException apiException) {
-//                            // You can get from apiException.getStatusCode() the detailed error code
-//                            // e.g. GoogleSignInStatusCodes.SIGN_IN_REQUIRED means user needs to take
-//                            // explicit action to finish sign-in;
-//                            // Please refer to GoogleSignInStatusCodes Javadoc for details
-//                            Toast.makeText(getApplicationContext(), "Please sign in", Toast.LENGTH_LONG)
-//                                    .show();
-//                            startLoginActivity();
-//                            finish();
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//            }
-
             Log.d(this.getClass().getSimpleName() + " TOKEN ", account.getIdToken() == null ? "null" : account.getIdToken());
-
-//            Toast.makeText(this, "successful sign in, account not null? main", Toast.LENGTH_LONG)
-//                    .show();
-
-//            requestQueue =  Volley.newRequestQueue(this);
-
-//            Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-//            if (task.isSuccessful()) {
-//                // There's immediate result available.
-////                addUser(task.getResult().getIdToken());
-//            } else {
-//                task.addOnCompleteListener(
-////                        this,
-////                        task1 -> addUser(SignInClient.getTokenIdFromResult(task1)));
-//            }
-
-
         } else {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
@@ -251,7 +201,6 @@ public class MainActivity extends BaseActivity {
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-//                            try {
                             JSONObject jsonObject = (JSONObject) response.get(i);
 
                             Integer id = jsonObject.getInt("id");
@@ -285,15 +234,6 @@ public class MainActivity extends BaseActivity {
                             adapter.notifyDataSetChanged();
 
                             Log.d(this.getClass().getSimpleName() + " jsonObject", challenges.get(i).toString());
-
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                                Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG)
-//                                        .show();
-//                                Log.d(this.getClass().getSimpleName() + " JSON Exception", response.toString(2));
-//                            } finally {
-//                                progressBar.setVisibility(View.GONE);
-//                            }
                         }
 
                     } catch (Exception e) {
@@ -349,15 +289,5 @@ public class MainActivity extends BaseActivity {
             url += "&search=" + search;
         }
         return url;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        SharedPreferences sharedPref = getApplicationContext()
-//                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
-//        Long userId = (Long) sharedPref.getLong(getString(R.string.user_id_field), -1);
-//
-//        Log.d(this.getClass().getSimpleName() + " USER_ID ", String.valueOf(userId));
     }
 }

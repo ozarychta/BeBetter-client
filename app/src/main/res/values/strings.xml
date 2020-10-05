@@ -36,7 +36,6 @@
     <string name="empty_fields_error">Please fill in all fields</string>
     <string name="added_challenge">Added challenge to server</string>
     <string name="goal">Goal: </string>
-    <string name="more_or_less">Aiming for more or less?</string>
     <string name="challenge">Challenge</string>
     <string name="times_per_week">Times per week: </string>
     <string name="for_">For: </string>

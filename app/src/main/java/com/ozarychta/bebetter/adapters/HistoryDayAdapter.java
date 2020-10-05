@@ -37,7 +37,6 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
             this.dateText = itemView.findViewById(R.id.dateTextView);
             this.weekdayText = itemView.findViewById(R.id.weekDayTextView);
             this.imageView = itemView.findViewById(R.id.imageView);
-            Log.d("constructor view holder", "constructor view holder");
         }
     }
 
@@ -52,7 +51,6 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_history_day, parent, false);
 
-        Log.d("on create view holder", "on create view holder");
         DayViewHolder DayViewHolder = new DayViewHolder(view);
         return DayViewHolder;
     }
@@ -60,7 +58,6 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
     @Override
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         Day d = dataSet.get(position);
-        Log.d("on bind view holder", "on bind view holder \n" + d);
 
         holder.dateText.setText(simpleDateFormat.format(d.getDate()));
         Calendar c = Calendar.getInstance();

@@ -39,7 +39,6 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
             this.toggleDone = itemView.findViewById(R.id.toggleButton);
             this.counterLinearLayout = itemView.findViewById(R.id.counterLinearLayout);
             this.counterText = itemView.findViewById(R.id.counterTextView);
-            Log.d("constructor view holder", "constructor view holder");
         }
     }
 
@@ -54,7 +53,6 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_day_inactive, parent, false);
 
-        Log.d("on create view holder", "on create view holder");
         DayViewHolder DayViewHolder = new DayViewHolder(view);
         return DayViewHolder;
     }
@@ -62,7 +60,6 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         Day d = dataSet.get(position);
-        Log.d("on bind view holder", "on bind view holder \n" + d);
 
         holder.dateText.setText(simpleDateFormat.format(d.getDate()));
         holder.toggleDone.setChecked(d.getDone());

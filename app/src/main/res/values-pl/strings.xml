@@ -36,7 +36,6 @@
     <string name="empty_fields_error">Wszystkie pola muszą być wypełnione.</string>
     <string name="added_challenge">Wyzwanie zostało dodane.</string>
     <string name="goal">Cel: </string>
-    <string name="more_or_less">Lepiej gdy licznik jest większy czy mniejszy?</string>
     <string name="challenge">Wyzwanie</string>
     <string name="times_per_week">Powtórzenia w tygodniu: </string>
     <string name="for_">Przez: </string>

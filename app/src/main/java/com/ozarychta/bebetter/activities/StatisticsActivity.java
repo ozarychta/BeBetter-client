@@ -110,7 +110,6 @@ public class StatisticsActivity extends BaseActivity {
         confirmationType = ConfirmationType.CHECK_TASK;
 
         allDaysRecyclerView = findViewById(R.id.history_recycler_view);
-//        daysLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         allDaysLayoutManager = new GridLayoutManager(this, 7, GridLayoutManager.VERTICAL, false);
         allDaysRecyclerView.setLayoutManager(allDaysLayoutManager);
         allDaysRecyclerView.setItemAnimator(new DefaultItemAnimator());

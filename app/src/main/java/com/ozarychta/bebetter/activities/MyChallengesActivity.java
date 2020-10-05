@@ -100,8 +100,6 @@ public class MyChallengesActivity extends BaseActivity {
         repeatSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, RepeatPeriod.values()));
         repeatSpinner.setSelection(0);
 
-//        List<ChallengeState> states = Arrays.asList(ChallengeState.values());
-//        states.remove(3);
         stateSpinner.setAdapter(new EnumArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ChallengeState.values()));
         stateSpinner.setSelection(0);
 
@@ -191,7 +189,6 @@ public class MyChallengesActivity extends BaseActivity {
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-//                            try {
                             JSONObject jsonObject = (JSONObject) response.get(i);
 
                             Integer id = jsonObject.getInt("id");
@@ -225,16 +222,8 @@ public class MyChallengesActivity extends BaseActivity {
 
                             joined.add(c);
                             Log.d(this.getClass().getSimpleName() + " jsonObject challenge", joined.get(i).getTitle());
-
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                                Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG)
-//                                        .show();
-//                                Log.d(this.getClass().getSimpleName() + " JSON Exception", response.toString(2));
-//                            } finally {
-//                                progressBar.setVisibility(View.GONE);
-//                            }
                         }
+
                         challengesViewModel.setJoinedLiveData(joined);
                         challengesViewModel.setAllLiveData(Stream.concat(created.stream(), joined.stream())
                                 .distinct()
@@ -287,7 +276,6 @@ public class MyChallengesActivity extends BaseActivity {
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-//                            try {
                             JSONObject jsonObject = (JSONObject) response.get(i);
 
                             Integer id = jsonObject.getInt("id");
@@ -321,16 +309,8 @@ public class MyChallengesActivity extends BaseActivity {
 
                             created.add(c);
                             Log.d(this.getClass().getSimpleName() + " jsonObject challenge", created.get(i).getTitle());
-
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                                Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG)
-//                                        .show();
-//                                Log.d(this.getClass().getSimpleName() + " JSON Exception", response.toString(2));
-//                            } finally {
-//                                progressBar.setVisibility(View.GONE);
-//                            }
                         }
+
                         challengesViewModel.setCreatedLiveData(created);
                         challengesViewModel.setAllLiveData(Stream.concat(created.stream(), joined.stream())
                                 .distinct()

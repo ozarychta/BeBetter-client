@@ -163,14 +163,9 @@ public class ChallengeActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-//        Bundle bundle = getIntent().getExtras();
-//        Long id = (Long) bundle.get("CHALLENGE_ID");
-//        String title = (String) bundle.get("TITLE");
-
         challengeIdFromIntent = getIntent().getLongExtra("CHALLENGE_ID", -1);
         titleFromIntent = getIntent().getStringExtra("TITLE");
         challenge = new Challenge();
-//        challenge = (Challenge) getIntent().getSerializableExtra("CHALLENGE");
         Log.d(this.getClass().getSimpleName() + " challenge id ", challengeIdFromIntent.toString());
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -687,12 +682,6 @@ public class ChallengeActivity extends BaseActivity {
 
                             comments.add(c);
                             commentsAdapter.notifyDataSetChanged();
-
-//                                Log.d(this.getClass().getSimpleName() + " comment", comments.get(i).toString());
-
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -947,7 +936,6 @@ public class ChallengeActivity extends BaseActivity {
 
 
                         for (int i = 1; i < response.length(); i++) {
-//                            try {
                             jsonObject = (JSONObject) response.get(i);
 
                             id = jsonObject.getLong("id");
@@ -960,10 +948,6 @@ public class ChallengeActivity extends BaseActivity {
 
                             pastDays.add(day);
                             daysAdapter.notifyDataSetChanged();
-
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
                         }
 
                     } catch (JSONException e) {

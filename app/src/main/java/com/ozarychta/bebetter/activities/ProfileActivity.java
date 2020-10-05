@@ -119,7 +119,6 @@ public class ProfileActivity extends BaseActivity{
         unfollowBtn.setOnClickListener(v ->  unfollowUser()
         );
 
-//        userIdFromIntent = Long.valueOf(getIntent().getIntExtra("USER_ID", -1));
         userIdFromIntent = getIntent().getLongExtra("USER_ID", -1);
 
         SharedPreferences sharedPref = getApplicationContext()
@@ -185,7 +184,6 @@ public class ProfileActivity extends BaseActivity{
                         Log.d(this.getClass().getSimpleName() + " response", response.toString(2));
 
                         for (int i = 0; i < response.length(); i++) {
-//                            try {
                             JSONObject jsonObject = (JSONObject) response.get(i);
 
                             Long id = jsonObject.getLong("id");
@@ -201,12 +199,6 @@ public class ProfileActivity extends BaseActivity{
                             }
 
                             Log.d(this.getClass().getSimpleName() + " jsonObject user", jsonObject.toString(2));
-
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            } finally {
-//                                progressBar.setVisibility(View.GONE);
-//                            }
                         }
 
                         if(achievements.isEmpty()){
@@ -475,7 +467,7 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void updateUI() {
-        if(user.isFollowed() == true){
+        if(user.isFollowed()){
             followBtn.setVisibility(View.GONE);
             unfollowBtn.setVisibility(View.VISIBLE);
         } else if(!signedUserId.equals(userIdFromIntent)){

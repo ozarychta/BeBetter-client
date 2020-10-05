@@ -139,7 +139,6 @@ public class UsersActivity extends BaseActivity {
                         Log.d(this.getClass().getSimpleName() + " response", response.toString(2));
 
                         for (int i = 0; i < response.length(); i++) {
-//                            try {
                             JSONObject jsonObject = (JSONObject) response.get(i);
 
                             Long id = jsonObject.getLong("id");
@@ -157,12 +156,6 @@ public class UsersActivity extends BaseActivity {
                             adapter.notifyDataSetChanged();
 
                             Log.d(this.getClass().getSimpleName() + " jsonObject user", jsonObject.toString(2));
-
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            } finally {
-//                                progressBar.setVisibility(View.GONE);
-//                            }
                         }
 
                         if(users.isEmpty()){

@@ -158,7 +158,6 @@ public class FriendsActivity extends BaseActivity {
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-//                            try {
                                 JSONObject jsonObject = (JSONObject) response.get(i);
 
                                 Long id = jsonObject.getLong("id");
@@ -173,12 +172,6 @@ public class FriendsActivity extends BaseActivity {
                                 following.add(u);
 
                                 Log.d(this.getClass().getSimpleName() + " jsonObject following", following.get(i).getUsername());
-
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            } finally {
-//                                progressBar.setVisibility(View.GONE);
-//                            }
                         }
 
                         friendsViewModel.setFollowingLiveData(following);
@@ -231,7 +224,6 @@ public class FriendsActivity extends BaseActivity {
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-//                            try {
                                 JSONObject jsonObject = (JSONObject) response.get(i);
 
                                 Long id = jsonObject.getLong("id");
@@ -247,11 +239,6 @@ public class FriendsActivity extends BaseActivity {
 
                                 Log.d(this.getClass().getSimpleName() + " jsonObject followers", followers.get(i).getUsername());
 
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            } finally {
-//                                progressBar.setVisibility(View.GONE);
-//                            }
                         }
 
                         friendsViewModel.setFollowersLiveData(followers);

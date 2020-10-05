@@ -47,7 +47,6 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
             this.startDateTextView = (TextView) itemView.findViewById(R.id.startDayTextView);
             this.endDateTextView = (TextView) itemView.findViewById(R.id.endDayTextView);
             this.ctx = itemView.getContext();
-            Log.d("constructor view holder", "constructor view holder");
         }
     }
 
@@ -62,14 +61,12 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_list_challenge, parent, false);
 
-        Log.d("on create view holder", "on create view holder");
         ChallengeViewHolder challengeViewHolder = new ChallengeViewHolder(view);
         return challengeViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChallengeViewHolder holder, int position) {
-        Log.d("on bind view holder", "on bind view holder \n" + dataSet.get(position));
         TextView goalTextView = holder.goalTextView;
 
         holder.titleTextView.setText(dataSet.get(position).getTitle());

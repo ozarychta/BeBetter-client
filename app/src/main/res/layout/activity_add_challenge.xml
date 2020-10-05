@@ -213,33 +213,6 @@
                 android:textSize="18sp"/>
 
             <TextView
-                android:id="@+id/moreOrLessTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="4sp"
-                android:paddingHorizontal="4sp"
-                android:paddingTop="5sp"
-                android:paddingBottom="2sp"
-                android:textColor="@color/secondaryDarkColor"
-                android:text="@string/more_or_less"
-                android:gravity="center"
-                android:textSize="18sp"/>
-
-            <Spinner
-                android:id="@+id/moreOrLessSpinner"
-                style="@android:style/Widget.Material.Light.Spinner.Underlined"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dropdown"
-                android:paddingRight="22sp"
-                android:paddingLeft="2sp"
-                android:paddingVertical="0sp"
-                android:layout_marginHorizontal="0sp"
-                android:textColor="@color/darkGrey"
-                android:textAlignment="textEnd"
-                />
-
-            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4sp"
