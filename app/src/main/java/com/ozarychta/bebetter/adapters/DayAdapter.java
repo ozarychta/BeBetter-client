@@ -1,6 +1,5 @@
 package com.ozarychta.bebetter.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +14,12 @@ import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.models.Day;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.TimeZone;
 
 public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
 
-    private static final String SIMPLE_DATE_FORMAT = "dd.MM";
-    private SimpleDateFormat simpleDateFormat;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
 
     private ArrayList<Day> dataSet;
 
@@ -44,8 +41,6 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
 
     public DayAdapter(ArrayList<Day> data) {
         this.dataSet = data;
-        simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
@@ -61,7 +56,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayAdapter.DayViewHolder> {
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         Day d = dataSet.get(position);
 
-        holder.dateText.setText(simpleDateFormat.format(d.getDate()));
+        holder.dateText.setText(d.getDate().format(formatter));
         holder.toggleDone.setChecked(d.getDone());
         holder.counterText.setText(String.valueOf(d.getCurrentStatus()));
 

@@ -1,7 +1,7 @@
 package com.ozarychta.bebetter.models;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public class Comment implements Serializable {
 
@@ -9,7 +9,7 @@ public class Comment implements Serializable {
 
     private String text;
 
-    private Date createdAt;
+    private OffsetDateTime createdAt;
 
     private Long creatorId;
 
@@ -34,11 +34,11 @@ public class Comment implements Serializable {
         this.text = text;
     }
 
-    public Date getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

@@ -14,14 +14,13 @@ import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.activities.ProfileActivity;
 import com.ozarychta.bebetter.models.Comment;
 
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.TimeZone;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
-    private static final String SIMPLE_DATE_FORMAT = "HH:mm  dd.MM.yyyy";
-    private SimpleDateFormat simpleDateFormat;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm  dd.MM.yyyy");
 
     private ArrayList<Comment> dataSet;
 
@@ -41,8 +40,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     public CommentAdapter(ArrayList<Comment> data) {
         this.dataSet = data;
-        simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
@@ -57,7 +54,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(@NonNull CommentAdapter.CommentViewHolder holder, int position) {
         holder.usernameTextView.setText(dataSet.get(position).getCreatorUsername());
-        holder.createdAtTextView.setText(simpleDateFormat.format(dataSet.get(position).getCreatedAt()));
+        holder.createdAtTextView.setText(dataSet.get(position).getCreatedAt().atZoneSameInstant(ZoneId.systemDefault()).format(formatter));
         holder.commentTextView.setText(dataSet.get(position).getText());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

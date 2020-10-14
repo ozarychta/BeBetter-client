@@ -35,6 +35,9 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -189,26 +192,22 @@ public class AddChallengeActivity extends BaseActivity {
                 startDatePicker.getYear() + " " + startDatePicker.getMonth() + " " + startDatePicker.getDayOfMonth());
         Log.d(this.getClass().getSimpleName() + " startDatePicker yyyy mm dd",
                 endDatePicker.getYear() + " " + endDatePicker.getMonth() + " " + endDatePicker.getDayOfMonth());
-        Calendar start = Calendar.getInstance();
-        start.set(Calendar.YEAR, startDatePicker.getYear());
-        start.set(Calendar.MONTH, startDatePicker.getMonth());
-        start.set(Calendar.DAY_OF_MONTH, startDatePicker.getDayOfMonth());
+        LocalDate startDate = LocalDate.of(startDatePicker.getYear(), startDatePicker.getMonth()+1, startDatePicker.getDayOfMonth());
+        LocalDateTime start = LocalDateTime.of(startDate, LocalTime.MIN);
 
-        requestBody.put("startDate", dateFormat.format(start.getTime()));
+        requestBody.put("startDate", start.toString());
 
-        Calendar end = Calendar.getInstance();
-        end.set(Calendar.YEAR, endDatePicker.getYear());
-        end.set(Calendar.MONTH, endDatePicker.getMonth());
-        end.set(Calendar.DAY_OF_MONTH, endDatePicker.getDayOfMonth());
+        LocalDate endDate = LocalDate.of(endDatePicker.getYear(), endDatePicker.getMonth()+1, endDatePicker.getDayOfMonth());
+        LocalDateTime end = LocalDateTime.of(endDate, LocalTime.MAX);
 
-        if (end.before(start)) {
+        if (end.isBefore(start)) {
             Toast.makeText(getApplicationContext(), getString(R.string.end_before_start), Toast.LENGTH_LONG)
                     .show();
             progressBar.setVisibility(View.GONE);
             return;
         }
 
-        requestBody.put("endDate", dateFormat.format(end.getTime()));
+        requestBody.put("endDate", end.toString());
 
         JSONObject jsonRequestBody = new JSONObject(requestBody);
         Log.d(this.getClass().getSimpleName() + " request body", "\n\n" + jsonRequestBody.toString() + "\n\n");

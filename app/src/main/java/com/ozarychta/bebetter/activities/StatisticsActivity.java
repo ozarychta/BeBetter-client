@@ -27,36 +27,29 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.ozarychta.bebetter.R;
-import com.ozarychta.bebetter.utils.ServerRequestUtil;
-import com.ozarychta.bebetter.utils.SignInClient;
+import com.ozarychta.bebetter.adapters.HistoryDayAdapter;
 import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.models.Day;
-import com.ozarychta.bebetter.adapters.HistoryDayAdapter;
+import com.ozarychta.bebetter.utils.ServerRequestUtil;
+import com.ozarychta.bebetter.utils.SignInClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class StatisticsActivity extends BaseActivity {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
-    private static final String SIMPLE_DATE_FORMAT = "dd.MM";
-    private static final String BASIC_DATE_FORMAT = "dd.MM.yyyy";
-    private static final String[] DAYS = { "SUN", "MONDAY", "TUESDAY", "WED", "THU", "FRI", "SAT" };
-
-    private SimpleDateFormat simpleDateFormat;
-    private SimpleDateFormat dateFormat;
-    private SimpleDateFormat basicDateFormat;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxxx");
+    DateTimeFormatter basicDayFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private ConnectivityManager connectivityManager;
 
@@ -89,15 +82,6 @@ public class StatisticsActivity extends BaseActivity {
         challengeIdFromIntent = getIntent().getLongExtra("CHALLENGE_ID", -1);
         String title = getIntent().getStringExtra("TITLE");
         Log.d(this.getClass().getSimpleName() + " challenge id ", challengeIdFromIntent.toString());
-
-        simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        basicDateFormat = new SimpleDateFormat(BASIC_DATE_FORMAT);
-        basicDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -179,8 +163,10 @@ public class StatisticsActivity extends BaseActivity {
                         JSONObject jsonObject = (JSONObject) response;
 
                         RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
-                        Date start = dateFormat.parse(jsonObject.getString("startDate"));
-                        Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                        OffsetDateTime offsetDateTimeStart = OffsetDateTime.parse(jsonObject.getString("startDate"), formatter);
+                        LocalDateTime start = offsetDateTimeStart.toLocalDateTime();
+                        OffsetDateTime offsetDateTimeEnd = OffsetDateTime.parse(jsonObject.getString("endDate"), formatter);
+                        LocalDateTime end = offsetDateTimeEnd.toLocalDateTime();
                         ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
                         Integer goal = jsonObject.getInt("goal");
 
@@ -192,7 +178,8 @@ public class StatisticsActivity extends BaseActivity {
                             JSONObject dayJsonObject = (JSONObject) allDaysJsonArray.get(i);
 
                             Long id = dayJsonObject.getLong("id");
-                            Date date = dateFormat.parse(dayJsonObject.getString("date"));
+                            OffsetDateTime offsetDateTime = OffsetDateTime.parse(dayJsonObject.getString("date"), formatter);
+                            LocalDateTime date = offsetDateTime.toLocalDateTime();
                             Boolean done = dayJsonObject.getBoolean("done");
                             Integer currentStatus = dayJsonObject.getInt("currentStatus");
                             Integer streak = dayJsonObject.getInt("streak");
@@ -250,13 +237,10 @@ public class StatisticsActivity extends BaseActivity {
             Integer highestStreak = maxStreakDay.getStreak();
             highestStreakTextView.setText(highestStreak.toString());
 
-            Calendar c = Calendar.getInstance();
-            c.setTime(maxStreakDay.getDate());
-            c.add(Calendar.DAY_OF_YEAR, -(highestStreak-1));
+            LocalDateTime streakFirstDayDate = maxStreakDay.getDate().minusDays(highestStreak-1);
 
-            Date streakFirsDay = c.getTime();
-            fromTextView.setText(basicDateFormat.format(streakFirsDay));
-            toTextView.setText(basicDateFormat.format(maxStreakDay.getDate()));
+            fromTextView.setText(streakFirstDayDate.format(basicDayFormatter));
+            toTextView.setText(maxStreakDay.getDate().format(basicDayFormatter));
         }
 
         Integer totalPoints = 0;
@@ -305,30 +289,29 @@ public class StatisticsActivity extends BaseActivity {
         int sunCount = 0;
 
         for(Day day : allDays){
-            Calendar c = Calendar.getInstance();
-            c.setTime(day.getDate());
+            LocalDateTime dateTime = day.getDate();
 
             if(day.getPoints() > 0){
-                switch(c.get(Calendar.DAY_OF_WEEK)){
-                    case Calendar.MONDAY:
+                switch(dateTime.getDayOfWeek()){
+                    case MONDAY:
                         monCount += 1;
                         break;
-                    case Calendar.TUESDAY:
+                    case TUESDAY:
                         tueCount +=1;
                         break;
-                    case Calendar.WEDNESDAY:
+                    case WEDNESDAY:
                         wedCount += 1;
                         break;
-                    case Calendar.THURSDAY:
+                    case THURSDAY:
                         thuCount +=1;
                         break;
-                    case Calendar.FRIDAY:
+                    case FRIDAY:
                         friCount += 1;
                         break;
-                    case Calendar.SATURDAY:
+                    case SATURDAY:
                         satCount +=1;
                         break;
-                    case Calendar.SUNDAY:
+                    case SUNDAY:
                         sunCount += 1;
                         break;
                 }

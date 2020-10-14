@@ -23,25 +23,27 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.ozarychta.bebetter.viewmodels.ChallengesViewModel;
+import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.adapters.ChallengesViewPagerAdapter;
 import com.ozarychta.bebetter.adapters.EnumArrayAdapter;
-import com.ozarychta.bebetter.R;
-import com.ozarychta.bebetter.utils.ServerRequestUtil;
-import com.ozarychta.bebetter.utils.SignInClient;
 import com.ozarychta.bebetter.enums.AccessType;
 import com.ozarychta.bebetter.enums.Category;
 import com.ozarychta.bebetter.enums.ChallengeState;
 import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.models.Challenge;
+import com.ozarychta.bebetter.utils.ServerRequestUtil;
+import com.ozarychta.bebetter.utils.SignInClient;
+import com.ozarychta.bebetter.viewmodels.ChallengesViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -54,6 +56,7 @@ public class MyChallengesActivity extends BaseActivity {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
     private SimpleDateFormat dateFormat;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxxx");
 
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
@@ -198,8 +201,10 @@ public class MyChallengesActivity extends BaseActivity {
                             RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
                             Category category = Category.valueOf(jsonObject.getString("category"));
                             AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
-                            Date start = dateFormat.parse(jsonObject.getString("startDate"));
-                            Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                            OffsetDateTime offsetDateTimeStart = OffsetDateTime.parse(jsonObject.getString("startDate"), formatter);
+                            LocalDateTime start = offsetDateTimeStart.toLocalDateTime();
+                            OffsetDateTime offsetDateTimeEnd = OffsetDateTime.parse(jsonObject.getString("endDate"), formatter);
+                            LocalDateTime end = offsetDateTimeEnd.toLocalDateTime();
                             ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                             ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
                             Integer goal = jsonObject.getInt("goal");
@@ -285,8 +290,10 @@ public class MyChallengesActivity extends BaseActivity {
                             RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
                             Category category = Category.valueOf(jsonObject.getString("category"));
                             AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
-                            Date start = dateFormat.parse(jsonObject.getString("startDate"));
-                            Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                            OffsetDateTime offsetDateTimeStart = OffsetDateTime.parse(jsonObject.getString("startDate"), formatter);
+                            LocalDateTime start = offsetDateTimeStart.toLocalDateTime();
+                            OffsetDateTime offsetDateTimeEnd = OffsetDateTime.parse(jsonObject.getString("endDate"), formatter);
+                            LocalDateTime end = offsetDateTimeEnd.toLocalDateTime();
                             ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                             ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
                             Integer goal = jsonObject.getInt("goal");

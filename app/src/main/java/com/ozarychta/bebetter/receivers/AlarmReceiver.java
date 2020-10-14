@@ -25,7 +25,7 @@ import java.util.Date;
 
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "CHANNEL_1";
-    private static final String DATE_FORMAT_WITHOUT_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    private static final String DATE_FORMAT_WITHOUT_TIMEZONE = "yyyy-MM-dd'T'HH:mm:ss";
 
     @Override
     public void onReceive(Context context, Intent intent) {

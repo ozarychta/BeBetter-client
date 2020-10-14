@@ -2,7 +2,6 @@ package com.ozarychta.bebetter.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +14,12 @@ import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.activities.ChallengeActivity;
 import com.ozarychta.bebetter.models.Challenge;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.TimeZone;
 
 public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.ChallengeViewHolder> {
 
-    private static final String SIMPLE_DATE_FORMAT = "dd.MM";
-    private SimpleDateFormat simpleDateFormat;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
 
     private ArrayList<Challenge> dataSet;
 
@@ -52,8 +49,6 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
 
     public ChallengeAdapter(ArrayList<Challenge> data) {
         this.dataSet = data;
-        simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
@@ -73,8 +68,8 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.Chal
         holder.repeatTextView.setText(holder.ctx.getText(R.string.times_per_week).toString() + " " + dataSet.get(position).getRepeatPeriod().getTimesPerWeek());
         holder.categoryTextView.setText(holder.ctx.getText(R.string.category) + " " + dataSet.get(position).getCategory().getLabel(holder.ctx));
         holder.cityTextView.setText(holder.ctx.getText(R.string.city) + " " + dataSet.get(position).getCity());
-        holder.startDateTextView.setText(holder.ctx.getText(R.string.start_date) + " " + simpleDateFormat.format(dataSet.get(position).getStartDate()));
-        holder.endDateTextView.setText(holder.ctx.getText(R.string.end_date) + " " + simpleDateFormat.format(dataSet.get(position).getEndDate()));
+        holder.startDateTextView.setText(holder.ctx.getText(R.string.start_date) + " " + dataSet.get(position).getStartDate().format(formatter));
+        holder.endDateTextView.setText(holder.ctx.getText(R.string.end_date) + " " + dataSet.get(position).getEndDate().format(formatter));
         if(dataSet.get(position).getGoal() == 0){
             goalTextView.setVisibility(View.GONE);
             goalTextView.setText("");

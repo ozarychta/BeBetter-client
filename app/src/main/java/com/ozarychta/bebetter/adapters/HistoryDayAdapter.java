@@ -1,6 +1,5 @@
 package com.ozarychta.bebetter.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.models.Day;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.DayViewHolder> {
 
-    private static final String SIMPLE_DATE_FORMAT = "dd.MM";
-    private SimpleDateFormat simpleDateFormat;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
 
     private ArrayList<Day> dataSet;
 
@@ -42,8 +39,6 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
 
     public HistoryDayAdapter(ArrayList<Day> data) {
         this.dataSet = data;
-        simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
@@ -59,10 +54,8 @@ public class HistoryDayAdapter extends RecyclerView.Adapter<HistoryDayAdapter.Da
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         Day d = dataSet.get(position);
 
-        holder.dateText.setText(simpleDateFormat.format(d.getDate()));
-        Calendar c = Calendar.getInstance();
-        c.setTime(d.getDate());
-        String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(d.getDate()).substring(0,3);
+        holder.dateText.setText(d.getDate().format(formatter));
+        String dayOfWeek = d.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault());
         holder.weekdayText.setText(dayOfWeek);
 
         switch (d.getConfirmationType()){

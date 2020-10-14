@@ -3,12 +3,12 @@ package com.ozarychta.bebetter.models;
 import com.ozarychta.bebetter.enums.ConfirmationType;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Day implements Serializable {
     private Long id;
 
-    private Date date;
+    private LocalDateTime date;
 
     private Boolean done;
 
@@ -22,7 +22,7 @@ public class Day implements Serializable {
 
     private Integer points;
 
-    public Day(Long id, Date date, Boolean done, Integer currentStatus) {
+    public Day(Long id, LocalDateTime date, Boolean done, Integer currentStatus) {
         this.id = id;
         this.date = date;
         this.done = done;
@@ -33,7 +33,7 @@ public class Day implements Serializable {
         this.points = 0;
     }
 
-    public Day(Long id, Date date, Boolean done, Integer currentStatus, Integer goal, ConfirmationType confirmationType) {
+    public Day(Long id, LocalDateTime date, Boolean done, Integer currentStatus, Integer goal, ConfirmationType confirmationType) {
         this.id = id;
         this.date = date;
         this.done = done;
@@ -44,7 +44,7 @@ public class Day implements Serializable {
         this.points = 0;
     }
 
-    public Day(Long id, Date date, Boolean done, Integer currentStatus, Integer goal, ConfirmationType confirmationType, Integer streak, Integer points) {
+    public Day(Long id, LocalDateTime date, Boolean done, Integer currentStatus, Integer goal, ConfirmationType confirmationType, Integer streak, Integer points) {
         this.id = id;
         this.date = date;
         this.done = done;
@@ -63,11 +63,11 @@ public class Day implements Serializable {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

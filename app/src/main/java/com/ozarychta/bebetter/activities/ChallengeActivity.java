@@ -32,13 +32,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
-import com.ozarychta.bebetter.receivers.AlarmReceiver;
-import com.ozarychta.bebetter.utils.ApplicationExecutor;
 import com.ozarychta.bebetter.R;
+import com.ozarychta.bebetter.adapters.CommentAdapter;
+import com.ozarychta.bebetter.adapters.DayAdapter;
 import com.ozarychta.bebetter.data.Reminder;
 import com.ozarychta.bebetter.data.ReminderDatabase;
-import com.ozarychta.bebetter.utils.ServerRequestUtil;
-import com.ozarychta.bebetter.utils.SignInClient;
 import com.ozarychta.bebetter.enums.AccessType;
 import com.ozarychta.bebetter.enums.Category;
 import com.ozarychta.bebetter.enums.ChallengeState;
@@ -46,32 +44,32 @@ import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.models.Challenge;
 import com.ozarychta.bebetter.models.Comment;
-import com.ozarychta.bebetter.adapters.CommentAdapter;
 import com.ozarychta.bebetter.models.Day;
-import com.ozarychta.bebetter.adapters.DayAdapter;
+import com.ozarychta.bebetter.receivers.AlarmReceiver;
+import com.ozarychta.bebetter.utils.ApplicationExecutor;
+import com.ozarychta.bebetter.utils.ServerRequestUtil;
+import com.ozarychta.bebetter.utils.SignInClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.Executor;
 
 public class ChallengeActivity extends BaseActivity {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
-    private static final String SIMPLE_DATE_FORMAT = "dd.MM";
-    private static final String BASIC_DATE_FORMAT = "dd.MM.yyyy";
     private static final Integer DEFAULT_DAYS_NUM = 7;
 
-    private SimpleDateFormat simpleDateFormat;
-    private SimpleDateFormat dateFormat;
-    private SimpleDateFormat basicDateFormat;
+    private DateTimeFormatter simpleDateFormatter = DateTimeFormatter.ofPattern("dd.MM");
+    private DateTimeFormatter basicDateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxxx");
 
     private ConnectivityManager connectivityManager;
 
@@ -170,15 +168,6 @@ public class ChallengeActivity extends BaseActivity {
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         executor = ApplicationExecutor.getInstance().getExecutor();
-
-        simpleDateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        basicDateFormat = new SimpleDateFormat(BASIC_DATE_FORMAT);
-        basicDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         titleText = findViewById(R.id.titleTextView);
         if(titleFromIntent != null){
@@ -473,8 +462,10 @@ public class ChallengeActivity extends BaseActivity {
                         RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
                         Category category = Category.valueOf(jsonObject.getString("category"));
                         AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
-                        Date start = dateFormat.parse(jsonObject.getString("startDate"));
-                        Date end = dateFormat.parse(jsonObject.getString("endDate"));
+                        OffsetDateTime offsetDateTimeStart = OffsetDateTime.parse(jsonObject.getString("startDate"), formatter);
+                        LocalDateTime start = offsetDateTimeStart.toLocalDateTime();
+                        OffsetDateTime offsetDateTimeEnd = OffsetDateTime.parse(jsonObject.getString("endDate"), formatter);
+                        LocalDateTime end = offsetDateTimeEnd.toLocalDateTime();
                         ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                         ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
                         Boolean isUserParticipant = jsonObject.getBoolean("userParticipant");
@@ -498,7 +489,7 @@ public class ChallengeActivity extends BaseActivity {
 
                         if(reminder.getTitle().isEmpty()){
                             reminder.setTitle(challenge.getTitle());
-                            reminder.setEndDate(dateFormat.format(challenge.getEndDate()));
+                            reminder.setEndDate(challenge.getEndDate().format(dateFormatter));
                         }
                         executor.execute(new Runnable() {
                             @Override
@@ -671,7 +662,7 @@ public class ChallengeActivity extends BaseActivity {
                             Long creatorId = jsonObject.getLong("creatorId");
                             String creatorUsername = jsonObject.getString("creatorUsername");
                             String text = jsonObject.getString("text");
-                            Date createdAt = dateFormat.parse(jsonObject.getString("createdAt"));
+                            OffsetDateTime createdAt = OffsetDateTime.parse(jsonObject.getString("createdAt"), formatter);
 
                             Comment c = new Comment();
                             c.setId(id);
@@ -840,8 +831,8 @@ public class ChallengeActivity extends BaseActivity {
 
         goalText.setText(challenge.getGoal().toString());
 
-        startText.setText(basicDateFormat.format(challenge.getStartDate()));
-        endText.setText(basicDateFormat.format(challenge.getEndDate()));
+        startText.setText(challenge.getStartDate().format(basicDateFormatter));
+        endText.setText(challenge.getEndDate().format(basicDateFormatter));
 
         if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
             todayToggle.setVisibility(View.VISIBLE);
@@ -914,7 +905,10 @@ public class ChallengeActivity extends BaseActivity {
                         JSONObject jsonObject = (JSONObject) response.get(0);
 
                         Long id = jsonObject.getLong("id");
-                        Date date = dateFormat.parse(jsonObject.getString("date"));
+
+                        OffsetDateTime offsetDateTime = OffsetDateTime.parse(jsonObject.getString("date"), formatter);
+                        LocalDateTime date = offsetDateTime.toLocalDateTime();
+
                         Boolean done = jsonObject.getBoolean("done");
                         Integer currentStatus = jsonObject.getInt("currentStatus");
 
@@ -922,7 +916,7 @@ public class ChallengeActivity extends BaseActivity {
                             today = new Day(id, date, done, currentStatus);
                             today.setConfirmationType(challenge.getConfirmationType());
 
-                            todayDate.setText(simpleDateFormat.format(date));
+                            todayDate.setText(date.format(simpleDateFormatter));
                             todayToggle.setChecked(done);
                             counterText.setText(String.valueOf(currentStatus));
                             todayCard.setVisibility(View.VISIBLE);
@@ -939,7 +933,8 @@ public class ChallengeActivity extends BaseActivity {
                             jsonObject = (JSONObject) response.get(i);
 
                             id = jsonObject.getLong("id");
-                            date = dateFormat.parse(jsonObject.getString("date"));
+                            offsetDateTime = OffsetDateTime.parse(jsonObject.getString("date"), formatter);
+                            date = offsetDateTime.toLocalDateTime();
                             done = jsonObject.getBoolean("done");
                             currentStatus = jsonObject.getInt("currentStatus");
 
