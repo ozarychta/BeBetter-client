@@ -18,13 +18,10 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.util.Strings;
-import com.google.android.gms.tasks.Task;
 import com.ozarychta.bebetter.adapters.EnumArrayAdapter;
 import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.utils.ServerRequestUtil;
-import com.ozarychta.bebetter.utils.SignInClient;
 import com.ozarychta.bebetter.enums.AccessType;
 import com.ozarychta.bebetter.enums.CategoryDTO;
 import com.ozarychta.bebetter.enums.ConfirmationType;
@@ -34,24 +31,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class AddChallengeActivity extends BaseActivity {
-
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
-    private SimpleDateFormat dateFormat;
 
     private ConnectivityManager connectivityManager;
 
     private TextView goalTextView;
-
     private EditText titleEdit;
     private EditText descEdit;
     private EditText cityEdit;
@@ -134,29 +125,14 @@ public class AddChallengeActivity extends BaseActivity {
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
-        addBtn.setOnClickListener(v -> silentSignInAndAddChallenge());
+        addBtn.setOnClickListener(v -> silentSignInAnd(this::addChallenge));
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    private void silentSignInAndAddChallenge() {
+    private void addChallenge(String idToken) {
         progressBar.setVisibility(View.VISIBLE);
 
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            addChallengeToServer(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> addChallengeToServer(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
-    private void addChallengeToServer(String idToken) {
         String title = titleEdit.getText().toString();
         String desc = descEdit.getText().toString();
         String city = cityEdit.getText().toString();
@@ -188,10 +164,6 @@ public class AddChallengeActivity extends BaseActivity {
         }
         requestBody.put("goal", goal);
 
-        Log.d(this.getClass().getSimpleName() + " startDatePicker yyyy mm dd",
-                startDatePicker.getYear() + " " + startDatePicker.getMonth() + " " + startDatePicker.getDayOfMonth());
-        Log.d(this.getClass().getSimpleName() + " startDatePicker yyyy mm dd",
-                endDatePicker.getYear() + " " + endDatePicker.getMonth() + " " + endDatePicker.getDayOfMonth());
         LocalDate startDate = LocalDate.of(startDatePicker.getYear(), startDatePicker.getMonth()+1, startDatePicker.getDayOfMonth());
         LocalDateTime start = LocalDateTime.of(startDate, LocalTime.MIN);
 

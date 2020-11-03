@@ -38,6 +38,10 @@ public class SignInClient {
         return googleSignInClient;
     }
 
+    public Task<GoogleSignInAccount> silentSignIn() {
+        return googleSignInClient.silentSignIn();
+    }
+
     public static String getTokenIdFromResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);

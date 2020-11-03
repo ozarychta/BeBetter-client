@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProfileActivity extends BaseActivity{
+public class ProfileActivity extends BaseActivity {
 
     private static final Integer REQUEST_CODE = 1;
 
@@ -112,20 +112,20 @@ public class ProfileActivity extends BaseActivity{
         });
 
         followBtn = findViewById(R.id.followBtn);
-        followBtn.setOnClickListener(v -> followUser()
+        followBtn.setOnClickListener(v -> silentSignInAnd(this::followUser)
         );
 
         unfollowBtn = findViewById(R.id.unfollowBtn);
-        unfollowBtn.setOnClickListener(v ->  unfollowUser()
+        unfollowBtn.setOnClickListener(v -> silentSignInAnd(this::unfollowUser)
         );
 
         userIdFromIntent = getIntent().getLongExtra("USER_ID", -1);
 
         SharedPreferences sharedPref = getApplicationContext()
-                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+                .getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
         signedUserId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
-        if (userIdFromIntent.equals(signedUserId)){
+        if (userIdFromIntent.equals(signedUserId)) {
             editBtn.setVisibility(View.VISIBLE);
             followBtn.setVisibility(View.GONE);
             unfollowBtn.setVisibility(View.GONE);
@@ -135,7 +135,7 @@ public class ProfileActivity extends BaseActivity{
             unfollowBtn.setVisibility(View.GONE);
         }
 
-        if (signedUserId == -1){
+        if (signedUserId == -1) {
             Toast.makeText(getApplicationContext(), "signed user id -1", Toast.LENGTH_LONG)
                     .show();
             editBtn.setVisibility(View.GONE);
@@ -149,21 +149,8 @@ public class ProfileActivity extends BaseActivity{
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
 
-        silentSignInAndGetUserInfo();
-        silentSignInAndGetAchievements();
-    }
-
-    private void silentSignInAndGetAchievements() {
-        achievementsProgressBar.setVisibility(View.VISIBLE);
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getAchievements(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> getAchievements(SignInClient.getTokenIdFromResult(task1)));
-        }
+        silentSignInAnd(this::getUserInfo);
+        silentSignInAnd(this::getAchievements);
     }
 
     private void getAchievements(String idToken) {
@@ -193,7 +180,7 @@ public class ProfileActivity extends BaseActivity{
 
                             Achievement a = new Achievement(id, title, desc, achieved);
 
-                            if(achieved){
+                            if (achieved) {
                                 achievements.add(a);
                                 adapter.notifyDataSetChanged();
                             }
@@ -201,7 +188,7 @@ public class ProfileActivity extends BaseActivity{
                             Log.d(this.getClass().getSimpleName() + " jsonObject user", jsonObject.toString(2));
                         }
 
-                        if(achievements.isEmpty()){
+                        if (achievements.isEmpty()) {
                             noResultsLabel.setVisibility(View.VISIBLE);
                         }
                     } catch (JSONException e) {
@@ -237,45 +224,11 @@ public class ProfileActivity extends BaseActivity{
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
     }
 
-    private void followUser() {
-        silentSignInAndFollowUser();
-    }
-
-    private void unfollowUser() {
-        silentSignInAndUnfollowUser();
-    }
-
-    private void silentSignInAndFollowUser() {
-        progressBar.setVisibility(View.VISIBLE);
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            postFollowUser(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> postFollowUser(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
-    private void silentSignInAndUnfollowUser() {
-        progressBar.setVisibility(View.VISIBLE);
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            postUnfollowUser(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> postUnfollowUser(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
-    private void postFollowUser(String tokenIdFromResult) {
+    private void followUser(String tokenIdFromResult) {
         progressBar.setVisibility(View.VISIBLE);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                "https://be-better-server.herokuapp.com/follow?userId="+userIdFromIntent,
+                "https://be-better-server.herokuapp.com/follow?userId=" + userIdFromIntent,
                 null,
                 response -> {
                     try {
@@ -283,7 +236,7 @@ public class ProfileActivity extends BaseActivity{
 
                         Integer id = jsonObject.getInt("id");
 
-                        Log.d(this.getClass().getSimpleName(), id+" followed user " + userIdFromIntent);
+                        Log.d(this.getClass().getSimpleName(), id + " followed user " + userIdFromIntent);
 
                         Toast.makeText(getApplicationContext(), "followed user" + userIdFromIntent, Toast.LENGTH_LONG)
                                 .show();
@@ -323,11 +276,11 @@ public class ProfileActivity extends BaseActivity{
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
     }
 
-    private void postUnfollowUser(String tokenIdFromResult) {
+    private void unfollowUser(String tokenIdFromResult) {
         progressBar.setVisibility(View.VISIBLE);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                "https://be-better-server.herokuapp.com/unfollow?userId="+userIdFromIntent,
+                "https://be-better-server.herokuapp.com/unfollow?userId=" + userIdFromIntent,
                 null,
                 response -> {
                     try {
@@ -335,7 +288,7 @@ public class ProfileActivity extends BaseActivity{
 
                         Integer id = jsonObject.getInt("id");
 
-                        Log.d(this.getClass().getSimpleName() , id+" followed user " + userIdFromIntent);
+                        Log.d(this.getClass().getSimpleName(), id + " followed user " + userIdFromIntent);
 
                         Toast.makeText(getApplicationContext(), "unfollowed user" + userIdFromIntent, Toast.LENGTH_LONG)
                                 .show();
@@ -373,19 +326,6 @@ public class ProfileActivity extends BaseActivity{
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
-    }
-
-    private void silentSignInAndGetUserInfo() {
-        progressBar.setVisibility(View.VISIBLE);
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getUserInfo(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> getUserInfo(SignInClient.getTokenIdFromResult(task1)));
-        }
     }
 
     private void getUserInfo(String idToken) {
@@ -430,7 +370,7 @@ public class ProfileActivity extends BaseActivity{
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
     }
 
-    private void showVolleyErrorMessage(VolleyError error){
+    private void showVolleyErrorMessage(VolleyError error) {
         if (!ServerRequestUtil.isConnectedToNetwork(connectivityManager)) {
             Toast.makeText(getApplicationContext(), getString(R.string.connection_error), Toast.LENGTH_LONG)
                     .show();
@@ -441,13 +381,13 @@ public class ProfileActivity extends BaseActivity{
 
         Log.d(this.getClass().getName() + ": Error code :", String.valueOf(error.networkResponse.statusCode));
         try {
-            Log.d(this.getClass().getName() + ": Error response :", new String(error.networkResponse.data,"UTF-8"));
+            Log.d(this.getClass().getName() + ": Error response :", new String(error.networkResponse.data, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
-    private void showExceptionMessage(Exception exception){
+    private void showExceptionMessage(Exception exception) {
         exception.printStackTrace();
         Toast.makeText(getApplicationContext(), getString(R.string.unknown_error_occurred), Toast.LENGTH_LONG)
                 .show();
@@ -459,7 +399,7 @@ public class ProfileActivity extends BaseActivity{
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
                 user = (User) data.getSerializableExtra("USER");
                 updateUI();
             }
@@ -467,10 +407,10 @@ public class ProfileActivity extends BaseActivity{
     }
 
     private void updateUI() {
-        if(user.isFollowed()){
+        if (user.isFollowed()) {
             followBtn.setVisibility(View.GONE);
             unfollowBtn.setVisibility(View.VISIBLE);
-        } else if(!signedUserId.equals(userIdFromIntent)){
+        } else if (!signedUserId.equals(userIdFromIntent)) {
             followBtn.setVisibility(View.VISIBLE);
             unfollowBtn.setVisibility(View.GONE);
         }

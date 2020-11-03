@@ -107,12 +107,11 @@ public class StatisticsActivity extends BaseActivity {
         toTextView = findViewById(R.id.toTextView);
         totalPointsTextView = findViewById(R.id.totalPoints);
 
-
         weekdaysChart = (HorizontalBarChart) findViewById(R.id.horizontalBarChart);
 
-        LineChart chart = (LineChart) findViewById(R.id.chart);
-        chart.setVisibility(View.GONE);
-
+//        LineChart chart = (LineChart) findViewById(R.id.chart);
+//        chart.setVisibility(View.GONE);
+//
 //        List<Entry> entries = new ArrayList<Entry>();
 //        entries.add(new Entry(1, 2));
 //        entries.add(new Entry(2, 3));
@@ -127,23 +126,11 @@ public class StatisticsActivity extends BaseActivity {
 //        chart.setData(lineData);
 //        chart.invalidate(); // refresh
 
-        silentSignInAndGetStatisticsData();
-    }
-
-    private void silentSignInAndGetStatisticsData() {
-        progressBar.setVisibility(View.VISIBLE);
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getStatisticsData(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> getStatisticsData(SignInClient.getTokenIdFromResult(task1)));
-        }
+        silentSignInAnd(this::getStatisticsData);
     }
 
     private void getStatisticsData(String idToken) {
+        progressBar.setVisibility(View.VISIBLE);
         allDays.clear();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
@@ -318,7 +305,6 @@ public class StatisticsActivity extends BaseActivity {
             }
         }
 
-
         List<BarEntry> entries = new ArrayList<BarEntry>();
         entries.add(new BarEntry(6, monCount));
         entries.add(new BarEntry(5, tueCount));
@@ -335,6 +321,5 @@ public class StatisticsActivity extends BaseActivity {
         BarData barData = new BarData(barDataSet);
         weekdaysChart.setData(barData);
         weekdaysChart.invalidate();
-
     }
 }

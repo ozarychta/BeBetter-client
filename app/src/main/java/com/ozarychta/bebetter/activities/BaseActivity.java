@@ -10,10 +10,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.ozarychta.bebetter.receivers.AlarmReceiver;
@@ -25,6 +28,7 @@ import com.ozarychta.bebetter.utils.SignInClient;
 
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -155,5 +159,19 @@ public class BaseActivity extends AppCompatActivity {
     private void startLoginActivity() {
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
+    }
+
+    protected void silentSignInAnd(Consumer<String> idTokenConsumer) {
+        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).silentSignIn();
+
+        if (task.isSuccessful()) {
+            // There's immediate result available.
+            idTokenConsumer.accept(task.getResult().getIdToken());
+        } else {
+            task.addOnCompleteListener(
+                    this,
+                    task1 -> idTokenConsumer.accept(task.getResult().getIdToken()));
+        }
+
     }
 }

@@ -65,26 +65,14 @@ public class EditProfileActivity extends BaseActivity{
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
-        editBtn.setOnClickListener(v -> silentSignInAndEditUserInfo());
+        editBtn.setOnClickListener(v -> silentSignInAnd(this::editUserInfo));
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
-    private void silentSignInAndEditUserInfo() {
+    private void editUserInfo(String idToken) {
         progressBar.setVisibility(View.VISIBLE);
 
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            editUserInfo(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> editUserInfo(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
-    private void editUserInfo(String idToken) {
         String username = usernameEdit.getText().toString();
         String aboutMe = aboutMeEdit.getText().toString();
         String mainGoal = mainGoalEdit.getText().toString();

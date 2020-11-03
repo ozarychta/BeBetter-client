@@ -28,9 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.util.Strings;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.card.MaterialCardView;
 import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.adapters.CommentAdapter;
@@ -48,7 +46,6 @@ import com.ozarychta.bebetter.models.Day;
 import com.ozarychta.bebetter.receivers.AlarmReceiver;
 import com.ozarychta.bebetter.utils.ApplicationExecutor;
 import com.ozarychta.bebetter.utils.ServerRequestUtil;
-import com.ozarychta.bebetter.utils.SignInClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,10 +63,10 @@ public class ChallengeActivity extends BaseActivity {
 
     private static final Integer DEFAULT_DAYS_NUM = 7;
 
-    private DateTimeFormatter simpleDateFormatter = DateTimeFormatter.ofPattern("dd.MM");
-    private DateTimeFormatter basicDateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxxx");
+    private final DateTimeFormatter dmFormatter = DateTimeFormatter.ofPattern("dd.MM");
+    private final DateTimeFormatter dmyFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    private final DateTimeFormatter offsetDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxxx");
 
     private ConnectivityManager connectivityManager;
 
@@ -170,7 +167,7 @@ public class ChallengeActivity extends BaseActivity {
         executor = ApplicationExecutor.getInstance().getExecutor();
 
         titleText = findViewById(R.id.titleTextView);
-        if(titleFromIntent != null){
+        if (titleFromIntent != null) {
             titleText.setText(titleFromIntent);
         }
 
@@ -234,9 +231,9 @@ public class ChallengeActivity extends BaseActivity {
         noNetworkLabel.setVisibility(View.GONE);
 
         refreshBtn = findViewById(R.id.refreshBtn);
-        refreshBtn.setOnClickListener(v -> {
-            silentSignInAndGetChallenge();
-        });
+        refreshBtn.setOnClickListener(v ->
+                silentSignInAnd(ChallengeActivity.this::getChallenge)
+        );
         refreshBtn.setVisibility(View.GONE);
 
         todayDate = todayCard.findViewById(R.id.dateTextView);
@@ -250,7 +247,7 @@ public class ChallengeActivity extends BaseActivity {
                             .show();
                 }
                 today.setDone(isChecked);
-                silentSignInAndSaveChange();
+                silentSignInAnd(ChallengeActivity.this::saveChange);
             }
         });
 
@@ -269,7 +266,7 @@ public class ChallengeActivity extends BaseActivity {
                 counter -= 1;
                 today.setCurrentStatus(counter);
                 counterText.setText(String.valueOf(counter));
-                silentSignInAndSaveChange();
+                silentSignInAnd(this::saveChange);
             } else {
                 Toast.makeText(getApplicationContext(), getString(R.string.error_less_that_zero), Toast.LENGTH_LONG)
                         .show();
@@ -281,7 +278,7 @@ public class ChallengeActivity extends BaseActivity {
             Integer counter = Integer.valueOf(counterText.getText().toString()) + 1;
             today.setCurrentStatus(counter);
             counterText.setText(String.valueOf(counter));
-            silentSignInAndSaveChange();
+            silentSignInAnd(this::saveChange);
         });
 
         commentEdit = findViewById(R.id.commentEdit);
@@ -300,17 +297,17 @@ public class ChallengeActivity extends BaseActivity {
         reminderTimeTextView = findViewById(R.id.reminderTimeTextView);
 
         SharedPreferences sharedPref = getApplicationContext()
-                .getSharedPreferences(getString(R.string.shared_pref_filename),Context.MODE_PRIVATE);
+                .getSharedPreferences(getString(R.string.shared_pref_filename), Context.MODE_PRIVATE);
         signedUserId = sharedPref.getLong(getString(R.string.user_id_field), -1);
 
-        if (signedUserId == -1){
+        if (signedUserId == -1) {
             Toast.makeText(getApplicationContext(), getString(R.string.sign_in_result_error), Toast.LENGTH_LONG)
                     .show();
         }
 
         reminder = reminderDatabase.reminderDao().findByChallengeIdAndUserId(challengeIdFromIntent, signedUserId);
 
-        if(reminder == null){
+        if (reminder == null) {
             reminder = new Reminder(challengeIdFromIntent, signedUserId, false, 12, 0, "", "");
             reminderId = reminderDatabase.reminderDao().insert(reminder);
         } else {
@@ -318,7 +315,7 @@ public class ChallengeActivity extends BaseActivity {
         }
 
         reminderTimeTextView.setText(String.format("%02d:%02d", reminder.getHour(), reminder.getMin()));
-        if(reminder.getEnabled()){
+        if (reminder.getEnabled()) {
             reminderCardView.setBackgroundColor(getColor(R.color.white));
         } else {
             reminderCardView.setBackgroundColor(getColor(R.color.lightGrey));
@@ -342,7 +339,7 @@ public class ChallengeActivity extends BaseActivity {
                             }
                         });
 
-                        if(reminder.getEnabled()){
+                        if (reminder.getEnabled()) {
                             setReminder();
                         }
                     }
@@ -356,7 +353,7 @@ public class ChallengeActivity extends BaseActivity {
         reminderToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!buttonView.isPressed()) return;
-                if(isChecked){
+                if (isChecked) {
                     reminderCardView.setBackgroundColor(getColor(R.color.white));
                     setReminder();
                     reminder.setEnabled(true);
@@ -374,12 +371,12 @@ public class ChallengeActivity extends BaseActivity {
             }
         });
 
-        silentSignInAndGetChallenge();
+        silentSignInAnd(this::getChallenge);
 
-        joinBtn.setOnClickListener(v -> silentSignInAndJoinChallenge());
-        showCommentsBtn.setOnClickListener(v -> silentSignInAndShowComments());
+        joinBtn.setOnClickListener(v -> silentSignInAnd(this::joinChallenge));
+        showCommentsBtn.setOnClickListener(v -> silentSignInAnd(this::showComments));
         hideCommentsBtn.setOnClickListener(v -> hideComments());
-        addCommentBtn.setOnClickListener(v -> silentSignInAndAddComment());
+        addCommentBtn.setOnClickListener(v -> silentSignInAnd(this::addComment));
         statisticsBtn.setOnClickListener(v -> {
             Intent intent = new Intent(this, StatisticsActivity.class);
             intent.putExtra("CHALLENGE_ID", challengeIdFromIntent);
@@ -426,20 +423,7 @@ public class ChallengeActivity extends BaseActivity {
         return true;
     }
 
-    private void silentSignInAndGetChallenge() {
-        progressBar.setVisibility(View.VISIBLE);
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getChallengeFromServer(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> getChallengeFromServer(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
-    private void getChallengeFromServer(String idToken) {
+    private void getChallenge(String idToken) {
         progressBar.setVisibility(View.VISIBLE);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
@@ -462,9 +446,9 @@ public class ChallengeActivity extends BaseActivity {
                         RepeatPeriod repeat = RepeatPeriod.valueOf(jsonObject.getString("repeatPeriod"));
                         Category category = Category.valueOf(jsonObject.getString("category"));
                         AccessType access = AccessType.valueOf(jsonObject.getString("accessType"));
-                        OffsetDateTime offsetDateTimeStart = OffsetDateTime.parse(jsonObject.getString("startDate"), formatter);
+                        OffsetDateTime offsetDateTimeStart = OffsetDateTime.parse(jsonObject.getString("startDate"), offsetDateTimeFormatter);
                         LocalDateTime start = offsetDateTimeStart.toLocalDateTime();
-                        OffsetDateTime offsetDateTimeEnd = OffsetDateTime.parse(jsonObject.getString("endDate"), formatter);
+                        OffsetDateTime offsetDateTimeEnd = OffsetDateTime.parse(jsonObject.getString("endDate"), offsetDateTimeFormatter);
                         LocalDateTime end = offsetDateTimeEnd.toLocalDateTime();
                         ChallengeState state = ChallengeState.valueOf(jsonObject.getString("challengeState"));
                         ConfirmationType confirmation = ConfirmationType.valueOf(jsonObject.getString("confirmationType"));
@@ -487,9 +471,9 @@ public class ChallengeActivity extends BaseActivity {
 
                         Log.d(this.getClass().getSimpleName() + " jsonObject", challenge.toString());
 
-                        if(reminder.getTitle().isEmpty()){
+                        if (reminder.getTitle().isEmpty()) {
                             reminder.setTitle(challenge.getTitle());
-                            reminder.setEndDate(challenge.getEndDate().format(dateFormatter));
+                            reminder.setEndDate(challenge.getEndDate().format(dateTimeFormatter));
                         }
                         executor.execute(new Runnable() {
                             @Override
@@ -538,33 +522,8 @@ public class ChallengeActivity extends BaseActivity {
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonObjectRequest);
     }
 
-    private void silentSignInAndShowComments() {
-        progressBar.setVisibility(View.VISIBLE);
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            showComments(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> showComments(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
-    private void silentSignInAndAddComment() {
+    private void addComment(String token) {
         addCommentProgressBar.setVisibility(View.VISIBLE);
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            addCommentToServer(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> addCommentToServer(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
-    private void addCommentToServer(String token) {
         String comment = commentEdit.getText().toString();
 
         if (Strings.isEmptyOrWhitespace(comment)) {
@@ -655,14 +614,13 @@ public class ChallengeActivity extends BaseActivity {
                         }
 
                         for (int i = 0; i < response.length(); i++) {
-//                            try {
                             JSONObject jsonObject = (JSONObject) response.get(i);
 
                             Long id = jsonObject.getLong("id");
                             Long creatorId = jsonObject.getLong("creatorId");
                             String creatorUsername = jsonObject.getString("creatorUsername");
                             String text = jsonObject.getString("text");
-                            OffsetDateTime createdAt = OffsetDateTime.parse(jsonObject.getString("createdAt"), formatter);
+                            OffsetDateTime createdAt = OffsetDateTime.parse(jsonObject.getString("createdAt"), offsetDateTimeFormatter);
 
                             Comment c = new Comment();
                             c.setId(id);
@@ -715,18 +673,6 @@ public class ChallengeActivity extends BaseActivity {
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
-    }
-
-    private void silentSignInAndSaveChange() {
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            saveChange(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> saveChange(SignInClient.getTokenIdFromResult(task1)));
-        }
     }
 
     private void saveChange(String tokenId) {
@@ -807,7 +753,7 @@ public class ChallengeActivity extends BaseActivity {
         } else if (ChallengeState.STARTED == state) {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
-            silentSignInAndGetLastDays();
+            silentSignInAnd(this::getLastDays);
             todayCard.setVisibility(View.VISIBLE);
             reminderLabel.setVisibility(View.VISIBLE);
             reminderCardView.setVisibility(View.VISIBLE);
@@ -815,7 +761,7 @@ public class ChallengeActivity extends BaseActivity {
             daysLayout.setVisibility(View.VISIBLE);
             notStartedYetLabel.setVisibility(View.GONE);
             todayCard.setVisibility(View.GONE);
-            silentSignInAndGetLastDays();
+            silentSignInAnd(this::getLastDays);
         }
     }
 
@@ -831,8 +777,8 @@ public class ChallengeActivity extends BaseActivity {
 
         goalText.setText(challenge.getGoal().toString());
 
-        startText.setText(challenge.getStartDate().format(basicDateFormatter));
-        endText.setText(challenge.getEndDate().format(basicDateFormatter));
+        startText.setText(challenge.getStartDate().format(dmyFormatter));
+        endText.setText(challenge.getEndDate().format(dmyFormatter));
 
         if (challenge.getConfirmationType() == ConfirmationType.CHECK_TASK) {
             todayToggle.setVisibility(View.VISIBLE);
@@ -871,19 +817,6 @@ public class ChallengeActivity extends BaseActivity {
         }
     }
 
-    private void silentSignInAndGetLastDays() {
-
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getLastDays(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> getLastDays(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
     private void getLastDays(String idToken) {
         ChallengeState state = challenge.getState();
         pastDays.clear();
@@ -906,7 +839,7 @@ public class ChallengeActivity extends BaseActivity {
 
                         Long id = jsonObject.getLong("id");
 
-                        OffsetDateTime offsetDateTime = OffsetDateTime.parse(jsonObject.getString("date"), formatter);
+                        OffsetDateTime offsetDateTime = OffsetDateTime.parse(jsonObject.getString("date"), offsetDateTimeFormatter);
                         LocalDateTime date = offsetDateTime.toLocalDateTime();
 
                         Boolean done = jsonObject.getBoolean("done");
@@ -916,7 +849,7 @@ public class ChallengeActivity extends BaseActivity {
                             today = new Day(id, date, done, currentStatus);
                             today.setConfirmationType(challenge.getConfirmationType());
 
-                            todayDate.setText(date.format(simpleDateFormatter));
+                            todayDate.setText(date.format(dmFormatter));
                             todayToggle.setChecked(done);
                             counterText.setText(String.valueOf(currentStatus));
                             todayCard.setVisibility(View.VISIBLE);
@@ -933,7 +866,7 @@ public class ChallengeActivity extends BaseActivity {
                             jsonObject = (JSONObject) response.get(i);
 
                             id = jsonObject.getLong("id");
-                            offsetDateTime = OffsetDateTime.parse(jsonObject.getString("date"), formatter);
+                            offsetDateTime = OffsetDateTime.parse(jsonObject.getString("date"), offsetDateTimeFormatter);
                             date = offsetDateTime.toLocalDateTime();
                             done = jsonObject.getBoolean("done");
                             currentStatus = jsonObject.getInt("currentStatus");
@@ -977,20 +910,6 @@ public class ChallengeActivity extends BaseActivity {
             }
         };
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
-    }
-
-    private void silentSignInAndJoinChallenge() {
-//        progressBar.setVisibility(View.VISIBLE);
-
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            joinChallenge(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> joinChallenge(SignInClient.getTokenIdFromResult(task1)));
-        }
     }
 
     private void joinChallenge(String token) {

@@ -25,7 +25,6 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.adapters.ChallengeAdapter;
@@ -37,7 +36,6 @@ import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.models.Challenge;
 import com.ozarychta.bebetter.utils.ServerRequestUtil;
-import com.ozarychta.bebetter.utils.SignInClient;
 
 import org.json.JSONObject;
 
@@ -123,7 +121,7 @@ public class MainActivity extends BaseActivity {
         adapter = new ChallengeAdapter(challenges);
         recyclerView.setAdapter(adapter);
 
-        searchBtn.setOnClickListener(v -> silentSignInAndGetChallenges());
+        searchBtn.setOnClickListener(v -> silentSignInAnd(this::getChallenges));
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         
@@ -174,22 +172,7 @@ public class MainActivity extends BaseActivity {
         startActivity(i);
     }
 
-    private void silentSignInAndGetChallenges() {
-        progressBar.setVisibility(View.VISIBLE);
-
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getChallengesFromServer(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> getChallengesFromServer(SignInClient.getTokenIdFromResult(task1)));
-        }
-    }
-
-
-    private void getChallengesFromServer(String token) {
+    private void getChallenges(String token) {
         progressBar.setVisibility(View.VISIBLE);
         challenges.clear();
         noResultsLabel.setVisibility(View.GONE);

@@ -19,8 +19,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.ozarychta.bebetter.R;
@@ -33,30 +31,24 @@ import com.ozarychta.bebetter.enums.ConfirmationType;
 import com.ozarychta.bebetter.enums.RepeatPeriod;
 import com.ozarychta.bebetter.models.Challenge;
 import com.ozarychta.bebetter.utils.ServerRequestUtil;
-import com.ozarychta.bebetter.utils.SignInClient;
 import com.ozarychta.bebetter.viewmodels.ChallengesViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MyChallengesActivity extends BaseActivity {
 
     private ConnectivityManager connectivityManager;
-
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
-    private SimpleDateFormat dateFormat;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxxx");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxxx");
 
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
@@ -84,7 +76,6 @@ public class MyChallengesActivity extends BaseActivity {
         getSupportActionBar().setTitle(R.string.my_challenges);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         searchBtn = findViewById(R.id.searchBtn);
@@ -127,10 +118,7 @@ public class MyChallengesActivity extends BaseActivity {
         joined = new ArrayList<>();
         all = new ArrayList<>();
 
-        dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        searchBtn.setOnClickListener(v -> silentSignInAndGetChallenges());
+        searchBtn.setOnClickListener(v -> silentSignInAnd(this::getChallenges));
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -147,7 +135,7 @@ public class MyChallengesActivity extends BaseActivity {
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
 
-        silentSignInAndGetChallenges();
+        silentSignInAnd(this::getChallenges);
     }
 
     private void startAddChallengeActivity() {
@@ -160,25 +148,12 @@ public class MyChallengesActivity extends BaseActivity {
         startActivity(i);
     }
 
-    private void silentSignInAndGetChallenges() {
-        progressBar.setVisibility(View.VISIBLE);
-
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getCreatedChallengesFromServer(task.getResult().getIdToken());
-            getJoinedChallengesFromServer(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> {
-                        getCreatedChallengesFromServer(SignInClient.getTokenIdFromResult(task1));
-                        getJoinedChallengesFromServer(SignInClient.getTokenIdFromResult(task1));
-                    });
-        }
+    private void getChallenges(String token){
+        getCreatedChallenges(token);
+        getJoinedChallenges(token);
     }
 
-    private void getJoinedChallengesFromServer(String token) {
+    private void getJoinedChallenges(String token) {
         progressBar.setVisibility(View.VISIBLE);
         joined.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
@@ -267,7 +242,7 @@ public class MyChallengesActivity extends BaseActivity {
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
     }
 
-    private void getCreatedChallengesFromServer(String token) {
+    private void getCreatedChallenges(String token) {
         progressBar.setVisibility(View.VISIBLE);
         created.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(

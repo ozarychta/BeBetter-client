@@ -80,7 +80,7 @@ public class UsersActivity extends BaseActivity {
         noResultsLabel = findViewById(R.id.noResultsLabel);
         noResultsLabel.setVisibility(View.GONE);
 
-        searchBtn.setOnClickListener(v -> silentSignInAndGetUsers());
+        searchBtn.setOnClickListener(v -> silentSignInAnd(this::getUsers));
 
         connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -97,23 +97,7 @@ public class UsersActivity extends BaseActivity {
         }
     }
 
-    private void silentSignInAndGetUsers() {
-        progressBar.setVisibility(View.VISIBLE);
-
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getUsersFromServer(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> {
-                        getUsersFromServer(SignInClient.getTokenIdFromResult(task1));
-                    });
-        }
-    }
-
-    private void getUsersFromServer(String token) {
+    private void getUsers(String token) {
         progressBar.setVisibility(View.VISIBLE);
         users.clear();
         noResultsLabel.setVisibility(View.GONE);

@@ -99,7 +99,7 @@ public class FriendsActivity extends BaseActivity {
         following = new ArrayList<>();
         followers = new ArrayList<>();
 
-        searchBtn.setOnClickListener(v -> silentSignInAndGetFriends());
+        searchBtn.setOnClickListener(v -> silentSignInAnd(this::getFriends));
 
         connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -111,7 +111,7 @@ public class FriendsActivity extends BaseActivity {
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
 
-        silentSignInAndGetFriends();
+        silentSignInAnd(this::getFriends);
     }
 
     private void startUsersActivity() {
@@ -124,25 +124,12 @@ public class FriendsActivity extends BaseActivity {
         startActivity(i);
     }
 
-    private void silentSignInAndGetFriends() {
-        progressBar.setVisibility(View.VISIBLE);
-
-        Task<GoogleSignInAccount> task = SignInClient.getInstance(this).getGoogleSignInClient().silentSignIn();
-        if (task.isSuccessful()) {
-            // There's immediate result available.
-            getFollowingFromServer(task.getResult().getIdToken());
-            getFollowersFromServer(task.getResult().getIdToken());
-        } else {
-            task.addOnCompleteListener(
-                    this,
-                    task1 -> {
-                        getFollowingFromServer(SignInClient.getTokenIdFromResult(task1));
-                        getFollowersFromServer(SignInClient.getTokenIdFromResult(task1));
-                    });
-        }
+    private void getFriends(String token) {
+            getFollowing(token);
+            getFollowers(token);
     }
 
-    private void getFollowingFromServer(String token) {
+    private void getFollowing(String token) {
         progressBar.setVisibility(View.VISIBLE);
         following.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
@@ -208,7 +195,7 @@ public class FriendsActivity extends BaseActivity {
         ServerRequestUtil.getInstance(this).getRequestQueue().add(jsonArrayRequest);
     }
 
-    private void getFollowersFromServer(String token) {
+    private void getFollowers(String token) {
         progressBar.setVisibility(View.VISIBLE);
         followers.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
