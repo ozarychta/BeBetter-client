@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -20,6 +21,9 @@ import com.ozarychta.bebetter.data.ReminderDatabase;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -39,18 +43,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         String title = reminder.getTitle();
         Long challengeId = reminder.getChallengeId();
 
-        Date endDate;
-        try {
-            endDate = dateFormat.parse(reminder.getEndDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return;
-        }
-        Calendar end = Calendar.getInstance();
-        end.setTime(endDate);
+        LocalDate endDate = reminder.getEndDate();
+        LocalDate now = LocalDate.now();
 
-        Calendar now = Calendar.getInstance();
-        if(now.after(end)){
+        if(now.isAfter(endDate)){
             reminder.setEnabled(false);
             reminderDatabase.reminderDao().update(reminder);
 

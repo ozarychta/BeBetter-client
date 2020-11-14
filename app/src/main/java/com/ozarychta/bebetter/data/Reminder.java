@@ -3,6 +3,7 @@ package com.ozarychta.bebetter.data;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import java.time.LocalDate;
 
 @Entity
 public class Reminder {
@@ -28,9 +29,9 @@ public class Reminder {
     public String title;
 
     @ColumnInfo(name = "end_date")
-    public String endDate;
+    public LocalDate endDate;
 
-    public Reminder(Long challengeId, Long userId, Boolean enabled, int hour, int min, String title, String endDate) {
+    public Reminder(Long challengeId, Long userId, Boolean enabled, int hour, int min, String title, LocalDate endDate) {
         this.challengeId = challengeId;
         this.userId = userId;
         this.enabled = enabled;
@@ -96,11 +97,11 @@ public class Reminder {
         this.title = title;
     }
 
-    public String getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

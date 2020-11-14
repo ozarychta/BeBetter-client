@@ -50,8 +50,11 @@ import com.ozarychta.bebetter.utils.ServerRequestUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -308,7 +311,7 @@ public class ChallengeActivity extends BaseActivity {
         reminder = reminderDatabase.reminderDao().findByChallengeIdAndUserId(challengeIdFromIntent, signedUserId);
 
         if (reminder == null) {
-            reminder = new Reminder(challengeIdFromIntent, signedUserId, false, 12, 0, "", "");
+            reminder = new Reminder(challengeIdFromIntent, signedUserId, false, 12, 0, "", null);
             reminderId = reminderDatabase.reminderDao().insert(reminder);
         } else {
             reminderId = reminder.getId();
@@ -392,13 +395,11 @@ public class ChallengeActivity extends BaseActivity {
         reminderIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         reminderPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), reminderId.intValue(), reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Calendar reminderTime = Calendar.getInstance();
-        reminderTime.setTimeInMillis(System.currentTimeMillis());
-        reminderTime.set(Calendar.HOUR_OF_DAY, reminder.getHour());
-        reminderTime.set(Calendar.MINUTE, reminder.getMin());
+        LocalDateTime triggerAtDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(reminder.getHour(), reminder.getMin()));
+        long triggerAtMillis = triggerAtDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, reminderTime.getTimeInMillis(),
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis,
                 AlarmManager.INTERVAL_DAY, reminderPendingIntent);
         Toast.makeText(getApplicationContext(), getString(R.string.reminder_set), Toast.LENGTH_LONG)
                 .show();
@@ -471,17 +472,17 @@ public class ChallengeActivity extends BaseActivity {
 
                         Log.d(this.getClass().getSimpleName() + " jsonObject", challenge.toString());
 
-                        if (reminder.getTitle().isEmpty()) {
+                        if (reminder.getTitle().isEmpty() || reminder.getEndDate() == null) {
                             reminder.setTitle(challenge.getTitle());
-                            reminder.setEndDate(challenge.getEndDate().format(dateTimeFormatter));
-                        }
-                        executor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                reminderDatabase.reminderDao().update(reminder);
-                            }
-                        });
+                            reminder.setEndDate(challenge.getEndDate().toLocalDate());
 
+                            executor.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    reminderDatabase.reminderDao().update(reminder);
+                                }
+                            });
+                        }
                         updateUIWithChallenge();
 
                     } catch (Exception e) {

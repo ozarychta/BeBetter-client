@@ -5,8 +5,10 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 @Database(entities = {Reminder.class}, version = 3)
+@TypeConverters({LocalDateConverter.class})
 public abstract class ReminderDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "reminder_db";
     private static ReminderDatabase instance;

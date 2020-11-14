@@ -11,7 +11,10 @@ import com.ozarychta.bebetter.R;
 import com.ozarychta.bebetter.data.Reminder;
 import com.ozarychta.bebetter.data.ReminderDatabase;
 
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 public class BootReceiver extends BroadcastReceiver {
@@ -36,12 +39,10 @@ public class BootReceiver extends BroadcastReceiver {
                 PendingIntent reminderPendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(),
                         reminderId.intValue(), reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Calendar reminderTime = Calendar.getInstance();
-                reminderTime.setTimeInMillis(System.currentTimeMillis());
-                reminderTime.set(Calendar.HOUR_OF_DAY, r.getHour());
-                reminderTime.set(Calendar.MINUTE, r.getMin());
+                LocalDateTime triggerAtDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(r.getHour(), r.getMin()));
+                long triggerAtMillis = triggerAtDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, reminderTime.getTimeInMillis(),
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis,
                         AlarmManager.INTERVAL_DAY, reminderPendingIntent);
             }
     }
