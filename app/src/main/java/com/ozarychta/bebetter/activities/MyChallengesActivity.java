@@ -333,7 +333,7 @@ public class MyChallengesActivity extends BaseActivity {
 
     private String getUrlParameters() {
         String url = "";
-//        url += "&type=" + AccessType.PRIVATE;
+//        url += "&access=" + AccessType.PRIVATE;
 
         if (categorySpinner.getSelectedItem() != Category.ALL) {
             url += "&category=" + ((Category)categorySpinner.getSelectedItem()).name();
