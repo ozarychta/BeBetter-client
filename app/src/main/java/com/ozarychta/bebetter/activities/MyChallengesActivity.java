@@ -158,7 +158,7 @@ public class MyChallengesActivity extends BaseActivity {
         joined.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/users/challenges?" + getUrlParameters(),
+                "https://be-better-server.herokuapp.com/challenges/joined?" + getUrlParameters(),
                 null,
                 response -> {
                     try {
@@ -247,7 +247,7 @@ public class MyChallengesActivity extends BaseActivity {
         created.clear();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://be-better-server.herokuapp.com/users/created?" + getUrlParameters(),
+                "https://be-better-server.herokuapp.com/challenges/created?" + getUrlParameters(),
                 null,
                 response -> {
                     try {
@@ -332,8 +332,7 @@ public class MyChallengesActivity extends BaseActivity {
     }
 
     private String getUrlParameters() {
-        String url = "";
-//        url += "&access=" + AccessType.PRIVATE;
+        String url = "access=" + AccessType.ALL;
 
         if (categorySpinner.getSelectedItem() != Category.ALL) {
             url += "&category=" + ((Category)categorySpinner.getSelectedItem()).name();

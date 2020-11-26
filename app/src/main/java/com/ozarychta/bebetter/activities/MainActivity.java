@@ -257,8 +257,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private String getUrlParameters() {
-        String url = "";
-        url += "&access=" + AccessType.PUBLIC;
+        String url = "access=" + AccessType.PUBLIC;
 
         if (categorySpinner.getSelectedItem() != Category.ALL) {
             url += "&category=" + ((Category)categorySpinner.getSelectedItem()).name();

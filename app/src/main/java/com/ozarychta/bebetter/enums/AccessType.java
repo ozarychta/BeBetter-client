@@ -6,7 +6,8 @@ import com.ozarychta.bebetter.R;
 
 public enum AccessType implements EnumWithLabel {
     PRIVATE(R.string.private_access),
-    PUBLIC(R.string.public_access);
+    PUBLIC(R.string.public_access),
+    ALL(R.string.all);
 
     private Integer resourceId;
 
